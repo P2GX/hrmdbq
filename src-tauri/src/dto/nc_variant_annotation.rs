@@ -1,6 +1,4 @@
 
-
-
 enum VariantClass {
     Utr5,
     Promoter,
@@ -8,26 +6,40 @@ enum VariantClass {
     Utr3,
     MicroRNA,
     LncRna,
-    Icr
+    Icr,
 }
 
 
 enum Pathomechanism {
     ReducedTranscription,
+    IncreasedTranscription,
+    IREdisruption,
+    SpliceDefect,
+    UORFCreation,
+    ReducedTranslation,
+    ReducedExpression,
+    MicroRNAbindingSiteDisruption,
+    MicroRNAbindingSiteCreation,
+    KozakDisruption,
+    SecondaryStructure,
+    Unknown,
 }
 
 enum Context {
-    Mendelian
+    Mendelian,
 }
 
 enum ReporterRegulation {
     Up,
     Down,
-    Unchanged
+    Unchanged,
 }
 
-
-
+enum Genotype {
+    Heterozygous,
+    Homozygous,
+    Hemizygous,
+}
 
 pub struct Qpcr {
     regulation: ReporterRegulation,
@@ -41,6 +53,7 @@ pub struct NcVariantAnnotation {
     pub context: Context,
     pub cosegregation: Option<bool>,
     pub regulation: ReporterRegulation,
+    pub genotype: Genotype,
 }
 
 
