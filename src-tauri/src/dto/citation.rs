@@ -8,7 +8,7 @@ pub struct Citation {
     pub year: usize,
     pub volume: String,
     pub pages: String,
-    pub pmid: String
+    pub pmid: String,
 }
 
 

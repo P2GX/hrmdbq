@@ -20,11 +20,22 @@ struct PubmedResult {
 
 #[derive(Debug, Deserialize)]
 struct ArticleRecord {
+    authors: Vec<Author>,
     title: Option<String>,
+
+    #[serde(rename = "fulljournalname")]
+    journal: Option<String>,
+
+    #[serde(rename = "pubdate")]
+    year: Option<String>,
+    
+    volume: Option<String>,
+    pages: Option<String>,
 }
 
-pub struct PubmedRetriever {
-    numerical_pmid: String,
+#[derive(Debug, Deserialize)]
+struct Author {
+    name: String,
 }
 
 impl PubmedRetriever {
