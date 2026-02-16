@@ -28,7 +28,7 @@ struct ArticleRecord {
 
     #[serde(rename = "pubdate")]
     year: Option<String>,
-    
+
     volume: Option<String>,
     pages: Option<String>,
 }
@@ -70,7 +70,7 @@ impl PubmedRetriever {
             .map(|n| n.to_string())
     }
 
-    async fn fetch_article_title(&self) -> Result<Option<String>, String> {
+    async fn fetch_pubmed_data(&self) -> Result<ArticleRecord, String> {
         let url = format!(
             "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id={}&retmode=json",
             &self.numerical_pmid
@@ -80,11 +80,10 @@ impl PubmedRetriever {
         println!("{:?}", response);
         let json: PubmedResponse = response.json().await.map_err(|e|e.to_string())?;
 
-        if let Some(record) = json.result.records.get(&self.numerical_pmid) {
-            Ok(record.title.clone())
-        } else {
-            Ok(None)
-        }
+        json.result.records
+            .get(&self.numerical_pmid)
+            .cloned()
+            .ok_or_else(|| format!("Article record not found in response for PMID {}", self.numerical_pmid))
     }
 }
 
