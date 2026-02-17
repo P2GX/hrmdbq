@@ -1,3 +1,4 @@
+use crate::dto::citation::Citation;
 
 enum VariantClass {
     Utr5,
