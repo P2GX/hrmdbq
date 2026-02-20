@@ -1,7 +1,9 @@
+use crate::dto::citation::Citation;
+
 pub mod dto;
 pub mod util;
 
-/*
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -10,4 +12,11 @@ pub fn run() {
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
-*/
+
+
+
+#[tauri::command]
+fn greet() -> Result<Citation, String> {
+    println!("Greeting");
+    Err("testing".to_string())
+}
