@@ -94,16 +94,39 @@ async fn fetch_citation(numerical_pmid: &str) -> Result<Citation, String> {
         Some(record) => record,
         None => { return Err("Could not fetch".to_string())}
     };
+    let title = match &article_record.title {
+        Some(t) => t.to_string(),
+        None => { return Err("Could not retrieve title from record".to_string()); }
+    };
+    let title = title.trim().to_string();
+    let journal = match &article_record.journal {
+        Some(j) => j.to_string(),
+        None => { return Err("Could not retrieve journal from record".to_string()); }
+    };
+    let journal = journal.trim().to_string();
     let year = match &article_record.year {
         Some(y) => y.to_string(),
         None => {return Err("Could not retrieve year from record".to_string()); }
     };
     let year: usize = year.parse().unwrap();
+    let volume = match &article_record.volume {
+        Some(v) => v.to_string(),
+        None => { return Err("Could not retrieve volume from record".to_string()); }
+    };
+    let volume = volume.trim().to_string();
+    let pages = match &article_record.pages {
+        Some(p) => p.to_string(),
+        None => { return Err("Could not retrieve pages from record".to_string()); }
+    };
+    let pages = pages.trim().to_string();
     
-    // extract fields
     println!("{:?}", article_record);
     let mut citation = Citation::from_numerical_pmid(numerical_pmid, "placeholder");
+    citation.title = title;
+    citation.journal = journal;
     citation.year = year;
+    citation.volume = volume;
+    citation.pages = pages;
     Ok(citation)
 
 }
