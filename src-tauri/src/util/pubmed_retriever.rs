@@ -166,6 +166,12 @@ mod tests {
         assert!(result.is_ok());
         let citation = result.unwrap();
         println!("{:?}", citation);
+        assert!(citation.year == 1953);
+        assert!(citation.journal.contains("symposia"));
+        assert!(citation.author_list.contains("WATSON"));
+        assert!(citation.pages.contains("123-31"));
+        assert!(citation.volume.contains("18"));
+        assert!(citation.title.contains("DNA"));
        
         // assert!(dto.title.contains("PIGV"));
         Ok(())
