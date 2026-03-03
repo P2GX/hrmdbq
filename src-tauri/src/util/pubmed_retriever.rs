@@ -50,8 +50,6 @@ pub struct Citation {
 #[derive(Debug, Deserialize)]
 struct Author {
     name: String,
-    authtype: String,
-    clusterid: String,
 }
 
 pub async  fn retrieve_citation(input: &str) -> Result<Citation, String> {
