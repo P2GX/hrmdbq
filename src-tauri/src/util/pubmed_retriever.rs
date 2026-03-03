@@ -94,6 +94,17 @@ async fn fetch_citation(numerical_pmid: &str) -> Result<Citation, String> {
         Some(record) => record,
         None => { return Err("Could not fetch".to_string())}
     };
+    let formatted_authors = article_record.authors
+        .iter()
+        .map(|a| a.name.trim().to_string())
+        .collect::<Vec<String>>()
+        .join(", ");
+    
+    let author_list = if formatted_authors.is_empty() { 
+        "No authors listed".to_string() 
+    } else { 
+        formatted_authors 
+    };
     let title = match &article_record.title {
         Some(t) => t.to_string(),
         None => { return Err("Could not retrieve title from record".to_string()); }
@@ -122,6 +133,7 @@ async fn fetch_citation(numerical_pmid: &str) -> Result<Citation, String> {
     
     println!("{:?}", article_record);
     let mut citation = Citation::from_numerical_pmid(numerical_pmid, "placeholder");
+    citation.author_list = author_list;
     citation.title = title;
     citation.journal = journal;
     citation.year = year;
