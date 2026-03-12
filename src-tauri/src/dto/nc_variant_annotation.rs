@@ -1,6 +1,9 @@
+use ga4ghphetools::dto::{hgvs_variant::HgvsVariant, intergenic_variant::IntergenicHgvsVariant, structural_variant::StructuralVariant};
+use chrono::Local;
+use serde::{Deserialize, Serialize};
 use crate::dto::citation::Citation;
 
-enum VariantClass {
+pub enum VariantClass {
     Utr5,
     Promoter,
     Enhancer,
@@ -11,7 +14,7 @@ enum VariantClass {
 }
 
 
-enum Pathomechanism {
+pub enum Pathomechanism {
     ReducedTranscription,
     IncreasedTranscription,
     IREdisruption,
@@ -29,20 +32,10 @@ enum Pathomechanism {
     Unknown,
 }
 
-enum Context {
-    Mendelian,
-}
-
-enum ReporterRegulation {
+pub enum ReporterRegulation {
     Up,
     Down,
     Unchanged,
-}
-
-enum Genotype {
-    Heterozygous,
-    Homozygous,
-    Hemizygous,
 }
 
 pub struct Qpcr {
@@ -54,10 +47,33 @@ pub struct Qpcr {
 pub struct NcVariantAnnotation {
     pub variant_class: VariantClass,
     pub pathomechanism: Pathomechanism,
-    pub context: Context,
     pub cosegregation: Option<bool>,
     pub regulation: ReporterRegulation,
-    pub genotype: Genotype,
+    pub citation: Citation
+}
+
+pub enum NcVariant {
+    Hgvs(HgvsVariant),
+    Structural(StructuralVariant),
+    Intergenic(IntergenicHgvsVariant)
+    
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CurationEvent {
+    /// ORCID identifier of the curator
+    pub orcid: String,
+    /// Date of curation in YYYY-MM-DD format
+    pub date: String,
+}
+
+
+pub struct NcVariantAssessment {
+    variant: NcVariant,
+    annotations: Vec<NcVariantAnnotation>,
+    biocuration: Vec<CurationEvent>,
+
 }
 
 
