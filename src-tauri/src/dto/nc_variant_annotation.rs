@@ -3,6 +3,9 @@ use chrono::Local;
 use serde::{Deserialize, Serialize};
 use crate::dto::citation::Citation;
 
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub enum VariantClass {
     Utr5,
     Promoter,
@@ -13,7 +16,8 @@ pub enum VariantClass {
     Icr,
 }
 
-
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub enum Pathomechanism {
     ReducedTranscription,
     IncreasedTranscription,
@@ -31,27 +35,34 @@ pub enum Pathomechanism {
     SecondaryStructure,
     Unknown,
 }
-
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub enum ReporterRegulation {
     Up,
     Down,
     Unchanged,
 }
-
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Qpcr {
     regulation: ReporterRegulation,
     citation: Citation,
 }
 
-
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct NcVariantAnnotation {
-    pub variant_class: VariantClass,
+    /// e.g. reduced transcription
     pub pathomechanism: Pathomechanism,
+    /// Was the variant shown to cosegregate in the current paper?
     pub cosegregation: Option<bool>,
     pub regulation: ReporterRegulation,
+    pub comment: Option<String>,
     pub citation: Citation
 }
 
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub enum NcVariant {
     Hgvs(HgvsVariant),
     Structural(StructuralVariant),
@@ -68,11 +79,17 @@ pub struct CurationEvent {
     pub date: String,
 }
 
-
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct NcVariantAssessment {
-    variant: NcVariant,
-    annotations: Vec<NcVariantAnnotation>,
-    biocuration: Vec<CurationEvent>,
+    /// Data we receive from VariantValidator
+    pub variant: NcVariant,
+    /// e.g., promotor, enhancer, ncRNA, 5UTR
+    pub variant_class: VariantClass,
+    /// assessment of the pathogenicity in one PMID
+    pub annotations: Vec<NcVariantAnnotation>,
+    /// ORCID id of curation and time of curation(s)
+    pub biocuration: Vec<CurationEvent>,
 
 }
 
