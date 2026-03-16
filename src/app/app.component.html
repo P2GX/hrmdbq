@@ -15,7 +15,11 @@
     <input #greetInput id="greet-input" placeholder="Enter a name..." />
     <button type="submit">Greet</button>
   </form>
+
+  <button class="button" (click)="getAnnotationCount($event)">Get annotation count</button>
   <p>{{ greetingMessage }}</p>
+
+  <p>The annotation count is {{ annotationCount }}</p>
 
   <router-outlet />
 </main>

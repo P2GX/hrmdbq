@@ -11,6 +11,8 @@ import { invoke } from "@tauri-apps/api/core";
 export class AppComponent {
   greetingMessage = "";
 
+  annotationCount: number = 0;
+
   greet(event: SubmitEvent, name: string): void {
     event.preventDefault();
 
@@ -19,4 +21,17 @@ export class AppComponent {
       this.greetingMessage = text;
     });
   }
+
+  getAnnotationCount(event: Event): void {
+     event.preventDefault();
+     invoke<number>("get_annot_count").then((n) => {
+      this.annotationCount = n;
+     })
+
+  }
+
+
+
+
+
 }

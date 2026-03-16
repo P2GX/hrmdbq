@@ -94,6 +94,26 @@ pub struct NcVariantAssessment {
 }
 
 
+impl NcVariantAssessment {
+
+
+    pub fn fake_remove_later() -> Self {
+        let fake_sv = 
+        StructuralVariant::new(  "fake".to_string(), 
+           "fake".to_string(),
+          "NM_fake.1".to_string(), 
+              "HGNC:123456789".to_string(), 
+             ga4ghphetools::dto::structural_variant::SvType::Del, "fake".to_string() ).unwrap();
+
+        Self { variant: NcVariant::Structural(fake_sv),
+             variant_class: VariantClass::Enhancer, 
+             annotations: vec![], 
+             biocuration: vec![] }
+        
+    }
+}
+
+
 
 #[cfg(test)]
 mod test {
