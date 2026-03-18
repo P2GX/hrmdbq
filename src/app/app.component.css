@@ -1,112 +1,201 @@
-.logo.angular:hover {
-  filter: drop-shadow(0 0 2em #e32727);
-}
-:root {
-  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
-  font-size: 16px;
-  line-height: 24px;
-  font-weight: 400;
-
-  color: #0f0f0f;
-  background-color: #f6f6f6;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-text-size-adjust: 100%;
+.sidenav-container {
+  height: 100%;
+  position: relative;
+  overflow: hidden;
 }
 
-.container {
+html,
+body {
+  height: 100%;
   margin: 0;
-  padding-top: 10vh;
+}
+
+.sidenav {
+  background-color: var(--md-sys-color-primary);
+  overflow-x: hidden;
+  overflow-y: hidden;
+  width: 16rem;
+  transition: width 0.2s ease !important;
+}
+
+.sidenav-header {
+  padding: 1rem;
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary); /* Reusing white from style.css */
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 2px 4px var(--shadow-header); /* Reusing shadow from style.css */
+  overflow: hidden;
+}
+
+.logo-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap; /* Prevents wrapping during collapse */
+}
+
+.logo-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.sidenav-header h2 {
+  margin: 0;
+  font-weight: 300;
+  font-size: 1.3rem;
+}
+
+.nav-item {
+  margin: 4px 8px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  color: var(--md-sys-color-on-primary);
+  white-space: nowrap; /* Prevents wrapping during collapse */
+  overflow: hidden;
+}
+
+.nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  transform: translateX(0.2em);
+}
+
+.nav-item mat-icon {
+  color: var(--md-sys-color-primary-container);
+  margin-right: 12px;
+  font-size: 20px;
+  align-content: center;
+}
+
+.nav-item span[matListItemTitle] {
+  color: var(--md-sys-color-on-primary);
+  font-weight: 200;
+}
+
+.nav-item.active-link {
+  background: linear-gradient(90deg, var(--md-sys-color-primary-hover) 0%, var(--md-sys-color-primary) 69%);
+  border-radius: 2em;
+  transform: translateX(0.2em);
+  color: var(--md-sys-color-on-primary); /* Reusing white */
+  transition: all 0.6s ease;
+}
+
+.mdc-list {
+  padding: 0.5em;
+}
+
+a.nav-item {
+  width: auto;
+  border-radius: 2em;
+}
+
+/* ==================================================== */
+/* Mini-sidebar state when class 'collapsed' is applied */
+/* ==================================================== */
+
+.sidenav.collapsed {
+  width: 4.5rem !important;
+}
+
+/* Hide text and logo inside the sidebar when collapsed */
+.sidenav.collapsed .logo-title,
+.sidenav.collapsed span[matListItemTitle] {
+  display: none !important;
+}
+
+/* Center elements in the collapsed sidebar */
+.sidenav.collapsed .sidenav-header {
+  padding: 1rem 0;
+  justify-content: center;
+}
+
+.sidenav.collapsed .nav-item {
+  width: 3.5rem;
+  margin: 4px auto;
+  padding: 0;
+  justify-content: center;
+}
+
+.sidenav.collapsed .nav-item mat-icon {
+  margin-right: 0;
+}
+
+/* ==================================================== */
+
+.main-content {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: 0.75s;
+.menu-button {
+  color: var(--md-sys-color-on-primary);
 }
 
-.logo.tauri:hover {
-  filter: drop-shadow(0 0 2em #24c8db);
+::ng-deep.mat-drawer-inner-container {
+  overflow: hidden !important;
+  max-width: 100%;
 }
 
-.row {
+.content {
+  flex: 1;
+  background-color: var(--md-sys-color-background);
+  container-type: inline-size;
+  overflow-x: hidden;
+  height: 100%;
+  /* Padding removed to allow content to naturally hit the top of the viewport */
+  padding-top: 0;
+}
+
+.content-analysis {
+  padding: 12px !important;
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+  background-color: red !important; /* Note: Left this hardcoded as it looks like a debug value */
+  height: 100vh;
+}
+
+* {
+  transition: all 0.2s ease-in-out;
+}
+
+::ng-deep h1 {
+  margin: 1rem;
+  font-size: 2.0rem;
+  font-weight: 400;
+  color: var(--md-sys-color-primary);
+}
+
+::ng-deep .page-header {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  padding: 0 5vw 0rem 5vw;
+  box-shadow: 0 2px 4px var(--shadow-header);
+  margin-bottom: 1rem;
+  background-color: var(--md-sys-color-on-primary);
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+::ng-deep h1.page-title {
+  margin-bottom: 1rem;
 }
 
-a:hover {
-  color: #535bf2;
+.mat-divider {
+  margin: 1rem 0.5rem;
+  color: var(--md-sys-color-primary);
+  font-size: var(--font-standard)
 }
 
-h1 {
-  text-align: center;
+::ng-deep.mat-mdc-button .mat-mdc-button-persistent-ripple::before {
+  color: var(--md-sys-color-on-primary);
 }
 
-input,
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  color: #0f0f0f;
-  background-color: #ffffff;
-  transition: border-color 0.25s;
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+::ng-deep.mat-snack-bar-container.mat-snack-bar-container-animations-enabled {
+  background-color: var(--md-sys-color-on-primary) !important;
+  opacity: 0.95 !important;
 }
 
-button {
-  cursor: pointer;
-}
-
-button:hover {
-  border-color: #396cd8;
-}
-button:active {
-  border-color: #396cd8;
-  background-color: #e8e8e8;
-}
-
-input,
-button {
-  outline: none;
-}
-
-#greet-input {
-  margin-right: 5px;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    color: #f6f6f6;
-    background-color: #2f2f2f;
-  }
-
-  a:hover {
-    color: #24c8db;
-  }
-
-  input,
-  button {
-    color: #ffffff;
-    background-color: #0f0f0f98;
-  }
-  button:active {
-    background-color: #0f0f0f69;
-  }
+::ng-deep.mat-snack-bar-container-animations-enabled {
+  background-color: var(--md-sys-color-on-primary) !important;
+  opacity: 0.95 !important;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 0.13rem 0.3rem;
 }

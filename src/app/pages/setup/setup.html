@@ -1,0 +1,40 @@
+<div class="page-header">
+    <h1 class="page-title">HRMDBQ</h1>
+    <div style="margin-left:2rem; display:flex; gap:2em;">
+        <h2 class="sub-title">Human Regulatory Mutation Database</h2>
+    </div>
+</div>
+<div class="about-body">
+    <div class="about-wrapper">
+        <div class="tabs-container">
+            <button class="tab-button" [class.active]="selectedTab === 'files'"
+                (click)="selectTab('files')">Load/Create curation file</button>
+            <mat-divider class="vertical" [vertical]="true"></mat-divider>
+            <button class="tab-button" [class.active]="selectedTab === 'orcid'" (click)="selectTab('orcid')">ORCID</button>
+            <mat-divider class="vertical" [vertical]="true"></mat-divider>
+        </div>
+
+    
+
+        @switch (selectedTab) {
+            @case ('files') {
+                <div class="tab-content">
+                <p>
+                   Setup file chooser/Creater
+                    </p>
+               
+    
+                </div>
+            }
+
+            @case ('orcid') {
+                <div class="tab-content">
+                    <h2>ORCID</h2>
+                    <p>Add button to support orcid.</p>
+                </div>
+            }
+
+
+        }
+ </div>
+</div>
