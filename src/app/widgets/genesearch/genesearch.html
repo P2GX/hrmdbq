@@ -1,0 +1,31 @@
+<div class="search-container">
+  <h3>HGNC Gene Lookup</h3>
+  
+  <div class="search-actions">
+    <mat-form-field appearance="outline">
+      <mat-label>Enter Gene Symbol</mat-label>
+      <input matInput 
+             [ngModel]="symbol()" 
+             (ngModelChange)="symbol.set($event)" 
+             placeholder="e.g. BRCA1" 
+             (keyup.enter)="searchGene()">
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" 
+            [disabled]="isLoading() || !symbol()" 
+            (click)="searchGene()">
+      @if (isLoading()) {
+        <mat-spinner diameter="20"></mat-spinner>
+      } @else {
+        Search
+      }
+    </button>
+  </div>
+
+  @if (hgncResult()) {
+    <div class="result-box">
+      <h4>Raw HGNC Bundle:</h4>
+      <pre>{{ hgncResult() }}</pre>
+    </div>
+  }
+</div>

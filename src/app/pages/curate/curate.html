@@ -1,3 +1,27 @@
 <p>Curation widget</p>
 
-<p>This page will have widgets to enable curation of a single variant.</p>
+<section class="search-section">
+        <div class="search-row">
+            <mat-form-field appearance="outline" class="symbol-input">
+                <mat-label>Gene Symbol</mat-label>
+                <input matInput 
+                       [ngModel]="geneSymbol()" 
+                       (ngModelChange)="geneSymbol.set($event)" 
+                       placeholder="e.g., SON"
+                       (keyup.enter)="onSearchGene()">
+            </mat-form-field>
+
+            <button mat-flat-button color="primary" 
+                    (click)="onSearchGene()" 
+                    [disabled]="isSearching() || !geneSymbol()">
+                {{ isSearching() ? 'Fetching...' : 'Lookup Gene' }}
+            </button>
+        </div>
+
+        @if (hgncRawResult()) {
+            <div class="result-viewer">
+                <h3>HGNC Result</h3>
+                <pre>{{ hgncRawResult() }}</pre>
+            </div>
+        }
+    </section>

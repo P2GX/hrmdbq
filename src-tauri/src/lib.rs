@@ -1,6 +1,8 @@
 use std::sync::{Arc, Mutex};
 
-use crate::dto::{citation::Citation, nc_variant_annotation::NcVariantAssessment};
+use tauri::AppHandle;
+
+use crate::{dto::{citation::Citation, nc_variant_annotation::NcVariantAssessment}, util::hgnc_rest::HgncBundle};
 
 pub mod dto;
 pub mod util;
@@ -22,6 +24,7 @@ pub fn run() {
         .manage(app_state)
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
+            fetch_gene_data_from_hgnc,
             get_variant_assessments,
             get_annot_count])
         .run(tauri::generate_context!())
@@ -61,4 +64,13 @@ fn get_variant_assessments(
             })()
         .map_err(|e| e.to_string())?; 
     Ok(assessments)
+}
+
+
+#[tauri::command]
+async fn fetch_gene_data_from_hgnc(
+     symbol: &str) -> Result<HgncBundle, String> {
+    util::hgnc_rest::fetch_gene_data(symbol)
+        .await
+        .map_err(|e| e.to_string())
 }
