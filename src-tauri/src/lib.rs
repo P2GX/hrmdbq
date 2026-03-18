@@ -22,7 +22,7 @@ pub fn run() {
         .manage(app_state)
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
-            greet,
+            get_variant_assessments,
             get_annot_count])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -44,4 +44,21 @@ fn get_annot_count(
     let state_handle = state.inner().clone(); 
     let singleton = state_handle.curated_variant_list.lock().unwrap();
     singleton.len()
+}
+
+
+#[tauri::command]
+fn get_variant_assessments(
+       state: tauri::State<'_, Arc<AppState>>, 
+) -> Result<Vec<NcVariantAssessment>, String> {
+    let assessments = (|| -> anyhow::Result<Vec<NcVariantAssessment>> {
+        let state_handle = state.inner().clone();    
+            let singleton = state_handle.curated_variant_list
+                    .lock()
+                    .map_err(|_| anyhow::anyhow!("Mutex poisoned"))?;
+
+                Ok(singleton.clone())
+            })()
+        .map_err(|e| e.to_string())?; 
+    Ok(assessments)
 }

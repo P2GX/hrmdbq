@@ -1,1 +1,46 @@
 <p>Annotation table</p>
+
+<div class="table-wrapper mat-elevation-z2">
+  
+  @if (variantService.variants().length > 0) {
+    <table mat-table [dataSource]="dataSource()">
+
+      <ng-container matColumnDef="label">
+        <th mat-header-cell *matHeaderCellDef> Variant Label </th>
+        <td mat-cell *matCellDef="let row"> 
+          <code class="variant-code">{{ getVariantLabel(row.variantCoordinates) }}</code>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="category">
+        <th mat-header-cell *matHeaderCellDef> Category </th>
+        <td mat-cell *matCellDef="let row"> 
+          <span class="category-badge" [attr.data-type]="row.variantCategory">
+            {{ row.variantCategory }}
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="symbol">
+        <th mat-header-cell *matHeaderCellDef> Gene </th>
+        <td mat-cell *matCellDef="let row"> 
+          {{ getGeneSymbol(row.variantCoordinates) }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="curator">
+        <th mat-header-cell *matHeaderCellDef> Curator </th>
+        <td mat-cell *matCellDef="let row"> 
+          {{ row.biocuration[0]?.orcid || 'System' }}
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  } @else {
+    <div class="empty-state">
+      <p>No annotations found. Please use the Setup page to load data.</p>
+    </div>
+  }
+</div>

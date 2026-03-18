@@ -30,15 +30,27 @@ body {
 }
 
 .logo-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  white-space: nowrap; /* Prevents wrapping during collapse */
-}
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    overflow: hidden; /* Prevents text from leaking out during animation */
+    white-space: nowrap; 
+    gap: 12px;
 
-.logo-icon {
-  width: 24px;
-  height: 24px;
+    .logo-icon {
+        width: 40px;  /* Standard sidebar icon size */
+        height: 40px;
+        flex-shrink: 0; /* Prevents the icon from squishing */
+    }
+
+    .logo-text {
+        margin: 0;
+        font-size: 1.2rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        color: var(--text-primary);
+        transition: opacity 0.3s ease;
+    }
 }
 
 .sidenav-header h2 {
