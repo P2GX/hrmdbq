@@ -1,8 +1,10 @@
-use ga4ghphetools::dto::{hgvs_variant::HgvsVariant, intergenic_variant::IntergenicHgvsVariant, structural_variant::StructuralVariant};
-use chrono::Local;
-use serde::{Deserialize, Serialize};
 use crate::dto::citation::Citation;
-
+use chrono::Local;
+use ga4ghphetools::dto::{
+    hgvs_variant::HgvsVariant, intergenic_variant::IntergenicHgvsVariant,
+    structural_variant::StructuralVariant,
+};
+use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -14,7 +16,7 @@ pub enum VariantClass {
     MicroRNA,
     LncRna,
     Icr,
-    MultiGene
+    MultiGene,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -53,14 +55,9 @@ pub enum ReporterRegulation {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Reporter {
-    assay: ReporterAssay, 
-    regulation: ReporterRegulation
+    assay: ReporterAssay,
+    regulation: ReporterRegulation,
 }
-
-
-
-
-
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -71,7 +68,7 @@ pub struct NcVariantEvaluation {
     pub cosegregation: Option<bool>,
     pub reporter: Vec<Reporter>,
     pub comment: Option<String>,
-    pub citation: Citation
+    pub citation: Citation,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -79,8 +76,7 @@ pub struct NcVariantEvaluation {
 pub enum NcVariant {
     Hgvs(HgvsVariant),
     Structural(StructuralVariant),
-    Intergenic(IntergenicHgvsVariant)
-    
+    Intergenic(IntergenicHgvsVariant),
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -105,38 +101,31 @@ pub struct NcVariantAssessment {
     pub biocuration: Vec<CurationEvent>,
 }
 
-
 impl NcVariantAssessment {
-
-
     pub fn fake_remove_later() -> Self {
-        let fake_sv = 
-        StructuralVariant::new(  "fake".to_string(), 
-           "fake".to_string(),
-          "NM_fake.1".to_string(), 
-              "HGNC:123456789".to_string(), 
-             ga4ghphetools::dto::structural_variant::SvType::Del, "fake".to_string() ).unwrap();
+        let fake_sv = StructuralVariant::new(
+            "fake".to_string(),
+            "fake".to_string(),
+            "NM_fake.1".to_string(),
+            "HGNC:123456789".to_string(),
+            ga4ghphetools::dto::structural_variant::SvType::Del,
+            "fake".to_string(),
+        )
+        .unwrap();
 
-        Self { variant_coordinates: NcVariant::Structural(fake_sv),
-             variant_category: VariantClass::Enhancer, 
-             annotations: vec![], 
-             biocuration: vec![] }
-        
+        Self {
+            variant_coordinates: NcVariant::Structural(fake_sv),
+            variant_category: VariantClass::Enhancer,
+            annotations: vec![],
+            biocuration: vec![],
+        }
     }
 }
-
-
 
 #[cfg(test)]
 mod test {
     use rstest::{fixture, rstest};
-    
+
     #[rstest]
-    fn retrieve_citation() {
-
-
-
-    }
-
-
+    fn retrieve_citation() {}
 }

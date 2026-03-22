@@ -1,14 +1,11 @@
 use serde::{Deserialize, Serialize};
 
-
-
 #[derive(Deserialize, Debug, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct HgncBundle {
     hgnc_id: String,
     mane_select: String,
 }
-
 
 pub async fn fetch_gene_data(symbol: &str) -> Result<HgncBundle, Box<dyn std::error::Error>> {
     let url = format!("https://rest.genenames.org/fetch/symbol/{}", symbol);
@@ -53,17 +50,16 @@ fn parse_hgnc_json(json_str: &str) -> Result<HgncBundle, Box<dyn std::error::Err
         .ok_or("No RefSeq (NM_...) entry found in mane_select")?
         .to_string();
 
-    Ok(HgncBundle{ hgnc_id, mane_select})
+    Ok(HgncBundle {
+        hgnc_id,
+        mane_select,
+    })
 }
-
-
 
 #[cfg(test)]
 mod tests {
     use super::*; // Assumes your logic is in the same crate
-   
 
- 
     #[tokio::test]
     #[ignore = "API call"]
     async fn test_fetch_gene_data() {
@@ -73,8 +69,6 @@ mod tests {
         let bundle = fetch_gene_data(symbol).await.expect("API call failed");
         assert_eq!(expected_hgnc, bundle.hgnc_id);
         assert_eq!(expected_mane, bundle.mane_select);
-        
-        
     }
 
     #[test]
@@ -84,6 +78,4 @@ mod tests {
         assert_eq!(bundle.hgnc_id, "HGNC:1097");
         assert_eq!(bundle.mane_select, "NM_004333.6");
     }
-
-
 }
