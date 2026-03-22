@@ -50,8 +50,22 @@
 
             @case ('orcid') {
                 <div class="tab-content">
-                    <h2>ORCID</h2>
-                    <p>Add button to support orcid.</p>
+                    <h3>Biocurator Identity</h3>
+                        <p class="instruction-text">
+                            Your ORCID iD is used to attribute your curations correctly in the database.
+                        </p>
+
+                        <div class="id-display-card">
+                            <span class="label">Current ORCID:</span>
+                            <code [class.not-available]="orcidDisplay() === 'N/A'">
+                                {{ orcidDisplay() }}
+                            </code>
+                        </div>
+
+                        <button class="button" (click)="setBiocuratorOrcid()">
+                            <span class="material-symbols-outlined">fingerprint</span>
+                            {{ orcidDisplay() === 'N/A' ? 'Set ORCID iD' : 'Update ORCID iD' }}
+                        </button>
                 </div>
             }
         }

@@ -52,8 +52,10 @@ pub fn run() {
             fetch_gene_data_from_hgnc,
             get_variant_assessments,
             get_annot_count,
+            get_biocuration_orcid,
             get_settings,
             select_curation_file,
+            set_biocuration_orcid,
             update_orcid,
             validate_hgvs_variant,
             validate_intergenic_variant,
@@ -188,4 +190,28 @@ async fn select_curation_file(
         return Ok(evaluations);
     }
     Err("User canceled selection".into())
+}
+
+
+#[tauri::command]
+async fn get_biocuration_orcid(
+   state: tauri::State<'_, Arc<AppState>>
+) -> Result<String, String> {
+ let  settings = state
+        .settings
+        .lock()
+        .map_err(|_| "Failed to lock settings")?;
+    settings.get_biocurator_orcid()
+}
+
+#[tauri::command]
+async fn set_biocuration_orcid(
+   state: tauri::State<'_, Arc<AppState>>,
+   orcid: String
+) -> Result<(), String> {
+    let mut settings = state
+        .settings
+        .lock()
+        .map_err(|_| "Failed to lock settings")?;
+    settings.save_biocurator_orcid(orcid).map_err(|e| e.to_string())
 }

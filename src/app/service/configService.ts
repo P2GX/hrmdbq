@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { HgvsVariant, IntergenicHgvsVariant, NcVariantEvaluation, StructuralVariant } from './models';
+import { Injectable, signal } from '@angular/core';
+import { HgvsVariant, HrmdbqSettings, IntergenicHgvsVariant, NcVariantEvaluation, StructuralVariant } from './models';
 import { invoke } from '@tauri-apps/api/core';
 import { VariantDto } from './models';
 
@@ -9,10 +9,13 @@ import { VariantDto } from './models';
   providedIn: 'root'
 })
 export class ConfigService {
- 
+  private _settings = signal<HrmdbqSettings | null>(null);
+  readonly settings = this._settings.asReadonly();
 
   
-  constructor() {}
+  constructor() {
+    this.refreshSettings();
+  }
 
   async validateSv(dto: VariantDto): Promise<StructuralVariant> {
     return invoke<StructuralVariant>('validate_structural_variant',
@@ -39,7 +42,23 @@ export class ConfigService {
       return invoke<NcVariantEvaluation[]>('select_curation_file');
   }
 
+  async setOrcid(orcid: string) : Promise<void> {
+     invoke<null>('set_biocuration_orcid', {orcid: orcid});
+  }
 
+
+  async refreshSettings() {
+    try {
+      const s = await invoke<HrmdbqSettings>('get_settings');
+      this._settings.set(s);
+    } catch (e) {
+      console.error("Failed to load settings", e);
+    }
+  }
+
+  getOrcid() {
+    return this._settings()?.orcid_id;
+  }
 
 
 }
