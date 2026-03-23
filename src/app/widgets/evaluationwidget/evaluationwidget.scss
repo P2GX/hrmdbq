@@ -1,0 +1,22 @@
+.dense-form {
+  font-size: 12px;
+  width: 140px;
+}
+
+/* Animation for adding new reporter rows */
+.animate-in {
+  animation: slideIn 0.2s ease-out;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* Toggle group custom coloring */
+::ng-deep .mat-button-toggle-checked[value="up"] {
+  background-color: #f0fdf4 !important; /* light green */
+}
+::ng-deep .mat-button-toggle-checked[value="down"] {
+  background-color: #fef2f2 !important; /* light red */
+}

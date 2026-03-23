@@ -24,6 +24,11 @@
             (stepComplete)="onCategoryStepComplete($event)">
         </app-variant-category-selector>
     }
+    @if(currentStep() > 0) {
+        <app-evaulation-widget>
+             (stepComplete)="onEvaluationStepComplete($event)">
+        </app-evaulation-widget>
+    }
 
 
     @if (currentStep() >= 7) {

@@ -13,6 +13,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { GeneStepResult, GeneCurationWidget } from '../../widgets/genecuration/genesymbolcuration';
 import { MatIcon } from "@angular/material/icon";
 import { VariantCategorySelectorComponent } from "../../widgets/variantcategory/variantcategory";
+import { NcEvaluationCurationComponent } from "../../widgets/evaluationwidget/evaluationwidget";
 
 
 
@@ -33,7 +34,8 @@ export interface AddVariantDialogData {
     GeneCurationWidget,
     AddVariantComponent,
     MatIcon,
-    VariantCategorySelectorComponent
+    VariantCategorySelectorComponent,
+    NcEvaluationCurationComponent
 ],
     templateUrl: './curate.html',
     styleUrl: './curate.css'
@@ -70,6 +72,10 @@ throw new Error('Method not implemented.');
       this.variantClass.set(category);
       this.currentStep.set(4);
     }
+
+  onEvaluationStepComplete(x: any): void {
+    console.log(x)
+  }
 
   // 4. Reset logic (if user goes back)
   resetToStep(step: number) {

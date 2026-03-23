@@ -1,0 +1,88 @@
+<mat-card class="p-6 border-t-4 border-t-purple-500 shadow-md">
+  <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+    <mat-icon class="text-purple-500">science</mat-icon>
+    New Functional Evaluation
+  </h2>
+
+  <section class="mb-6">
+    <div class="field-container mt-4">
+  <label class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-2">
+    1. Predicted Pathomechanism
+  </label>
+  
+  <mat-form-field appearance="outline" class="w-full">
+    <mat-label>Select Pathomechanism</mat-label>
+    <mat-select [(ngModel)]="evaluation.pathomechanism">
+      @for (pm of pathomechanismOptions; track pm) {
+        <mat-option [value]="pm">
+          {{ getPathoLabel(pm) }}
+        </mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+</div>
+  </section>
+
+  <section class="mb-6 p-4 bg-slate-50 rounded-lg border border-slate-200">
+    <div class="flex justify-between items-center mb-3">
+      <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">2. Reporter Results</label>
+      <button mat-button color="primary" (click)="addReporter()" size="small">
+        <mat-icon>add</mat-icon> Add Assay
+      </button>
+    </div>
+
+    @for (rep of evaluation.reporter; track $index) {
+      <div class="flex items-center gap-4 mb-3 p-2 bg-white rounded border border-slate-200 animate-in">
+        <mat-form-field appearance="outline" class="flex-1 dense-form">
+          <mat-label>Assay</mat-label>
+          <mat-select [(ngModel)]="rep.assay">
+            <mat-option value="qpcr">qPCR</mat-option>
+            <mat-option value="luciferase">Luciferase</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-button-toggle-group [(ngModel)]="rep.regulation" class="h-[40px]">
+          <mat-button-toggle value="up"><mat-icon class="text-green-600">trending_up</mat-icon></mat-button-toggle>
+          <mat-button-toggle value="unchanged"><mat-icon class="text-slate-400">remove</mat-icon></mat-button-toggle>
+          <mat-button-toggle value="down"><mat-icon class="text-red-600">trending_down</mat-icon></mat-button-toggle>
+        </mat-button-toggle-group>
+
+        <button mat-icon-button color="warn" (click)="removeReporter($index)">
+          <mat-icon>delete_outline</mat-icon>
+        </button>
+      </div>
+    }
+  </section>
+
+  <section class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+    <div class="flex items-center gap-2">
+      <mat-checkbox [(ngModel)]="evaluation.cosegregation">Evidence of Cosegregation?</mat-checkbox>
+    </div>
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Curator Comments</mat-label>
+      <textarea matInput [(ngModel)]="evaluation.comment" rows="2"></textarea>
+    </mat-form-field>
+  </section>
+
+ <!-- <section class="mb-6">
+     <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">3. Supporting Citation</label>
+     <div class="mt-2">
+        @if (evaluation.citation) {
+           <app-citation-card [citation]="evaluation.citation" (clear)="evaluation.citation = null"></app-citation-card>
+        } @else {
+           <button mat-stroked-button color="accent" class="w-full py-4 border-dashed" (click)="searchCitation()">
+             <mat-icon>search</mat-icon> Search PubMed for Citation
+           </button>
+        }
+     </div>
+  </section> -->
+
+  <div class="flex justify-end gap-3 border-t pt-4">
+    <button mat-button (click)="cancel()">Cancel</button>
+    <button mat-raised-button color="primary" 
+            [disabled]="!isEvaluationValid()"
+            (click)="submit()">
+      Add Evaluation to Assessment
+    </button>
+  </div>
+</mat-card>

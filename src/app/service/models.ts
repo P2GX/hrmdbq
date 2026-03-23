@@ -11,12 +11,73 @@ export interface NcVariantAssessment {
 
 export type VariantClass = 'utr5' | 'promoter' | 'enhancer' | 'utr3' | 'microRna' | 'lncRna' | 'icr' | 'multiGene';
 
+export type ReporterAssay = 'qpcr' | 'luciferase';
+
+export type ReporterRegulation = 'up' | 'down' | 'unchanged';
+
+export interface Reporter {
+  assay: ReporterAssay;
+  regulation: ReporterRegulation;
+}
+
+export type Pathomechanism = 
+  'lossOfFunction'
+  | 'gainOfFunction'
+  | 'dominantNegative'
+  | 'reducedTranscription'
+  | 'increasedTranscription'
+  | 'iREdisruption'
+  | 'spliceDefect'
+  | 'uORFCreation'
+  | 'uORFDisruption'
+  | 'reducedTranslation'
+  | 'increasedTranslation'
+  | 'reducedExpression'
+  | 'increasedExpression'
+  | 'microRNAbindingSiteDisruption'
+  | 'microRNAbindingSiteCreation'
+  | 'kozakDisruption'
+  | 'secondaryStructure'
+  | 'unknown';
+
+
+export const PATHOMECHANISM_LABELS: Record<Pathomechanism, string> = {
+    lossOfFunction: 'Loss of Function (LoF)',
+    gainOfFunction: 'Gain of Function (GoF)',
+    dominantNegative: 'Dominant Negative',
+    unknown: 'Unknown Pathomechanism',
+    reducedTranscription: "Reduced transcription",
+    increasedTranscription: "Increased transcription",
+    iREdisruption: "Internal ribosome entry site disruption",
+    spliceDefect: "Splice defect",
+    uORFCreation: "upstream ORF creation",
+    uORFDisruption: "upstream ORF disruption",
+    reducedTranslation: "Reduced translatiom",
+    increasedTranslation: "Increased translation",
+    reducedExpression: "Reduced expression",
+    increasedExpression: "Increased expression",
+    microRNAbindingSiteDisruption: "microRNA binding site disruption",
+    microRNAbindingSiteCreation: "microRNA binding site creation",
+    kozakDisruption: "Kozak sequence disruption",
+    secondaryStructure: "Secondary structure alteration",
+};
+
+export interface Citation {
+  author_list: string; // matches Rust snake_case
+  title: string;
+  journal: string;
+  year: number;        // Rust usize -> TS number
+  volume: string;
+  pages: string;
+  pmid: string;
+}
+
 export interface NcVariantEvaluation {
-  pathomechanism: string;
+  pathomechanism: Pathomechanism;
   cosegregation?: boolean;
-  reporter: any[]; // Extend based on your Reporter struct
+  reporter: Reporter[]; 
   comment?: string;
-  citation: any; 
+  citation: Citation; 
 }
 
 export interface CurationEvent {
@@ -213,3 +274,5 @@ export interface HgncBundle {
     hgncId: string,
     maneSelect: string,
 }
+
+
