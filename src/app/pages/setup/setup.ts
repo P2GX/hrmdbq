@@ -37,6 +37,15 @@ export class Setup {
     return orcid && orcid.trim() !== '' ? orcid : 'N/A';
   });
 
+  public curationFileDisplay = computed(() => {
+    const fpath = this.configService.settings()?.curation_json_path;
+    if (fpath) {
+      return `Curation file: ${fpath}`;
+    } else {
+      return "Curation file not loaded";
+    }
+  });
+
 
   async selectTab(tab: string) {
     this.selectedTab = tab;

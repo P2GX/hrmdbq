@@ -1,27 +1,33 @@
-<p>Curation widget</p>
+<div class="curation-container">
+    <h2>Variant Curation Wizard</h2>
 
-<section class="search-section">
-        <div class="search-row">
-            <mat-form-field appearance="outline" class="symbol-input">
-                <mat-label>Gene Symbol</mat-label>
-                <input matInput 
-                       [ngModel]="geneSymbol()" 
-                       (ngModelChange)="geneSymbol.set($event)" 
-                       placeholder="e.g., SON"
-                       (keyup.enter)="onSearchGene()">
-            </mat-form-field>
+    <div class="step-wrapper" [class.active]="currentStep() === 1">
+        <app-gene-curation-widget 
+            (stepComplete)="onGeneStepComplete($event)"
+            (reset)="resetToStep(1)">
+        </app-gene-curation-widget>
+    </div>
 
-            <button mat-flat-button color="primary" 
-                    (click)="onSearchGene()" 
-                    [disabled]="isSearching() || !geneSymbol()">
-                {{ isSearching() ? 'Fetching...' : 'Lookup Gene' }}
+   <!-- @if (currentStep() > 1) { <mat-divider/>  }
+
+    @if (currentStep() >= 2) {
+        <div class="step-wrapper fade-in">
+            <h3>Step 2: Define Variant</h3>
+            <p>Define the specific mutation for <strong>{{ geneData()?.symbol }}</strong></p>
+            
+            <app-variant-search-widget 
+                [geneSymbol]="geneData()?.symbol"
+                (stepComplete)="currentStep.set(3)">
+            </app-variant-search-widget>
+        </div>
+    }
+
+    @if (currentStep() >= 3) {
+        <div class="step-wrapper fade-in">
+            <h3>Step 3: Review & Save</h3>
+            <button mat-raised-button color="accent" (click)="onFinalSave()">
+                Save to Curation File
             </button>
         </div>
-
-        @if (hgncRawResult()) {
-            <div class="result-viewer">
-                <h3>HGNC Result</h3>
-                <pre>{{ hgncRawResult() }}</pre>
-            </div>
-        }
-    </section>
+    } -->
+</div>

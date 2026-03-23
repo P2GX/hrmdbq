@@ -27,24 +27,14 @@
                 <span class="material-symbols-outlined">folder_open</span>
                 {{ curationService.variants().length > 0 ? 'Change File' : 'Select File' }}
             </button>
-
-                @if (curationService.fileName()) {
-                    <div class="file-status">
-                        <mat-icon class="success-icon">check_circle</mat-icon>
-                        <span [matTooltip]="curationService.currentPath()" 
-                            matTooltipPosition="above"
-                            class="file-badge">
-                            Active File: <strong>{{ curationService.fileName() }}</strong>
-                        </span>
-                        <span class="variant-count">
-                            ({{ curationService.variants().length }} variants)
-                        </span>
-                    </div>
-                } @else {
+                <div class="file-status">
                     <mat-icon class="success-icon">check_circle</mat-icon>
-                    <p>No annotation file loaded</p>
-                }
-
+                    <span [matTooltip]="curationService.currentPath()" 
+                        matTooltipPosition="above"
+                        class="file-badge">
+                        {{ curationFileDisplay() }}
+                    </span>
+                </div>
             </div>
             }
 

@@ -10,6 +10,7 @@ import { VariantType } from '../../service/models';
 import { NotificationService } from '../../service/notification.service';
 
 import { MatDialog } from '@angular/material/dialog';
+import { GeneStepResult, GeneCurationWidget } from '../../widgets/genecuration/genesymbolcuration';
 
 
 export interface AddVariantDialogData {
@@ -21,15 +22,23 @@ export interface AddVariantDialogData {
   @Component({
     selector: 'app-about',
     imports: [
-      CommonModule,
-      FormsModule,
-      MatDividerModule,  
-      MatFormField, 
-      MatLabel],
+    CommonModule,
+    FormsModule,
+    MatDividerModule,
+    MatFormField,
+    MatLabel,
+    GeneCurationWidget
+],
     templateUrl: './curate.html',
     styleUrl: './curate.css'
   })
   export class CurationWidget {
+
+    currentStep = signal(1); // Start at step 1 (Gene)
+
+    // 2. Data collection from steps
+  geneData = signal<GeneStepResult | null>(null);
+  variantData = signal<any>(null);
 
   // Local state for the gene search
   geneSymbol = signal('');
@@ -39,23 +48,19 @@ export interface AddVariantDialogData {
   private dialog = inject(MatDialog);
   private notificationService = inject(NotificationService);
 
-
-  /* Reach out the the HGNC API to get the MANE transcript */
-  async onSearchGene() {
-    const symbol = this.geneSymbol().trim();
-    if (!symbol) return;
-
-    this.isSearching.set(true);
-    try {
-      const data = await invoke<any>('fetch_gene_data_from_hgnc', { symbol });
-      this.hgncRawResult.set(JSON.stringify(data, null, 2));
-    } catch (err) {
-      this.hgncRawResult.set(`Error: ${err}`);
-    } finally {
-      this.isSearching.set(false);
-    }
+  onGeneStepComplete(result: GeneStepResult) {
+    this.geneData.set(result);
+    this.currentStep.set(2); // Reveal Step 2
   }
 
+  // 4. Reset logic (if user goes back)
+  resetToStep(step: number) {
+    this.currentStep.set(step);
+    if (step === 1) {
+      this.geneData.set(null);
+      this.variantData.set(null);
+    }
+  }
 
   openVariantEditor(varKind: VariantKind) {
     const dialogRef = this.dialog.open(AddVariantComponent, {

@@ -208,3 +208,10 @@ export interface HrmdbqSettings {
     /** Path to the file in which we keep our curations */
     curation_json_path: string | null;
 }
+
+
+
+export interface HgncBundle {
+    hgncId: string,
+    maneSelect: string,
+}
