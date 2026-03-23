@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { invoke } from '@tauri-apps/api/core';
 import { MatFormField, MatLabel } from "@angular/material/form-field";
-import { NcVariant, VariantDto, VariantKind } from '../../service/models';
+import { NcVariant, VariantClass, VariantDto, VariantKind } from '../../service/models';
 import { AddVariantComponent } from '../../addvariant/addvariant.component';
 import { VariantType } from '../../service/models';
 import { NotificationService } from '../../service/notification.service';
@@ -12,6 +12,7 @@ import { NotificationService } from '../../service/notification.service';
 import { MatDialog } from '@angular/material/dialog';
 import { GeneStepResult, GeneCurationWidget } from '../../widgets/genecuration/genesymbolcuration';
 import { MatIcon } from "@angular/material/icon";
+import { VariantCategorySelectorComponent } from "../../widgets/variantcategory/variantcategory";
 
 
 
@@ -31,18 +32,23 @@ export interface AddVariantDialogData {
     MatLabel,
     GeneCurationWidget,
     AddVariantComponent,
-    MatIcon
+    MatIcon,
+    VariantCategorySelectorComponent
 ],
     templateUrl: './curate.html',
     styleUrl: './curate.css'
   })
   export class CurationWidget {
+onFinalSave() {
+throw new Error('Method not implemented.');
+}
     readonly VariantKind = VariantKind;
     currentStep = signal(1); // Start at step 1 (Gene)
 
     // 2. Data collection from steps
   geneData = signal<GeneStepResult | null>(null);
   variantData = signal<NcVariant | null>(null);
+  variantClass = signal<VariantClass | null>(null);
 
   
 
@@ -52,7 +58,6 @@ export interface AddVariantDialogData {
   onGeneStepComplete(result: GeneStepResult) {
     this.geneData.set(result);
     this.currentStep.set(2); 
-    console.log("onGeneStepComplete step is ", this.currentStep());
     this.notificationService.showSuccess(`Retrieved HGNC data for ${this.geneData()?.symbol}`)
   }
 
@@ -60,6 +65,11 @@ export interface AddVariantDialogData {
     this.variantData.set(variant);
     this.currentStep.set(3); 
   }
+
+    onCategoryStepComplete(category: VariantClass) {
+      this.variantClass.set(category);
+      this.currentStep.set(4);
+    }
 
   // 4. Reset logic (if user goes back)
   resetToStep(step: number) {

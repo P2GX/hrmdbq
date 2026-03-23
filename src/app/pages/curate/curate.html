@@ -11,33 +11,27 @@
     @if (currentStep() > 1) { <mat-divider/>  }
 
     @if (currentStep() >= 2 && geneData(); as gdata) {
-       <div class="step-wrapper fade-in">
-        <div class="flex items-center justify-between mb-4">
-      <h3 class="step-title !mb-0">Step 2: Define Variant</h3>
-      <div class="px-3 py-1 bg-blue-50 border border-blue-200 rounded-full flex items-center gap-2">
-        <span class="text-[10px] font-bold text-blue-400 uppercase tracking-tighter">Selected Gene:</span>
-        <span class="text-xs font-mono font-bold text-blue-700">{{ gdata.symbol }}</span>
-      </div>
-    </div>
-        
-        <div class="variant-selection-grid">
-            <div class="variant-card hgvs-theme">
-               
-                <app-addvariant 
-                    [selected_gene]="gdata"
-                    (stepComplete)="onVariantStepComplete($event)">
-                </app-addvariant>
-            </div>
+        <div class="variant-card hgvs-theme">
+            <app-addvariant 
+                [selected_gene]="gdata"
+                (stepComplete)="onVariantStepComplete($event)">
+            </app-addvariant>
         </div>
-    </div>
     }
-<!--
-    @if (currentStep() >= 3) {
+    @if (currentStep() > 2) { <mat-divider/>  }
+    @if(currentStep() >= 3 ) {
+        <app-variant-category-selector>
+            (stepComplete)="onCategoryStepComplete($event)">
+        </app-variant-category-selector>
+    }
+
+
+    @if (currentStep() >= 7) {
         <div class="step-wrapper fade-in">
             <h3>Step 3: Review & Save</h3>
             <button mat-raised-button color="accent" (click)="onFinalSave()">
                 Save to Curation File
             </button>
         </div>
-    } -->
+    } 
 </div>

@@ -1,0 +1,49 @@
+/* Container for the buttons */
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+  margin-top: 1rem;
+}
+
+/* Base button style */
+.category-btn {
+  height: 54px !important; /* Slightly taller for a better touch/click target */
+  border: 1.5px solid #e2e8f0 !important; /* slate-200 */
+  border-radius: 8px !important;
+  background-color: white !important;
+  color: #64748b !important; /* slate-500 */
+  font-weight: 500 !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  text-transform: none !important;
+  letter-spacing: 0.01em !important;
+}
+
+/* Hover effect for unselected buttons */
+.category-btn:hover:not(.active-btn) {
+  background-color: #f8fafc !important; /* slate-50 */
+  border-color: #cbd5e1 !important; /* slate-300 */
+  color: #334155 !important; /* slate-700 */
+  transform: translateY(-1px);
+}
+
+/* The Active/Selected State */
+.active-btn {
+  background-color: #eff6ff !important; /* blue-50 */
+  border-color: #3b82f6 !important; /* blue-500 */
+  color: #1d4ed8 !important; /* blue-700 */
+  box-shadow: 0 0 0 1px #3b82f6, 0 4px 6px -1px rgba(59, 130, 246, 0.1) !important;
+}
+
+/* Active State Icon (Optional: adds a little dot or indicator) */
+.active-btn::after {
+  content: '●';
+  margin-left: 8px;
+  font-size: 8px;
+  vertical-align: middle;
+}
+
+/* Press effect */
+.category-btn:active {
+  transform: scale(0.97);
+}

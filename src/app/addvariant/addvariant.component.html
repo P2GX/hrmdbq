@@ -1,3 +1,4 @@
+<div class="curation-widget-container">
 <mat-card class="p-4 transition-all duration-300" [class.bg-slate-50]="variantConfirmed()">
   @if (!variantConfirmed()) {
     <div class="mb-6 flex justify-center">
@@ -55,25 +56,22 @@
 </div>
 
   } @else {
-    <div class="flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="bg-green-100 p-2 rounded-full">
-          <mat-icon class="text-green-600 scale-75">check</mat-icon>
-        </div>
-        <div>
-          <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Confirmed {{ currentMode }}</div>
-          <div class="text-sm font-mono font-bold text-slate-700">{{ variant_string }}</div>
-          @if (currentMode === 'SV') {
-            <span class="text-[10px] bg-slate-200 text-slate-600 px-1.5 py-0.5 rounded">
-              {{ selectedStructuralType?.label }}
-            </span>
-          }
-        </div>
+    <div class="confirmed-badge">
+        <div class="data-info">
+            <mat-icon class="success-icon">check_circle</mat-icon>
+            <span class="label">Class:</span>
+            <strong>{{ currentMode }}</strong>
+            <span class="label">HGVS:</span>
+            <strong>{{ variant_string }}</strong>
+            @if (currentMode === 'SV') {
+                <span class="label">Class:</span>
+                <strong>{{ selectedStructuralType?.label }}</strong>
+            }
+            <button mat-icon-button color="warn" (click)="variantConfirmed.set(false)" matTooltip="Reset Variant and Edit">
+                <mat-icon>restart_alt</mat-icon>
+            </button>
       </div>
-      
-      <button mat-icon-button (click)="variantConfirmed.set(false)" matTooltip="Edit Variant">
-        <mat-icon class="text-slate-400">edit</mat-icon>
-      </button>
     </div>
   }
 </mat-card>
+</div>
