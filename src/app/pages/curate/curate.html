@@ -24,14 +24,15 @@
             (stepComplete)="onCategoryStepComplete($event)">
         </app-variant-category-selector>
     }
-    @if(currentStep() > 0) {
+    @if (currentStep() > 3) { <mat-divider/>  }
+    @if(currentStep() >=4) {
         <app-evaulation-widget>
              (stepComplete)="onEvaluationStepComplete($event)">
         </app-evaulation-widget>
     }
+   @if (currentStep() > 4) { <mat-divider/>  }
 
-
-    @if (currentStep() >= 7) {
+    @if (currentStep() >= 5) {
         <div class="step-wrapper fade-in">
             <h3>Step 3: Review & Save</h3>
             <button mat-raised-button color="accent" (click)="onFinalSave()">

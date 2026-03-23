@@ -1,0 +1,55 @@
+<div class="pubmed-container">
+  <label class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 block">
+    Supporting Citation
+  </label>
+
+  @if (!isConfirmed()) {
+    <div class="animate-in">
+      <div class="flex gap-2 mb-3">
+        <mat-form-field appearance="outline" class="flex-1 dense-field">
+          <mat-label>PMID</mat-label>
+          <input matInput 
+                 [ngModel]="pmidInput()" 
+                 (ngModelChange)="pmidInput.set($event)"
+                 placeholder="Enter PMID"
+                 (keyup.enter)="retrieveCitation()">
+        </mat-form-field>
+        
+        <button mat-flat-button color="primary" class="h-[56px]"
+                [disabled]="!pmidInput() || isLoading()" 
+                (click)="retrieveCitation()">
+          @if (isLoading()) { <mat-spinner diameter="20"></mat-spinner> }
+          @else { Retrieve }
+        </button>
+      </div>
+
+      @if (citation(); as citation) {
+        <div class="p-3 bg-slate-50 border rounded-lg mb-4 animate-pop-in">
+          <div class="text-sm font-medium text-slate-800">{{ citation.title }}</div>
+          <div class="flex justify-end mt-2 gap-2">
+            <button mat-button color="warn" (click)="clear()">Cancel</button>
+            <button mat-raised-button color="success" (click)="accept()">Confirm & Use</button>
+          </div>
+        </div>
+      }
+    </div>
+
+  } @else {
+    <div class="citation-confirmed-card animate-pop-in">
+      @if(citation(); as citation) {
+      <div class="flex items-start gap-3">
+        <div class="bg-green-100 text-green-600 p-2 rounded">
+          <mat-icon>menu_book</mat-icon>
+        </div>
+        <div class="flex-1">
+          <div class="text-sm font-bold text-slate-900 leading-snug">{{ citation.title }}</div>
+          <div class="text-xs text-slate-500 font-mono mt-1">PMID: {{ citation.pmid }}</div>
+        </div>
+        <button mat-icon-button (click)="isConfirmed.set(false)">
+          <mat-icon class="text-slate-400">edit</mat-icon>
+        </button>
+      </div>
+      }
+    </div>
+  }
+</div>

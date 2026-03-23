@@ -2,6 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { HgvsVariant, HrmdbqSettings, IntergenicHgvsVariant, NcVariantEvaluation, StructuralVariant } from './models';
 import { invoke } from '@tauri-apps/api/core';
 import { VariantDto } from './models';
+import { Citation } from './citation';
 
 
 
@@ -58,6 +59,11 @@ export class ConfigService {
 
   getOrcid() {
     return this._settings()?.orcid_id;
+  }
+
+
+  async retrievePmidCitation(pmid: string) : Promise<Citation> {
+   return invoke<Citation>('retrieve_pmid_citation', {pmid: pmid});
   }
 
 

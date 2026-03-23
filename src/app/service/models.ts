@@ -2,6 +2,8 @@
 
 /* TODO. Make these interfaces exact correspondences to the Rust structs */
 
+import { Citation } from "./citation";
+
 export interface NcVariantAssessment {
   variantCoordinates: NcVariant;
   variantCategory: VariantClass;
@@ -62,15 +64,6 @@ export const PATHOMECHANISM_LABELS: Record<Pathomechanism, string> = {
     secondaryStructure: "Secondary structure alteration",
 };
 
-export interface Citation {
-  author_list: string; // matches Rust snake_case
-  title: string;
-  journal: string;
-  year: number;        // Rust usize -> TS number
-  volume: string;
-  pages: string;
-  pmid: string;
-}
 
 export interface NcVariantEvaluation {
   pathomechanism: Pathomechanism;

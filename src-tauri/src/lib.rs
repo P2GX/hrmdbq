@@ -54,6 +54,7 @@ pub fn run() {
             get_annot_count,
             get_biocuration_orcid,
             get_settings,
+            retrieve_pmid_citation,
             select_curation_file,
             set_biocuration_orcid,
             update_orcid,
@@ -214,4 +215,13 @@ async fn set_biocuration_orcid(
         .lock()
         .map_err(|_| "Failed to lock settings")?;
     settings.save_biocurator_orcid(orcid).map_err(|e| e.to_string())
+}
+
+
+
+#[tauri::command]
+async fn retrieve_pmid_citation(
+    pmid: &str
+) -> Result<Citation, String> {
+    util::pubmed_retriever::retrieve_citation(pmid).await
 }

@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { invoke } from '@tauri-apps/api/core';
 import { MatFormField, MatLabel } from "@angular/material/form-field";
-import { NcVariant, VariantClass, VariantDto, VariantKind } from '../../service/models';
+import { NcVariant, NcVariantEvaluation, VariantClass, VariantDto, VariantKind } from '../../service/models';
 import { AddVariantComponent } from '../../addvariant/addvariant.component';
 import { VariantType } from '../../service/models';
 import { NotificationService } from '../../service/notification.service';
@@ -50,7 +50,8 @@ throw new Error('Method not implemented.');
     // 2. Data collection from steps
   geneData = signal<GeneStepResult | null>(null);
   variantData = signal<NcVariant | null>(null);
-  variantClass = signal<VariantClass | null>(null);
+  variantClass = signal<VariantClass | null>(null);
+  evaluation = signal<NcVariantEvaluation | null>(null);
 
   
 
@@ -73,8 +74,9 @@ throw new Error('Method not implemented.');
       this.currentStep.set(4);
     }
 
-  onEvaluationStepComplete(x: any): void {
-    console.log(x)
+  onEvaluationStepComplete(evaluation: NcVariantEvaluation): void {
+    this.evaluation.set(evaluation);
+    this.currentStep.set(5);
   }
 
   // 4. Reset logic (if user goes back)

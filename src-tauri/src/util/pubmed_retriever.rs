@@ -32,19 +32,6 @@ struct ArticleRecord {
     pages: Option<String>,
 }
 
-/*
-
-#[derive(Debug, Deserialize, Serialize)]
-pub struct Citation {
-    pub author_list: String,
-    pub title: String,
-    pub journal: String,
-    pub year: usize,
-    pub volume: String,
-    pub pages: String,
-    pub pmid: String,
-}
-     */
 
 #[derive(Debug, Deserialize)]
 struct Author {
