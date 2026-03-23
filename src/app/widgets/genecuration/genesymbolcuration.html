@@ -37,12 +37,6 @@
                             [disabled]="isSearching() || !geneSymbol()">
                         {{ isSearching() ? 'Fetching...' : 'Lookup Gene' }}
                     </button>
-
-                    <button mat-stroked-button 
-                            (click)="onConfirm()"
-                            [disabled]="!hgncId()">
-                        Confirm
-                    </button>
                 </div>
             </div>
         </section>

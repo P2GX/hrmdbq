@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, OnInit, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { openUrl } from '@tauri-apps/plugin-opener';
@@ -8,11 +8,15 @@ import { MatOption } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { displayHgvs, displayIntergenic, displaySv, GeneTranscriptData, HgvsVariant, IntergenicHgvsVariant, StructuralType, StructuralVariant, VariantDto } from '../service/models';
+import { displayHgvs, displayIntergenic, displaySv, GeneTranscriptData, HgvsVariant, IntergenicHgvsVariant, NcVariant, StructuralType, StructuralVariant, VariantDto } from '../service/models';
 import { ConfigService } from '../service/configService';
 import { CurationService } from '../service/curation_service';
+import { GeneStepResult } from '../widgets/genecuration/genesymbolcuration';
+import { MatIconModule } from "@angular/material/icon";
+import { NotificationService } from '../service/notification.service';
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 
 /* This widget can validate small HGVS variants (e.g., small number of nucleotides, "c."("n.")),
 structural variants (symbolic, e.g., DEL ex3), and intergenic variants (not located in transcripts,
@@ -37,6 +41,8 @@ export interface VariantAcceptedEvent {
 
 type ValidatorFn = () => Promise<void>;
 
+type VariantMode = 'HGVS' | 'SV' | 'IG';
+
 /**
  * A modal component that pops up when the user clicks on Add Allele
  * It can enter HGVS or SV
@@ -48,40 +54,89 @@ type ValidatorFn = () => Promise<void>;
 @Component({
   selector: 'app-addvariant',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatButtonModule, 
-      MatCardModule,MatCheckboxModule, MatInputModule, MatFormFieldModule, 
-      MatOption, MatSelectModule],
+  imports: [CommonModule, FormsModule, MatButtonModule,
+    MatCardModule, MatCheckboxModule, MatInputModule, MatFormFieldModule,
+    MatOption, MatSelectModule, MatButtonToggleModule, MatIconModule, MatProgressSpinnerModule],
   templateUrl: './addvariant.component.html',
   styleUrl: './addvariant.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AddVariantComponent implements OnInit{
+export class AddVariantComponent {
   
-
-  private dialogRef= inject(MatDialogRef<AddVariantComponent, VariantDto | null>);
-  readonly data = inject<AddVariantDialogData>(MAT_DIALOG_DATA);
-  readonly kind: VariantKind = this.data.kind;
+  // the following has symbol, transcript id, and HGNC id
+  selected_gene = input.required<GeneStepResult>();
+  currentMode: VariantMode = 'HGVS';
+  rowId = input<string>();
   private configService = inject(ConfigService);
-
   private curationService = inject(CurationService);
-  variants = this.curationService.variants;
-  totalCount = this.curationService.count;
+  private notificationService = inject(NotificationService);
+  stepComplete = output<NcVariant>();
+  variantConfirmed = signal(false);
+  variantValidated = false;
+  isSubmitting = false;
 
-  async ngOnInit(): Promise<void> {
-
-
-    
+  async handleAction() {
+    if (!this.variantValidated) {
+      await this.validate();
+    } else {
+      this.confirm();
+    }
   }
 
-  
+  async validate() {
+    if (!this.variant_string?.trim() || !this.selected_gene()) {
+      return this.notificationService.showError('Please enter a variant and select a gene.');
+    }
+    this.isSubmitting = true;
+    try {
+      if (this.currentMode === 'HGVS') {
+         await this.validateHgvsDto();
+      } else if (this.currentMode === 'SV') {
+        // Assuming you have a validateStructural method
+        await this.validateStructuralVariant();
+      } else if (this.currentMode === 'IG') {
+        await this.validateIntergenicVariant();
+      }
+      this.variantValidated = true;
+      this.errorMessage = '';
+    } catch (error) {
+      this.notificationService.showError(String(error));
+      this.variantValidated = false;
+    } finally {
+      this.isSubmitting = false;
+    }
+  }
 
-  private validators: Record<VariantKind, ValidatorFn> = {
-    [VariantKind.HGVS]: () => this.submitHgvsDto(),
-    [VariantKind.SV]: () => this.submitSvDto(),
-    [VariantKind.INTERGENIC]: () => this.submitIntergenicDto(),
+  confirm(): void {
+    if (!this.variant_string?.trim()) {
+      this.notificationService.showError("Please enter a variant string.");
+      return;
+    }
+    console
+    if (this.currentMode === 'HGVS' && this.currentHgvsVariant) {
+      this.variantConfirmed.set(true);
+      this.stepComplete.emit({hgvs: this.currentHgvsVariant});
+      return;
+    } else if (this.currentMode === 'SV' && this.currentStructuralVariant) {
+      this.variantConfirmed.set(true);
+      this.stepComplete.emit({ structural: this.currentStructuralVariant});
+      return;
+    } else if (this.currentMode === 'IG' && this.currentIntergenicVariant) {
+      this.variantConfirmed.set(true);
+      this.stepComplete.emit({ intergenic: this.currentIntergenicVariant});
+      return;
+    } else {
+      this.notificationService.showError("Could not retrieve non-coding variant");
+      return;
+    }
+  }
+
+  private validators: Record<VariantMode, ValidatorFn> = {
+    ['HGVS']: () => this.validateHgvsDto(),
+    ['SV']: () => this.validateStructuralVariant(),
+    ['IG']: () => this.validateIntergenicVariant(),
   };
 
-  
   /* If the current variant was HGVS and was validated, this variant is non-null */
   currentHgvsVariant: HgvsVariant | null = null;
   /* If the current variant was structural and was validated, this variant is non-null */
@@ -90,23 +145,27 @@ export class AddVariantComponent implements OnInit{
   currentIntergenicVariant: IntergenicHgvsVariant |null = null;
 
   isHgvs(): boolean {
-    return this.kind === VariantKind.HGVS;
+    return this.currentMode === 'HGVS';
   }
 
   isStructural(): boolean {
-    return this.kind === VariantKind.SV;
+    return this.currentMode === 'SV';
   }
 
   isIntergenic(): boolean {
-    return this.kind == VariantKind.INTERGENIC;
+    return this.currentMode == 'IG';
   }
+
+  onModeChange(newMode: VariantMode) {
+    this.currentMode = newMode;
+    this.resetVars(); // Clear inputs when switching types
+  }
+
+ 
 
 
   variant_string = '';
-  isBiallelic = false;
-
   errorMessage: string | null = null;
-  variantValidated = false;
 
 
 
@@ -119,11 +178,9 @@ export class AddVariantComponent implements OnInit{
     {'label':'sv (general)', 'id':'SV'},];
 
   geneOptions: GeneTranscriptData[] = []; 
-  selectedGene: GeneTranscriptData | null = null;
   selectedStructuralType: StructuralType | null = null;
 
   validationMessage = '';
-  isSubmitting = false;
   validationComplete = false;
 
   /** This is called from -   (input)="onVariantInput()" -- everytime the value of the input field changes.
@@ -162,19 +219,19 @@ export class AddVariantComponent implements OnInit{
    * in the HashMap. This function itself only initializes the variant currentStructuralVariant,
    * so that the user can cancel the variant for whatever reason.
    */
-  async submitSvDto(): Promise<void> {
-    if (!this.variant_string || !this.selectedGene || !this.selectedStructuralType) {
+  async validateStructuralVariant(): Promise<void> {
+    if (!this.variant_string || !this.selected_gene() || !this.selectedStructuralType) {
       this.errorMessage = 'Please enter a valid variant and select a gene and a SV type';
       this.variantValidated = false;
       return;
     }
-    console.log("submitSvDto, ", this.variant_string);
+
     this.errorMessage = null;
     const vv_dto: VariantDto = {
       variantString: this.variant_string,
-      transcript: this.selectedGene.transcript,
-      hgncId: this.selectedGene.hgncId,
-      geneSymbol: this.selectedGene.geneSymbol,
+      transcript: this.selected_gene().maneId,
+      hgncId: this.selected_gene().hgncId,
+      geneSymbol: this.selected_gene().symbol,
       variantType: "SV",
       isValidated: false,
       count: 0
@@ -182,8 +239,8 @@ export class AddVariantComponent implements OnInit{
    
     this.configService.validateSv(vv_dto)
       .then((sv) => {
-        this.currentStructuralVariant = sv;
         this.variantValidated = true;
+        this.currentStructuralVariant = sv;
       })
       .catch((error) => {
         alert(String(error));
@@ -199,16 +256,15 @@ export class AddVariantComponent implements OnInit{
   }
 
   async submit(): Promise<void> {
-    if (! this.kind) return;
-    await this.validators[this.kind]();
+    await this.validators[this.currentMode]();
   }
 
-  async submitIntergenicDto(): Promise<void> {
-    if (!this.variant_string || !this.selectedGene) {
+  async validateIntergenicVariant(): Promise<void> {
+    if (!this.variant_string || !this.selected_gene()) {
       return this.fail('Please enter a valid variant and select a gene.');
     }
     console.log("submitIntergenicDto=", this.variant_string);
-    this.configService.validateIntergenic(this.selectedGene.geneSymbol, this.selectedGene.hgncId, this.variant_string).then((ig) => {
+    this.configService.validateIntergenic(this.selected_gene().symbol, this.selected_gene().hgncId, this.variant_string).then((ig) => {
         this.currentIntergenicVariant = ig;
         this.variantValidated = true;
       })
@@ -222,13 +278,13 @@ export class AddVariantComponent implements OnInit{
    * and clicks on the "Submit HGVS" button. If we are successful, the methods
    * sets the currentHgvsVariant variable and adds it to the HGVS map
    */
-  async submitHgvsDto(): Promise<void> {
-     if (!this.variant_string || !this.selectedGene) {
+  async validateHgvsDto(): Promise<void> {
+     if (!this.variant_string || !this.selected_gene()) {
       return this.fail('Please enter a valid variant and select a gene.');
     }
     this.errorMessage = null;
-    console.log("add variant, ", this.selectedGene);
-    this.configService.validateHgvsVariant(this.selectedGene.geneSymbol, this.selectedGene.hgncId, this.selectedGene.transcript, this.variant_string)
+    console.log("add variant, ", this.selected_gene());
+    this.configService.validateHgvsVariant(this.selected_gene().symbol, this.selected_gene().hgncId, this.selected_gene().maneId, this.variant_string)
       .then((hgvs) => {
         this.currentHgvsVariant = hgvs;
         this.variantValidated = true;
@@ -260,40 +316,45 @@ export class AddVariantComponent implements OnInit{
    * Close the dialog without changing state
   */
   cancel(): void {
-    this.dialogRef.close();
+    console.log("todo reset")
   }
 
-  getSubmitLabel(): string {
-    if (this.isHgvs()) return 'Submit HGVS';
-    if (this.isStructural()) return 'Submit SV';
-    if (this.isIntergenic()) return 'Submit Intergenic';
-    return 'Cannot determine variant type';
+ 
+   getSubmitLabel() {
+    if (this.isSubmitting) return 'Validating...';
+    return `Validate ${this.currentMode}`;
   }
 
   /**
    * Emits the validated variant to the parent component so it can be added
    * to the current phenopacket row object.
+   * Returns an NcVariant object to the parent component
    */
-  addVariantToPpkt(): void{
+  confirmVariant(): void{
     if (! this.variantValidated) {
       alert("Could not add variant");
       return;
     }
-    if (this.currentHgvsVariant != null) {
-       const hgvsVarDto: VariantDto = displayHgvs(this.currentHgvsVariant, true);
-       hgvsVarDto.count = this.isBiallelic ? 2: 1;
-       this.dialogRef.close(hgvsVarDto);
-    } else if (this.currentStructuralVariant != null) {
-      const svVarDto: VariantDto = displaySv(this.currentStructuralVariant, true);
-      svVarDto.count = this.isBiallelic ? 2: 1;
-      this.dialogRef.close(svVarDto);
-    } else if (this.currentIntergenicVariant != null) {
-      const IgVarDto: VariantDto = displayIntergenic(this.currentIntergenicVariant, true);
-      IgVarDto.count = this.isBiallelic ? 2: 1;
-      this.dialogRef.close(IgVarDto);
+    if (!this.variantValidated) {
+      alert("Please validate the variant first");
+      return;
+    }
+
+    let result: NcVariant | null = null;
+
+    if (this.currentHgvsVariant) {
+      result = { hgvs: this.currentHgvsVariant };
+    } else if (this.currentStructuralVariant) {
+      result = { structural: this.currentStructuralVariant };
+    } else if (this.currentIntergenicVariant) {
+      result = { intergenic: this.currentIntergenicVariant };
+    }
+
+    if (result) {
+      // This now returns the object that matches the Rust enum structure
+      this.stepComplete.emit(result);
     } else {
-      alert("Unable to add variant")
-      this.errorMessage = "attempt to add invalid variant";
+      alert("Unable to package variant data");
     }
   }
 

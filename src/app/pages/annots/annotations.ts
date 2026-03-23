@@ -29,9 +29,9 @@ export class AnnotationTable {
    * Helper to extract a display label from the variant enum
    */
   getVariantLabel(variant: NcVariant): string {
-    if (variant.hgvs) return variant.hgvs.hgvs;
-    if (variant.structural) return variant.structural.label;
-    if (variant.intergenic) return variant.intergenic.gHgvs;
+    if ('hgvs' in variant) return variant.hgvs.hgvs;
+    if ('structural' in variant) return variant.structural.label;
+    if ('intergenic' in variant) return variant.intergenic.gHgvs;
     return 'Unknown Variant';
   }
 
@@ -39,10 +39,10 @@ export class AnnotationTable {
    * Helper to get the gene symbol safely
    */
   getGeneSymbol(variant: NcVariant): string {
-    return variant.hgvs?.symbol || 
-           variant.structural?.geneSymbol || 
-           variant.intergenic?.symbol || 
-           'N/A';
+    if ('hgvs' in variant) return variant.hgvs.symbol;
+    if ('structural' in variant) return variant.structural.geneSymbol;
+    if ('intergenic' in variant) return variant.intergenic.symbol || 'n/a';
+    return "n/a"  
   }
 
    

@@ -60,20 +60,16 @@ export class GeneCurationWidget {
       const data = await invoke<HgncBundle>('fetch_gene_data_from_hgnc', { symbol });
       this.hgncId.set(data.hgncId);
       this.maneTranscriptId.set(data.maneSelect);
+      this.stepComplete.emit({
+        symbol: this.geneSymbol(),
+        hgncId: this.hgncId(),
+        maneId: this.maneTranscriptId()
+      });
     } catch (err) {
       this.notificationService.showError(`Could not retrieve HGNC data: ${err}.`);
     } finally {
       this.isSearching.set(false);
     }
-  }
-
-  onConfirm() {
-    this.isConfirmed.set(true);
-    this.stepComplete.emit({
-      symbol: this.geneSymbol(),
-      hgncId: this.hgncId(),
-      maneId: this.maneTranscriptId()
-    });
   }
 
 }

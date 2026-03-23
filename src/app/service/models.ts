@@ -79,12 +79,10 @@ export interface StructuralVariant {
 
 
 
-// Handling the Rust Enum for Variant Coordinates
-export interface NcVariant {
-  hgvs?: HgvsVariant;
-  structural?: StructuralVariant;
-  intergenic?: IntergenicHgvsVariant;
-}
+export type NcVariant = 
+  | { hgvs: HgvsVariant }
+  | { structural: StructuralVariant }
+  | { intergenic: IntergenicHgvsVariant };
 
 export interface GeneTranscriptData {
     hgncId: string;
