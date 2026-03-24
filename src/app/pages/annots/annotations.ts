@@ -51,7 +51,7 @@ export class AnnotationTable {
 
    
   exportData(): void {
-    const variants = this.curationService.variants;
+    const variants = this.curationService.variants();
     this.configService.serializeVariantAssessments(variants);
   }
 
