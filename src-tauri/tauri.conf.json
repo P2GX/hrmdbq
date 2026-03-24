@@ -1,7 +1,7 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "hrmdbq",
-  "version": "0.1.0",
+  "version": "0.1.6",
   "identifier": "org.p2gx.hrmdbq",
   "build": {
     "beforeDevCommand": "npm run start",
@@ -13,8 +13,8 @@
     "windows": [
       {
         "title": "hrmdbq",
-        "width": 800,
-        "height": 600
+        "width": 1200,
+        "height": 900
       }
     ],
     "security": {

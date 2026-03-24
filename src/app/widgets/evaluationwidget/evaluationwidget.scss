@@ -1,0 +1,126 @@
+.dense-form {
+  font-size: 12px;
+  width: 140px;
+}
+
+/* Animation for adding new reporter rows */
+.animate-in {
+  animation: slideIn 0.2s ease-out;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* Toggle group custom coloring */
+::ng-deep .mat-button-toggle-checked[value="up"] {
+  background-color: #f0fdf4 !important; /* light green */
+}
+::ng-deep .mat-button-toggle-checked[value="down"] {
+  background-color: #fef2f2 !important; /* light red */
+}
+
+
+/* Responsive Grid: 1 column on mobile, 2 on tablet, 3 on desktop */
+.patho-grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 10px;
+}
+
+@media (min-min-width: 640px) {
+  .patho-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (min-width: 1024px) {
+  .patho-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+/* The Badge Style */
+.patho-badge {
+  display: inline-flex;
+  width: auto;
+  align-items: center;
+  padding: 12px 16px;
+  min-height: 52px;
+  background-color: #f1f5f9; /* slate-100 */
+  border: 1px solid transparent;
+  border-radius: 10px;
+  color: #475569; /* slate-600 */
+  font-size: 0.825rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: left;
+}
+
+.patho-badge:hover {
+  background-color: #e2e8f0; /* slate-200 */
+  color: #1e293b; /* slate-800 */
+}
+
+/* The Active State */
+.active-patho {
+  background-color: #eff6ff !important; /* blue-50 */
+  border-color: #3b82f6 !important; /* blue-500 */
+  color: #1d4ed8 !important; /* blue-700 */
+  box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1);
+}
+
+.active-patho mat-icon {
+  color: #3b82f6;
+}
+
+.animate-pop-in {
+  animation: popIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+  0% { opacity: 0; transform: scale(0.95); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* Optional: Subtle slide for the grid appearing */
+.animate-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.data-info {
+  display: grid;
+  // Column 1: fits the widest label; Column 2: takes the rest
+  grid-template-columns: max-content 1fr; 
+  gap: 8px 16px; // Vertical gap: 8px, Horizontal gap: 16px
+  align-items: center;
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: 8px;
+
+  .success-icon {
+    grid-column: 1 / -1; // Make the icon span the full width of the first row
+    justify-self: center;
+    margin-bottom: 8px;
+  }
+
+  .label {
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+  }
+
+  strong {
+    word-break: break-word; // Prevents long strings from breaking the layout
+  }
+
+  .reset-btn {
+    grid-column: 1 / -1; // Push the reset button to its own full-width row at the bottom
+    justify-self: end;
+    margin-top: 8px;
+  }
+}
