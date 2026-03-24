@@ -26,9 +26,9 @@
     }
     @if (currentStep() > 3) { <mat-divider/>  }
     @if(currentStep() >=0) {
-        <app-evaulation-widget>
-             (stepComplete)="onEvaluationStepComplete($event)"
-        </app-evaulation-widget>
+        <app-evaluation-widget
+             (stepComplete)="onEvaluationStepComplete($event)">
+        </app-evaluation-widget>
     }
    @if (currentStep() > 4) { <mat-divider/>  }
 

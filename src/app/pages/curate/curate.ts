@@ -65,6 +65,7 @@ export class CurationWidget {
   }
 
   onEvaluationStepComplete(evaluation: NcVariantEvaluation): void {
+    console.log("onEvaluationStepComplete", evaluation);
     this.evaluation.set(evaluation);
     this.currentStep.set(5);
   }

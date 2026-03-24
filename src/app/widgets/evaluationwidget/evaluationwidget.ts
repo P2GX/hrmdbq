@@ -16,7 +16,7 @@ import { Citation } from "../../service/citation";
 
 
 @Component({
-  selector: 'app-evaulation-widget',
+  selector: 'app-evaluation-widget',
   templateUrl: './evaluationwidget.html',
   styleUrl: './evaluationwidget.scss',
     imports: [
@@ -47,9 +47,10 @@ export class NcEvaluationCurationComponent {
   reporters = signal<Reporter[]>([]);
   cosegregation = signal<boolean>(false);
   comment = signal<string | undefined>(undefined);
+  submitted = signal<boolean>(false);
 
   stepFinished = computed(() => {
-   return !!this.pathomechanism() && !!this.citation()
+   return !!this.submitted() && !!this.pathomechanism() && !!this.citation() 
   });
  
 
@@ -73,6 +74,7 @@ export class NcEvaluationCurationComponent {
 
     submit() {
         if (this.isEvaluationValid()) {
+            this.submitted.set(true);
             const pathomechanism = this.pathomechanism();
             if (!pathomechanism) {
                 this.notificationService.showError("Could not retrieve pathomechanism");
@@ -96,7 +98,7 @@ export class NcEvaluationCurationComponent {
             if (comment) {
                 evaluation.comment = comment;
             }
-        this.stepComplete.emit(evaluation);
+            this.stepComplete.emit(evaluation);
         }
     }
 
