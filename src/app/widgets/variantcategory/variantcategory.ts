@@ -1,34 +1,34 @@
-import { Component, EventEmitter, Output, signal } from '@angular/core';
+import { Component, output, signal } from '@angular/core';
 import { VariantClass } from '../../service/models';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from "@angular/material/card";
 import { MatIconModule } from "@angular/material/icon";
-import { MatFormField } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
 
 @Component({
   selector: 'app-variant-category-selector',
    templateUrl: './variantcategory.html',
   styleUrl: './variantcategory.scss',
-  imports: [CommonModule, MatCardModule, MatIconModule, MatFormField, MatSelectModule]
+  imports: [CommonModule, MatCardModule, MatIconModule, MatSelectModule]
 })
 export class VariantCategorySelectorComponent {
-  @Output() categorySelected = new EventEmitter<VariantClass>();
 
+  stepComplete = output<VariantClass>();
   categories: VariantClass[] = [
     'utr5', 'promoter', 'enhancer', 'utr3', 
     'microRna', 'lncRna', 'icr', 'multiGene'
   ];
 
-  selectedCategory: VariantClass | null = null;
+  selectedCategory = signal<VariantClass | null>(null);
   categoryConfirmed = signal(false);
 
   selectCategory(cat: VariantClass) {
-    this.selectedCategory = cat;
-    this.confirmCategory(); 
+    this.selectedCategory.set(cat);
+    this.categoryConfirmed.set(true);
+      this.stepComplete.emit(cat);
   }
 
-  formatCategoryLabel(cat: VariantClass): string {
+  formatCategoryLabel(cat: VariantClass | null): string {
     // Converts 'utr5' to '5\' UTR', 'microRna' to 'Micro RNA', etc.
     const labels: Record<VariantClass, string> = {
       utr5: "5' UTR",
@@ -40,18 +40,11 @@ export class VariantCategorySelectorComponent {
       icr: "ICR",
       multiGene: "Multi-Gene"
     };
-    return labels[cat];
-  }
-
-  confirmCategory() {
-    if (this.selectedCategory) {
-      this.categoryConfirmed.set(true);
-      this.categorySelected.emit(this.selectedCategory);
+    if (cat) {
+      return labels[cat];
+    } else {
+      return "n/a";
     }
   }
 
-  cancel() {
-    this.selectedCategory = null;
-    this.categoryConfirmed.set(false);
-  }
 }

@@ -8,7 +8,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfigService } from '../../service/configService';
-import { HrmdbqSettings } from '../../service/models';
 
 
 @Component({

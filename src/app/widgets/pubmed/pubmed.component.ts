@@ -26,10 +26,11 @@ export class PubmedComponent {
 async retrieveCitation() {
     const id = this.pmidInput().trim();
     if (!id) return;
-
+    console.log("Retrieving PMID", id);
     this.isLoading.set(true);
     try {
       const data = await this.configService.retrievePmidCitation(id);
+      console.log("Got data=", data);
       this.citation.set(data);
       this.citationRetrieved.emit(data);
       this.isConfirmed.set(true);

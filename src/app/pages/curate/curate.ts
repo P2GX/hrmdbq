@@ -2,18 +2,14 @@ import { Component, inject, signal } from '@angular/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { invoke } from '@tauri-apps/api/core';
-import { MatFormField, MatLabel } from "@angular/material/form-field";
-import { NcVariant, NcVariantEvaluation, VariantClass, VariantDto, VariantKind } from '../../service/models';
+import { NcVariant, NcVariantAssessment, NcVariantEvaluation, VariantClass, VariantKind } from '../../service/models';
 import { AddVariantComponent } from '../../addvariant/addvariant.component';
-import { VariantType } from '../../service/models';
 import { NotificationService } from '../../service/notification.service';
-
-import { MatDialog } from '@angular/material/dialog';
 import { GeneStepResult, GeneCurationWidget } from '../../widgets/genecuration/genesymbolcuration';
-import { MatIcon } from "@angular/material/icon";
 import { VariantCategorySelectorComponent } from "../../widgets/variantcategory/variantcategory";
 import { NcEvaluationCurationComponent } from "../../widgets/evaluationwidget/evaluationwidget";
+import { ConfigService } from '../../service/configService';
+import { CurationService } from '../../service/curation_service';
 
 
 
@@ -23,29 +19,24 @@ export interface AddVariantDialogData {
 }
 
 
-  @Component({
-    selector: 'app-about',
-    imports: [
+@Component({
+  selector: 'app-about',
+  imports: [
     CommonModule,
     FormsModule,
     MatDividerModule,
-    MatFormField,
-    MatLabel,
     GeneCurationWidget,
     AddVariantComponent,
-    MatIcon,
     VariantCategorySelectorComponent,
     NcEvaluationCurationComponent
-],
-    templateUrl: './curate.html',
-    styleUrl: './curate.css'
-  })
-  export class CurationWidget {
-onFinalSave() {
-throw new Error('Method not implemented.');
-}
-    readonly VariantKind = VariantKind;
-    currentStep = signal(1); // Start at step 1 (Gene)
+  ],
+  templateUrl: './curate.html',
+  styleUrl: './curate.css'
+})
+export class CurationWidget {
+
+  readonly VariantKind = VariantKind;
+  currentStep = signal(1); 
 
     // 2. Data collection from steps
   geneData = signal<GeneStepResult | null>(null);
@@ -53,10 +44,9 @@ throw new Error('Method not implemented.');
   variantClass = signal<VariantClass | null>(null);
   evaluation = signal<NcVariantEvaluation | null>(null);
 
-  
-
-  private dialog = inject(MatDialog);
   private notificationService = inject(NotificationService);
+   private configService = inject(ConfigService);
+   private curationService = inject(CurationService);
 
   onGeneStepComplete(result: GeneStepResult) {
     this.geneData.set(result);
@@ -69,10 +59,10 @@ throw new Error('Method not implemented.');
     this.currentStep.set(3); 
   }
 
-    onCategoryStepComplete(category: VariantClass) {
-      this.variantClass.set(category);
-      this.currentStep.set(4);
-    }
+  onCategoryStepComplete(category: VariantClass) {
+    this.variantClass.set(category);
+    this.currentStep.set(4);
+  }
 
   onEvaluationStepComplete(evaluation: NcVariantEvaluation): void {
     this.evaluation.set(evaluation);
@@ -85,11 +75,56 @@ throw new Error('Method not implemented.');
     if (step === 1) {
       this.geneData.set(null);
       this.variantData.set(null);
+       this.variantClass.set(null);
+       this.evaluation.set(null);
     } else if (step === 2) {
       this.variantData.set(null);
+       this.variantClass.set(null);
+       this.evaluation.set(null);
+    } else if (step === 3) {
+       this.variantClass.set(null);
+       this.evaluation.set(null);
+    } else if (step === 4) {
+      this.evaluation.set(null);
     }
   }
 
+  onFinalSave() {
+    const cat = this.variantClass();
+    if (! cat) {
+      this.notificationService.showError("Cannot save without variant category");
+      return;
+    }
+    const variant = this.variantData();
+    if (! variant) {
+       this.notificationService.showError("Cannot save without variant data");
+      return;
+    }
+    const annot = this.evaluation();
+    if (! annot) {
+       this.notificationService.showError("Cannot save without variant Evaluation");
+      return;
+    }
+    const currentOrcid = this.configService.getOrcid();
+    if (! currentOrcid) {
+         this.notificationService.showError("Cannot save without valid ORCID");
+      return;
+    }
+    const curation = this.configService.createCurationEvent(currentOrcid);
 
+    const ncAssess: NcVariantAssessment = {
+      variantCoordinates: variant,
+      variantCategory: cat,
+      annotations: [annot],
+      biocuration: [curation],
+    };
+    this.configService.addNcVariantAssesment(ncAssess)
+    .then((assessmentList) => {
+      this.curationService.updateNcVariantAssessmentList(assessmentList);
+    })
+    .catch((err) => {
+      this.notificationService.showError(String(err));
+    });
 
   }
+}

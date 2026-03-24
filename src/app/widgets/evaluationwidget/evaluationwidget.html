@@ -1,97 +1,126 @@
-<mat-card class="p-6 border-t-4 border-t-purple-500 shadow-md">
-  <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-    <mat-icon class="text-purple-500">science</mat-icon>
-    New Functional Evaluation
-  </h2>
+@if (! stepFinished()) {
+  <mat-card class="p-6 border-t-4 border-t-purple-500 shadow-md">
+    <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+      <mat-icon class="text-purple-500">science</mat-icon>
+      New Functional Evaluation
+    </h2>
 
-  <section class="mb-6">
-    <div class="mb-6">
-    
-    
-    @if (!pathomechanism()) {
-        <label class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 block">
-        1. Pathomechanism
-    </label>
-        <div class="patho-grid animate-in">
-        @for (pm of pathomechanismOptions; track pm) {
-            <button type="button" class="patho-badge" (click)="pathomechanism.set(pm)">
-            {{ getPathoLabel(pm) }}
-            </button>
-        }
-        </div>
-    } @else {
-        <div class="!flex !flex-row items-center justify-start gap-4 p-3 bg-blue-50 border border-blue-200 rounded-xl animate-pop-in">
-        <div class="flex items-center gap-20 shrink-0">
-            <button type="button" class="patho-badge !w-auto !m-0 shrink-0">
-                {{ getPathoLabel(pathomechanism()) }}
-            </button>
-            <button mat-icon-button 
-                color="warn" 
-                (click)="pathomechanism.set(undefined)" 
-                matTooltip="Reset and Edit"
-                class="shrink-0 ml-4">
-                <mat-icon>restart_alt</mat-icon>
-            </button>
-        </div>
-    </div>
-    }
-    </div>
-  </section>
+    <section class="mb-6">
+      <div class="mb-6">
+      
+      
+      @if (!pathomechanism()) {
+          <label class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 block">
+          1. Pathomechanism
+      </label>
+          <div class="patho-grid animate-in">
+          @for (pm of pathomechanismOptions; track pm) {
+              <button type="button" class="patho-badge" (click)="pathomechanism.set(pm)">
+              {{ getPathoLabel(pm) }}
+              </button>
+          }
+          </div>
+      } @else {
+          <div class="!flex !flex-row items-center justify-start gap-4 p-3 bg-blue-50 border border-blue-200 rounded-xl animate-pop-in">
+          <div class="flex items-center gap-20 shrink-0">
+              <button type="button" class="patho-badge !w-auto !m-0 shrink-0">
+                  {{ getPathoLabel(pathomechanism()) }}
+              </button>
+              <button mat-icon-button 
+                  color="warn" 
+                  (click)="pathomechanism.set(undefined)" 
+                  matTooltip="Reset and Edit"
+                  class="shrink-0 ml-4">
+                  <mat-icon>restart_alt</mat-icon>
+              </button>
+          </div>
+      </div>
+      }
+      </div>
+    </section>
 
-  <section class="mb-6 p-4 bg-slate-50 rounded-lg border border-slate-200">
-    <div class="flex justify-between items-center mb-3">
-      <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">2. Reporter Results</label>
-      <button mat-button color="primary" (click)="addReporter()" size="small">
-        <mat-icon>add</mat-icon> Add Assay
-      </button>
-    </div>
-
-    @for (rep of reporters(); track $index) {
-      <div class="flex items-center gap-4 mb-3 p-2 bg-white rounded border border-slate-200 animate-in">
-        <mat-form-field appearance="outline" class="flex-1 dense-form">
-          <mat-label>Assay</mat-label>
-          <mat-select [(ngModel)]="rep.assay">
-            <mat-option value="qpcr">qPCR</mat-option>
-            <mat-option value="luciferase">Luciferase</mat-option>
-          </mat-select>
-        </mat-form-field>
-
-        <mat-button-toggle-group [(ngModel)]="rep.regulation" class="h-[40px]">
-          <mat-button-toggle value="up"><mat-icon class="text-green-600">trending_up</mat-icon></mat-button-toggle>
-          <mat-button-toggle value="unchanged"><mat-icon class="text-slate-400">remove</mat-icon></mat-button-toggle>
-          <mat-button-toggle value="down"><mat-icon class="text-red-600">trending_down</mat-icon></mat-button-toggle>
-        </mat-button-toggle-group>
-
-        <button mat-icon-button color="warn" (click)="removeReporter($index)">
-          <mat-icon>delete_outline</mat-icon>
+    <section class="mb-6 p-4 bg-slate-50 rounded-lg border border-slate-200">
+      <div class="flex justify-between items-center mb-3">
+        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">2. Reporter Results</label>
+        <button mat-button color="primary" (click)="addReporter()" size="small">
+          <mat-icon>add</mat-icon> Add Assay
         </button>
       </div>
-    }
-  </section>
 
-  <section class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-    <div class="flex items-center gap-2">
-      <mat-checkbox [(ngModel)]="cosegregation">Evidence of Cosegregation?</mat-checkbox>
+      @for (rep of reporters(); track $index) {
+        <div class="flex items-center gap-4 mb-3 p-2 bg-white rounded border border-slate-200 animate-in">
+          <mat-form-field appearance="outline" class="flex-1 dense-form">
+            <mat-label>Assay</mat-label>
+            <mat-select [(ngModel)]="rep.assay">
+              <mat-option value="qpcr">qPCR</mat-option>
+              <mat-option value="luciferase">Luciferase</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-button-toggle-group [(ngModel)]="rep.regulation" class="h-[40px]">
+            <mat-button-toggle value="up"><mat-icon class="text-green-600">trending_up</mat-icon></mat-button-toggle>
+            <mat-button-toggle value="unchanged"><mat-icon class="text-slate-400">remove</mat-icon></mat-button-toggle>
+            <mat-button-toggle value="down"><mat-icon class="text-red-600">trending_down</mat-icon></mat-button-toggle>
+          </mat-button-toggle-group>
+
+          <button mat-icon-button color="warn" (click)="removeReporter($index)">
+            <mat-icon>delete_outline</mat-icon>
+          </button>
+        </div>
+      }
+    </section>
+
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+      <div class="flex items-center gap-2">
+        <mat-checkbox [(ngModel)]="cosegregation">Evidence of Cosegregation?</mat-checkbox>
+      </div>
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Curator Comments</mat-label>
+        <textarea matInput [(ngModel)]="comment" rows="2"></textarea>
+      </mat-form-field>
+    </section>
+
+  <section class="mb-6">
+      <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">3. Supporting Citation</label>
+        <app-pubmed 
+          (citationRetrieved)="handleNewCitation($event)">
+        </app-pubmed>
+    </section> 
+
+    <div class="flex justify-end gap-3 border-t pt-4">
+      <button mat-button (click)="cancel()">Reset</button>
+      <button mat-raised-button color="primary" 
+              [disabled]="!isEvaluationValid()"
+              (click)="submit()">
+        Add Evaluation to Assessment
+      </button>
     </div>
-    <mat-form-field appearance="outline" class="w-full">
-      <mat-label>Curator Comments</mat-label>
-      <textarea matInput [(ngModel)]="comment" rows="2"></textarea>
-    </mat-form-field>
-  </section>
+  </mat-card>
+} @else {
+  <div class="confirmed-badge">
+        <div class="data-info">
+            <mat-icon class="success-icon">check_circle</mat-icon>
+            <span class="label">pathomechanism:</span>
+            <strong>{{ pathomechanism() }}</strong>
+            @for(reporter of reporters(); track $index) {
+              <span class="label">{{reporter.assay}}:</span>
+               <strong>{{reporter.regulation }}</strong>
+            }
+            <span class="label">Cosegregation:</span>
+            <strong>{{ cosegregation() }}</strong>
+          
+            <span class="label">Citation:</span>
+            <strong>{{ citation() }}</strong>
+            <span class="label">Comment:</span>
+            <strong>{{ comment() }}</strong>
+            
+            <button 
+              mat-icon-button color="warn" 
+              (click)="cancel()" 
+              matTooltip="Reset Variant and Edit">
+                <mat-icon>restart_alt</mat-icon>
+            </button>
+      </div>
+    </div>
+}
 
- <section class="mb-6">
-     <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">3. Supporting Citation</label>
-      <app-pubmed 
-        (citationRetrieved)="handleNewCitation($event)">
-      </app-pubmed>
-  </section> 
-
-  <div class="flex justify-end gap-3 border-t pt-4">
-    <button mat-button (click)="cancel()">Reset</button>
-    <button mat-raised-button color="primary" 
-            [disabled]="!isEvaluationValid()"
-            (click)="submit()">
-      Add Evaluation to Assessment
-    </button>
-  </div>
-</mat-card>

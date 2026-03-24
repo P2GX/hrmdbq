@@ -1,10 +1,10 @@
-import { Component, EventEmitter, inject, Output, signal } from "@angular/core";
+import { Component, computed, inject, output, signal } from "@angular/core";
 import { NcVariantEvaluation, Pathomechanism, PATHOMECHANISM_LABELS, Reporter } from "../../service/models";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { MatDividerModule } from "@angular/material/divider";
-import { MatIcon } from "@angular/material/icon";
-import { MatFormField, MatInputModule, MatLabel } from "@angular/material/input";
+import {  MatIconModule } from "@angular/material/icon";
+import {  MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { MatCardModule } from "@angular/material/card";
@@ -24,21 +24,18 @@ import { Citation } from "../../service/citation";
     FormsModule,
     MatCheckboxModule,
     MatDividerModule,
-    MatFormField,
     MatInputModule,
-    MatLabel,
-    MatIcon,
     MatSelectModule,
     MatButtonToggleModule,
     MatCardModule,
+    MatIconModule,
     PubmedComponent
 ]
 })
 export class NcEvaluationCurationComponent {
 
+    stepComplete = output<NcVariantEvaluation>();
 
-
-  @Output() evaluationAdded = new EventEmitter<NcVariantEvaluation>();
 
   private notificationService = inject(NotificationService);
 
@@ -50,6 +47,10 @@ export class NcEvaluationCurationComponent {
   reporters = signal<Reporter[]>([]);
   cosegregation = signal<boolean>(false);
   comment = signal<string | undefined>(undefined);
+
+  stepFinished = computed(() => {
+   return !!this.pathomechanism() && !!this.citation()
+  });
  
 
     addReporter() {
@@ -95,7 +96,7 @@ export class NcEvaluationCurationComponent {
             if (comment) {
                 evaluation.comment = comment;
             }
-        this.evaluationAdded.emit(evaluation as NcVariantEvaluation);
+        this.stepComplete.emit(evaluation);
         }
     }
 

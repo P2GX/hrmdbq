@@ -1,3 +1,5 @@
+use std::fmt;
+
 use crate::dto::citation::Citation;
 use chrono::Local;
 use ga4ghphetools::dto::{
@@ -6,7 +8,7 @@ use ga4ghphetools::dto::{
 };
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub enum VariantClass {
     Utr5,
@@ -17,6 +19,22 @@ pub enum VariantClass {
     LncRna,
     Icr,
     MultiGene,
+}
+
+impl fmt::Display for VariantClass {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let label = match self {
+            Self::Utr5 => "5' UTR",
+            Self::Promoter => "Promoter",
+            Self::Enhancer => "Enhancer",
+            Self::Utr3 => "3' UTR",
+            Self::MicroRNA => "microRNA",
+            Self::LncRna => "lncRNA",
+            Self::Icr => "ICR",
+            Self::MultiGene => "Multi-Gene",
+        };
+        write!(f, "{}", label)
+    }
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -71,7 +89,7 @@ pub struct NcVariantEvaluation {
     pub citation: Citation,
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub enum NcVariant {
     Hgvs(HgvsVariant),

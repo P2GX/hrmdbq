@@ -11,8 +11,11 @@ use crate::{
     util::{hgnc_rest::HgncBundle, settings::HrmdbqSettings},
 };
 
+
+
 pub mod dto;
 pub mod util;
+pub mod ncvar;
 
 struct AppState {
     curated_variant_list: Mutex<Vec<NcVariantAssessment>>,
@@ -49,6 +52,7 @@ pub fn run() {
         .manage(app_state)
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
+            add_nc_variant_assesment,
             fetch_gene_data_from_hgnc,
             get_variant_assessments,
             get_annot_count,
@@ -223,5 +227,19 @@ async fn set_biocuration_orcid(
 async fn retrieve_pmid_citation(
     pmid: &str
 ) -> Result<Citation, String> {
+    println!("retrieve_pmid_citation pmid={}", pmid);
     util::pubmed_retriever::retrieve_citation(pmid).await
+}
+
+#[tauri::command]
+fn add_nc_variant_assesment(
+      state: tauri::State<'_, Arc<AppState>>,
+      assess: NcVariantAssessment
+) -> Result<Vec<NcVariantAssessment>, String> {
+     let mut guard = state.curated_variant_list
+        .lock()
+        .map_err(|_| "Failed to lock mutex".to_string())?;
+    let current_list = std::mem::take(&mut *guard);
+    let list = ncvar::ncvar_assessment::update_ncvar_list(current_list, assess)?;
+    Ok(list.clone())
 }

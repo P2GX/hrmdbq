@@ -12,7 +12,7 @@
 
     @if (currentStep() >= 2 && geneData(); as gdata) {
         <div class="variant-card hgvs-theme">
-            <app-addvariant 
+            <app-addvariant
                 [selected_gene]="gdata"
                 (stepComplete)="onVariantStepComplete($event)">
             </app-addvariant>
@@ -20,23 +20,23 @@
     }
     @if (currentStep() > 2) { <mat-divider/>  }
     @if(currentStep() >= 3 ) {
-        <app-variant-category-selector>
+        <app-variant-category-selector
             (stepComplete)="onCategoryStepComplete($event)">
         </app-variant-category-selector>
     }
     @if (currentStep() > 3) { <mat-divider/>  }
-    @if(currentStep() >=4) {
+    @if(currentStep() >=0) {
         <app-evaulation-widget>
-             (stepComplete)="onEvaluationStepComplete($event)">
+             (stepComplete)="onEvaluationStepComplete($event)"
         </app-evaulation-widget>
     }
    @if (currentStep() > 4) { <mat-divider/>  }
 
     @if (currentStep() >= 5) {
         <div class="step-wrapper fade-in">
-            <h3>Step 3: Review & Save</h3>
+            <h3>Review & Save</h3>
             <button mat-raised-button color="accent" (click)="onFinalSave()">
-                Save to Curation File
+                Save
             </button>
         </div>
     } 

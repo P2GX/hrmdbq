@@ -1,13 +1,13 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { invoke } from '@tauri-apps/api/core';
-import { NcVariantEvaluation } from './models';
+import { NcVariantAssessment, NcVariantEvaluation } from './models';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class CurationService {
-  private _variants = signal<NcVariantEvaluation[]>([]);
+  private _variants = signal<NcVariantAssessment[]>([]);
   readonly variants = this._variants.asReadonly();
   private _currentPath = signal<string>('');
   readonly currentPath = this._currentPath.asReadonly();
@@ -26,7 +26,7 @@ export class CurationService {
   async loadCurationFile() {
     try {
       // This calls your Rust command select_curation_file
-      const data = await invoke<NcVariantEvaluation[]>('select_curation_file');
+      const data = await invoke<NcVariantAssessment[]>('select_curation_file');
       // Update the signal value
       this._variants.set(data);
       const settings = await invoke<any>('get_settings');
@@ -37,6 +37,10 @@ export class CurationService {
       console.error('Failed to load file:', err);
       throw err;
     }
+  }
+
+  updateNcVariantAssessmentList(list: NcVariantAssessment[]): void {
+    this._variants.set(list);
   }
 
   // Helper to clear state if needed

@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { HgvsVariant, HrmdbqSettings, IntergenicHgvsVariant, NcVariantEvaluation, StructuralVariant } from './models';
+import { CurationEvent, HgvsVariant, HrmdbqSettings, IntergenicHgvsVariant, NcVariantAssessment, NcVariantEvaluation, StructuralVariant } from './models';
 import { invoke } from '@tauri-apps/api/core';
 import { VariantDto } from './models';
 import { Citation } from './citation';
@@ -64,6 +64,25 @@ export class ConfigService {
 
   async retrievePmidCitation(pmid: string) : Promise<Citation> {
    return invoke<Citation>('retrieve_pmid_citation', {pmid: pmid});
+  }
+
+
+createCurationEvent(orcid: string): CurationEvent {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const date = `${year}-${month}-${day}`;
+
+  return {
+    orcid,
+    date
+  };
+}
+
+
+  addNcVariantAssesment( assess: NcVariantAssessment): Promise<NcVariantAssessment[]> {
+    return invoke<NcVariantAssessment[]>('add_nc_variant_assesment', {assess: assess});
   }
 
 

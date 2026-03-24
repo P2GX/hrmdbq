@@ -1,5 +1,6 @@
 use serde::Deserialize;
 use std::fmt::Debug;
+use regex::{self, Regex};
 
 use crate::dto::citation::Citation;
 
@@ -45,6 +46,7 @@ pub async fn retrieve_citation(input: &str) -> Result<Citation, String> {
             return Err(format!("Could not extract numerical PMID from {}", input));
         }
     };
+    println!("retrieve_citation numerical pmid={}", num_pmid);
     fetch_citation(&num_pmid).await
 }
 
@@ -59,6 +61,14 @@ fn extract_numerical_pmid(input: &str) -> Option<String> {
         .parse::<u32>()
         .ok()
         .map(|n| n.to_string())
+}
+
+fn extract_year(date_str: &str) -> usize {
+    let re = Regex::new(r"(\d{4})").unwrap();
+    re.captures(date_str)
+        .and_then(|cap| cap.get(1))
+        .and_then(|m| m.as_str().parse().ok())
+        .unwrap_or(0) // Return 0 or handle error if no 4-digit year found
 }
 
 async fn fetch_citation(numerical_pmid: &str) -> Result<Citation, String> {
@@ -106,7 +116,7 @@ async fn fetch_citation(numerical_pmid: &str) -> Result<Citation, String> {
             return Err("Could not retrieve year from record".to_string());
         }
     };
-    let year: usize = year.parse().unwrap();
+    let year: usize =  extract_year(&year);
     let volume = match &article_record.volume {
         Some(v) => v.to_string(),
         None => {
@@ -150,7 +160,7 @@ mod tests {
 
     #[rstest]
     #[tokio::test]
-    ///#[ignore = "API call"]
+    #[ignore = "API call"]
     async fn fetch_pmid_test() -> Result<(), Box<dyn std::error::Error>> {
         let pmid = "13168976";
         let result = retrieve_citation(pmid).await;
