@@ -97,30 +97,35 @@
     </div>
   </mat-card>
 } @else {
-  <div class="confirmed-badge">
-        <div class="data-info">
-            <mat-icon class="success-icon">check_circle</mat-icon>
-            <span class="label">pathomechanism:</span>
-            <strong>{{ pathomechanism() }}</strong>
-            @for(reporter of reporters(); track $index) {
-              <span class="label">{{reporter.assay}}:</span>
-               <strong>{{reporter.regulation }}</strong>
-            }
-            <span class="label">Cosegregation:</span>
-            <strong>{{ cosegregation() }}</strong>
-          
-            <span class="label">Citation:</span>
-            <strong>{{ citation() }}</strong>
-            <span class="label">Comment:</span>
-            <strong>{{ comment() }}</strong>
-            
-            <button 
-              mat-icon-button color="warn" 
-              (click)="cancel()" 
-              matTooltip="Reset Variant and Edit">
-                <mat-icon>restart_alt</mat-icon>
-            </button>
-      </div>
+ <div class="confirmed-badge">
+    <div class="data-info">
+        <mat-icon class="success-icon">check_circle</mat-icon>
+
+        <span class="label">Pathomechanism:</span>
+        <strong>{{ pathomechanism() }}</strong>
+
+        @for(reporter of reporters(); track $index) {
+            <span class="label">{{ reporter.assay }}:</span>
+            <strong>{{ reporter.regulation }}</strong>
+        }
+
+        <span class="label">Cosegregation:</span>
+        <strong>{{ cosegregation() }}</strong>
+
+        <span class="label">Citation:</span>
+        <strong>{{ citation() }}</strong>
+
+        <span class="label">Comment:</span>
+        <strong>{{ comment() || 'N/A' }}</strong>
+
+        <button 
+            class="reset-btn"
+            mat-icon-button color="warn" 
+            (click)="cancel()" 
+            matTooltip="Reset Variant and Edit">
+            <mat-icon>restart_alt</mat-icon>
+        </button>
     </div>
+</div>
 }
 

@@ -18,10 +18,10 @@ pub fn update_ncvar_list(mut list: Vec<NcVariantAssessment>, assess: NcVariantAs
         return Err(format!("Disagreement with previous variant category: previous: {} and current {}",
             entry.variant_category, assess.variant_category));
        }
-       let annot = match assess.annotations.first() {
-            Some(ann) => entry.annotations.push(ann.clone()),
-            None => { return Err(format!("Could not find NcVariantEvaluation in new entry {:?}", assess));},
-        };
+       let ann = assess.annotations.first()
+            .ok_or_else(|| format!("Could not find NcVariantEvaluation in new entry {:?}", assess))?;
+        entry.annotations.push(ann.clone());
+        
         for bioc in assess.biocuration {
             entry.biocuration.push(bioc);
         };

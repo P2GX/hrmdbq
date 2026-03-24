@@ -3,7 +3,7 @@
 
 use dirs::home_dir;
 use serde::{Deserialize, Serialize};
-use std::fs::{self, File};
+use std::fs;
 use std::path::PathBuf;
 
 /// Settings to persist between sessions.

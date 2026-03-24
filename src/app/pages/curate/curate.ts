@@ -119,9 +119,11 @@ export class CurationWidget {
       annotations: [annot],
       biocuration: [curation],
     };
+    console.log("Adding ncAsses=", ncAssess);
     this.configService.addNcVariantAssesment(ncAssess)
     .then((assessmentList) => {
       this.curationService.updateNcVariantAssessmentList(assessmentList);
+      console.log("Updated list=", assessmentList);
     })
     .catch((err) => {
       this.notificationService.showError(String(err));

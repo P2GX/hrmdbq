@@ -4,7 +4,6 @@ use ga4ghphetools::dto::{
     hgvs_variant::HgvsVariant, intergenic_variant::IntergenicHgvsVariant,
     structural_variant::StructuralVariant, variant_dto::VariantDto,
 };
-use tauri::AppHandle;
 
 use crate::{
     dto::{citation::Citation, nc_variant_annotation::{NcVariantAssessment}},

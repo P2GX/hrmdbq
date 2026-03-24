@@ -1,7 +1,6 @@
 use std::fmt;
 
 use crate::dto::citation::Citation;
-use chrono::Local;
 use ga4ghphetools::dto::{
     hgvs_variant::HgvsVariant, intergenic_variant::IntergenicHgvsVariant,
     structural_variant::StructuralVariant,
@@ -40,6 +39,9 @@ impl fmt::Display for VariantClass {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub enum Pathomechanism {
+    LossOfFunction,
+    GainOfFunction,
+    DominantNegative,
     ReducedTranscription,
     IncreasedTranscription,
     IREdisruption,
@@ -56,6 +58,32 @@ pub enum Pathomechanism {
     SecondaryStructure,
     Unknown,
 }
+
+
+/*
+export type Pathomechanism = 
+  'lossOfFunction'
+  | 'gainOfFunction'
+  | 'dominantNegative'
+  | 'reducedTranscription'
+  | 'increasedTranscription'
+  | 'iREdisruption'
+  | 'spliceDefect'
+  | 'uORFCreation'
+  | 'uORFDisruption'
+  | 'reducedTranslation'
+  | 'increasedTranslation'
+  | 'reducedExpression'
+  | 'increasedExpression'
+  | 'microRNAbindingSiteDisruption'
+  | 'microRNAbindingSiteCreation'
+  | 'kozakDisruption'
+  | 'secondaryStructure'
+  | 'unknown';
+   */
+
+
+
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub enum ReporterAssay {
