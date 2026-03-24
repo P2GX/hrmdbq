@@ -1,8 +1,18 @@
-<p>Annotation table</p>
+<div class="table-header">
+  <h2>Annotation Table</h2>
+  <div class="actions">
+    <button mat-flat-button color="accent" 
+            [disabled]="curationService.variants().length === 0"
+            (click)="exportData()">
+      <mat-icon>download</mat-icon>
+      Export JSON
+    </button>
+  </div>
+</div>
 
 <div class="table-wrapper mat-elevation-z2">
   
-  @if (variantService.variants().length > 0) {
+  @if (curationService.variants().length > 0) {
     <table mat-table [dataSource]="dataSource()">
 
       <ng-container matColumnDef="label">

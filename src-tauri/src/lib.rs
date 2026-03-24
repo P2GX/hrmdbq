@@ -59,6 +59,7 @@ pub fn run() {
             get_settings,
             retrieve_pmid_citation,
             select_curation_file,
+            serialize_variant_assessments,
             set_biocuration_orcid,
             update_orcid,
             validate_hgvs_variant,
@@ -241,4 +242,20 @@ fn add_nc_variant_assesment(
     let current_list = std::mem::take(&mut *guard);
     let list = ncvar::ncvar_assessment::update_ncvar_list(current_list, assess)?;
     Ok(list.clone())
+}
+
+
+
+#[tauri::command]
+fn serialize_variant_assessments(
+    state: tauri::State<'_, Arc<AppState>>,
+) -> Result<(), String> {
+    let assessments = state.curated_variant_list.lock().map_err(|_|"Failed to locl variant assessment list")?;
+    let settings = state.settings.lock().unwrap();
+    let path = settings.curation_json_path.as_ref()
+        .ok_or("No save path configured in settings")?;
+    ncvar::ncvar_assessment::save_curation_list(path, &assessments)?;
+
+
+    Ok(())
 }

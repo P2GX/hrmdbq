@@ -10,7 +10,7 @@ import { VariantCategorySelectorComponent } from "../../widgets/variantcategory/
 import { NcEvaluationCurationComponent } from "../../widgets/evaluationwidget/evaluationwidget";
 import { ConfigService } from '../../service/configService';
 import { CurationService } from '../../service/curation_service';
-
+import { Router } from '@angular/router'; // <--- Import this
 
 
 export interface AddVariantDialogData {
@@ -47,6 +47,7 @@ export class CurationWidget {
   private notificationService = inject(NotificationService);
    private configService = inject(ConfigService);
    private curationService = inject(CurationService);
+   private router = inject(Router);
 
   onGeneStepComplete(result: GeneStepResult) {
     this.geneData.set(result);
@@ -123,7 +124,7 @@ export class CurationWidget {
     this.configService.addNcVariantAssesment(ncAssess)
     .then((assessmentList) => {
       this.curationService.updateNcVariantAssessmentList(assessmentList);
-      console.log("Updated list=", assessmentList);
+      this.router.navigate(['/annots']);
     })
     .catch((err) => {
       this.notificationService.showError(String(err));

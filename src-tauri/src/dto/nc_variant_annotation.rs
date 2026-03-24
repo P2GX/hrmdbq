@@ -60,30 +60,6 @@ pub enum Pathomechanism {
 }
 
 
-/*
-export type Pathomechanism = 
-  'lossOfFunction'
-  | 'gainOfFunction'
-  | 'dominantNegative'
-  | 'reducedTranscription'
-  | 'increasedTranscription'
-  | 'iREdisruption'
-  | 'spliceDefect'
-  | 'uORFCreation'
-  | 'uORFDisruption'
-  | 'reducedTranslation'
-  | 'increasedTranslation'
-  | 'reducedExpression'
-  | 'increasedExpression'
-  | 'microRNAbindingSiteDisruption'
-  | 'microRNAbindingSiteCreation'
-  | 'kozakDisruption'
-  | 'secondaryStructure'
-  | 'unknown';
-   */
-
-
-
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub enum ReporterAssay {

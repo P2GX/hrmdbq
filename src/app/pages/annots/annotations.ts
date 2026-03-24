@@ -2,27 +2,31 @@ import { Component, computed, inject } from '@angular/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { CommonModule } from '@angular/common';
-import { VariantService } from '../../service/variant.service';
+import { CurationService } from '../../service/curation_service'; 
 import { NcVariant, NcVariantAssessment } from '../../service/models';
+import { MatIconModule } from "@angular/material/icon";
+import { ConfigService } from '../../service/configService';
 @Component({
   selector: 'app-about',
   imports: [
     CommonModule,
     MatDividerModule,
-    MatTableModule
-  ],
+    MatTableModule,
+    MatIconModule
+],
   templateUrl: './annotations.html',
   styleUrl: './annotations.css'
 })
 export class AnnotationTable {
 
-    public variantService = inject(VariantService);
+    public curationService = inject(CurationService);
+    private configService = inject(ConfigService);
 
     displayedColumns: string[] = ['label', 'category', 'symbol', 'curator'];
 
   // Create a reactive data source for the Material Table
   dataSource = computed(() => {
-    return new MatTableDataSource<NcVariantAssessment>(this.variantService.variants());
+    return new MatTableDataSource<NcVariantAssessment>(this.curationService.variants());
   });
 
   /**
@@ -46,5 +50,9 @@ export class AnnotationTable {
   }
 
    
+  exportData(): void {
+    const variants = this.curationService.variants;
+    this.configService.serializeVariantAssessments(variants);
+  }
 
 }

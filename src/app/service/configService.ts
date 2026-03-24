@@ -86,4 +86,9 @@ createCurationEvent(orcid: string): CurationEvent {
   }
 
 
+  serializeVariantAssessments(variants: NcVariantAssessment[]) : Promise<void> {
+     return invoke<void>('serialize_variant_assessments', {variants: variants});
+  }
+
+
 }
