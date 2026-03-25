@@ -1,21 +1,33 @@
-import { Injectable, signal } from '@angular/core';
+import { inject, Injectable, NgZone, signal } from '@angular/core';
 import { CurationEvent, HgvsVariant, HrmdbqSettings, IntergenicHgvsVariant, NcVariantAssessment, NcVariantEvaluation, StructuralVariant } from './models';
 import { invoke } from '@tauri-apps/api/core';
 import { VariantDto } from './models';
 import { Citation } from './citation';
-
+import { listen } from '@tauri-apps/api/event';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class ConfigService {
+  private ngZone = inject(NgZone);
   private _settings = signal<HrmdbqSettings | null>(null);
   readonly settings = this._settings.asReadonly();
 
   
   constructor() {
     this.refreshSettings();
+    this.listen_status();
+  }
+
+  private async listen_status(): Promise<void> {
+    await listen("settings-update", (event) => {
+      const updatedSettings = event.payload as HrmdbqSettings;
+      console.log("listen_status ", updatedSettings)
+      this.ngZone.run(() => {
+        this._settings.set(updatedSettings);
+      });
+    });
   }
 
   async validateSv(dto: VariantDto): Promise<StructuralVariant> {
@@ -86,9 +98,11 @@ createCurationEvent(orcid: string): CurationEvent {
   }
 
 
-  serializeVariantAssessments(variants: NcVariantAssessment[]) : Promise<void> {
+  async serializeVariantAssessments(variants: NcVariantAssessment[]) : Promise<void> {
      return invoke<void>('serialize_variant_assessments', {variants: variants});
   }
 
 
 }
+
+

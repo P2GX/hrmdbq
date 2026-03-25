@@ -1,9 +1,10 @@
-use std::{fs, path::PathBuf, sync::{Arc, Mutex}};
+use std::{fs::{self, OpenOptions}, path::PathBuf, sync::{Arc, Mutex}};
 
 use ga4ghphetools::dto::{
     hgvs_variant::HgvsVariant, intergenic_variant::IntergenicHgvsVariant,
     structural_variant::StructuralVariant, variant_dto::VariantDto,
 };
+use tauri::Emitter;
 
 use crate::{
     dto::{citation::Citation, nc_variant_annotation::{NcVariantAssessment}},
@@ -145,43 +146,38 @@ fn update_orcid(state: tauri::State<Arc<AppState>>, orcid: String) -> Result<(),
     settings.save_biocurator_orcid(orcid)
 }
 
-#[tauri::command]
-fn set_go_dir(state: tauri::State<Arc<AppState>>, go_dir_path: String) -> Result<(), String> {
-    let mut settings = state
-        .settings
-        .lock()
-        .map_err(|_| "Failed to lock settings")?;
-    settings.set_go_dir_path(&go_dir_path)?;
-    Ok(())
-}
-
 
 /// Open the native Save/As window
 #[tauri::command]
 async fn select_curation_file(
     app: tauri::AppHandle,
-   state: tauri::State<'_, Arc<AppState>>
+    state: tauri::State<'_, Arc<AppState>>
 ) -> Result<Vec<NcVariantAssessment>, String> {
     use tauri_plugin_dialog::DialogExt;
 
-    // Use the sync/blocking call or the async one
+
    let file_path = app.dialog()
         .file()
         .set_title("Select or Create Curation File")
         .add_filter("JSON", &["json"])
-        .blocking_save_file(); // This opens the native "Save As" window
+        .blocking_pick_file(); 
 
     if let Some(path) = file_path {
         let path_buf = PathBuf::from(path.to_string());
+
+        let metadata = fs::metadata(&path_buf).map_err(|e| format!("Could not read file metadata: {}", e))?;
+        if metadata.len() == 0 {
+            // Initialize with an empty JSON array if the file was empty
+            fs::write(&path_buf, "[]")
+                .map_err(|e| format!("Failed to initialize empty JSON file: {}", e))?;
+        }
         {
             let mut settings = state.settings.lock()
                 .map_err(|_| "Failed to lock settings".to_string())?;
             settings.set_curation_file(path_buf.clone())?;
+            app.emit("settings-update", settings.clone()).map_err(|e|e.to_string() )?;
         }
-        if !path_buf.exists() || fs::metadata(&path_buf).map(|m| m.len()).unwrap_or(0) == 0 {
-            // File is new or 0 bytes: return empty list
-            return Ok(vec![]);
-        }
+       
         let contents = fs::read_to_string(&path_buf)
             .map_err(|e| format!("Failed to read file: {}", e))?;
             
@@ -249,12 +245,12 @@ fn add_nc_variant_assesment(
 #[tauri::command]
 fn serialize_variant_assessments(
     state: tauri::State<'_, Arc<AppState>>,
+    variants: Vec<NcVariantAssessment>
 ) -> Result<(), String> {
-    let assessments = state.curated_variant_list.lock().map_err(|_|"Failed to locl variant assessment list")?;
     let settings = state.settings.lock().unwrap();
     let path = settings.curation_json_path.as_ref()
         .ok_or("No save path configured in settings")?;
-    ncvar::ncvar_assessment::save_curation_list(path, &assessments)?;
+    ncvar::ncvar_assessment::save_curation_list(path, &variants)?;
 
 
     Ok(())

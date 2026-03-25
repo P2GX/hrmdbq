@@ -222,3 +222,23 @@ body { margin: 0; font-family: "Trebuchet MS", Trebuchet, sans-serif; }
     from { opacity: 0; transform: translateY(-5px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
+.curation-container {
+  // 1. Space between the edge of the DIV and the content
+  padding: 5px; 
+
+  // 2. Space BETWEEN elements inside the container
+  display: flex;
+  flex-direction: column; // Stack elements vertically
+  gap: 10px; // Use 10px if you want 5px from each element (5+5)
+  
+  // 3. Optional: Ensure it fills the available space
+  width: 100%;
+  box-sizing: border-box; // Crucial: includes padding in the width calculation
+}
+
+// If you want EVERY single nested element to have its own margin
+// (The "Shotgun" approach)
+.curation-container > * {
+  margin: 5px;
+}

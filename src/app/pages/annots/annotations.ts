@@ -6,6 +6,7 @@ import { CurationService } from '../../service/curation_service';
 import { NcVariant, NcVariantAssessment } from '../../service/models';
 import { MatIconModule } from "@angular/material/icon";
 import { ConfigService } from '../../service/configService';
+import { NotificationService } from '../../service/notification.service';
 @Component({
   selector: 'app-about',
   imports: [
@@ -21,6 +22,7 @@ export class AnnotationTable {
 
     public curationService = inject(CurationService);
     private configService = inject(ConfigService);
+    private notificationService = inject(NotificationService);
 
     displayedColumns: string[] = ['label', 'category', 'symbol', 'curator'];
 
@@ -52,7 +54,13 @@ export class AnnotationTable {
    
   exportData(): void {
     const variants = this.curationService.variants();
-    this.configService.serializeVariantAssessments(variants);
+    this.configService.serializeVariantAssessments(variants)
+      .then(() => {
+        this.notificationService.showSuccess(`Saved ${variants.length} variant annotations.`);
+      })
+      .catch((error) => {
+        this.notificationService.showError(`Failed to save annotations: ${error}.`);
+      });
   }
 
 }

@@ -54,7 +54,7 @@ export class Setup {
     try {
       await this.curationService.loadCurationFile();
     } catch (err) {
-      this.notificationService.showError("File selection not successful.")
+      this.notificationService.showError(`File selection not successful: ${err}.`)
     } 
   }
 
