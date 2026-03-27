@@ -46,6 +46,10 @@ theme:
 
 nav:
 - Home: 'index.md'
+- Curation:
+  - Overview: 'curation/index.md'
+  - Liftover: 'curation/liftover.md'
+  - UTR5: 'curation/utr5.md'
 - Developers: 'curation.md'
 
 
