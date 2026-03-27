@@ -15,7 +15,7 @@
 <div class="table-wrapper mat-elevation-z2">
   
   @if (curationService.variants().length > 0) {
-    <table mat-table [dataSource]="dataSource()">
+    <table mat-table [dataSource]="dataSource">
 
       <ng-container matColumnDef="label">
         <th mat-header-cell *matHeaderCellDef> Variant Label </th>

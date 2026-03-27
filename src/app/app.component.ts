@@ -22,23 +22,8 @@ import { MatButtonModule } from '@angular/material/button';
 export class AppComponent {
   isCollapsed = signal(false);
 
-  greetingMessage = "";
-
-  annotationCount: number = 0;
-
-
-  getAnnotationCount(event: Event): void {
-     event.preventDefault();
-     invoke<number>("get_annot_count").then((n) => {
-      this.annotationCount = n;
-     })
-
-  }
-
   toggleMenu(): void {
     this.isCollapsed.set(!this.isCollapsed());
   }
-
-
 
 }

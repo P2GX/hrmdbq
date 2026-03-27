@@ -121,12 +121,30 @@ pub struct NcVariantEvaluation {
     pub citation: Citation,
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize, PartialEq)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub enum NcVariant {
     Hgvs(HgvsVariant),
     Structural(StructuralVariant),
     Intergenic(IntergenicHgvsVariant),
+}
+
+
+impl PartialEq for NcVariant {
+    fn eq(&self, other: &Self) -> bool {
+        match (&self, &other) {
+            // 1. If both are the same category, compare the inner data
+            (NcVariant::Hgvs(a), NcVariant::Hgvs(b)) => a == b,
+            (NcVariant::Structural(a), NcVariant::Structural(b)) => a == b,
+            (NcVariant::Intergenic(a), NcVariant::Intergenic(b)) => a == b,
+            // 2. If they are different variants, define the order of the variants themselves
+            (NcVariant::Hgvs(_), _) => false,  
+            (_, NcVariant::Hgvs(_)) => false,
+
+            (NcVariant::Structural(_), NcVariant::Intergenic(_)) => false,
+            (NcVariant::Intergenic(_), NcVariant::Structural(_)) => false,
+        }
+    }
 }
 
 

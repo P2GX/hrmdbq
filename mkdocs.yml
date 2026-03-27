@@ -50,6 +50,7 @@ nav:
   - Overview: 'curation/index.md'
   - Liftover: 'curation/liftover.md'
   - UTR5: 'curation/utr5.md'
+  - Promoter: 'curation/promoter.md'
 - Developers: 'curation.md'
 
 

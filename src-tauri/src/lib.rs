@@ -52,7 +52,7 @@ pub fn run() {
         .manage(app_state)
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
-            add_nc_variant_assesment,
+            add_nc_variant_assessment,
             fetch_gene_data_from_hgnc,
             get_variant_assessments,
             get_annot_count,
@@ -214,8 +214,6 @@ async fn load_variants_file(state: tauri::State<'_, Arc<AppState>>)
             *list = evaluations.clone();
         }
         return Ok(evaluations);
-    
-    
     }
 
 
@@ -256,7 +254,7 @@ async fn retrieve_pmid_citation(
 }
 
 #[tauri::command]
-fn add_nc_variant_assesment(
+fn add_nc_variant_assessment(
       state: tauri::State<'_, Arc<AppState>>,
       assess: NcVariantAssessment
 ) -> Result<Vec<NcVariantAssessment>, String> {
@@ -264,8 +262,11 @@ fn add_nc_variant_assesment(
         .lock()
         .map_err(|_| "Failed to lock mutex".to_string())?;
     let current_list = std::mem::take(&mut *guard);
-    let list = ncvar::ncvar_assessment::update_ncvar_list(current_list, assess)?;
-    Ok(list.clone())
+    println!("add_nc_variant_assesment current list size= {}", current_list.len());
+    let updated_list = ncvar::ncvar_assessment::update_ncvar_list(current_list, assess)?;
+    println!("add_nc_variant_assesment updated list size= {}", updated_list.len());
+    *guard = updated_list.clone();
+    Ok(updated_list)
 }
 
 

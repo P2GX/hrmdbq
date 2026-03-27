@@ -91,7 +91,7 @@ export class CurationWidget {
     }
   }
 
-  onFinalSave() {
+  async onFinalSave() {
     const cat = this.variantClass();
     if (! cat) {
       this.notificationService.showError("Cannot save without variant category");
@@ -121,14 +121,16 @@ export class CurationWidget {
       biocuration: [curation],
     };
     console.log("Adding ncAsses=", ncAssess);
-    this.configService.addNcVariantAssesment(ncAssess)
-    .then((assessmentList) => {
-      this.curationService.updateNcVariantAssessmentList(assessmentList);
-      this.router.navigate(['/annots']);
-    })
-    .catch((err) => {
-      this.notificationService.showError(String(err));
-    });
+    try {
+        await this.curationService.saveVariant(ncAssess);
+        this.notificationService.showSuccess("Variant assessment saved.");
+        this.router.navigate(["/annots"]);
+    } catch (err) {
+        this.notificationService.showError(`Save failed: ${err}`);
+    }
 
   }
+
+
+
 }

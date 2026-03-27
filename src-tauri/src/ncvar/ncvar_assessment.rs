@@ -7,21 +7,25 @@ use std::path::PathBuf;
 
 
 /// TODO develop better error message!
-pub fn update_ncvar_list(mut list: Vec<NcVariantAssessment>, assess: NcVariantAssessment) 
+pub fn update_ncvar_list(
+    mut list: Vec<NcVariantAssessment>, 
+    assess: NcVariantAssessment) 
     -> Result<Vec<NcVariantAssessment>, String> {
 
-   if let Some(index) = list.iter().position(|existing| {
-        existing.variant_coordinates == assess.variant_coordinates
-    }) {
-        // This position was previously curated. Add the new curation to the existing one
-       let mut entry = list.remove(index);
-       if entry.variant_category != assess.variant_category {
-        return Err(format!("Disagreement with previous variant category: previous: {} and current {}",
-            entry.variant_category, assess.variant_category));
-       }
-       let ann = assess.annotations.first()
-            .ok_or_else(|| format!("Could not find NcVariantEvaluation in new entry {:?}", assess))?;
-        entry.annotations.push(ann.clone());
+        let existing_index = list.iter().position(|existing| 
+            {existing.variant_coordinates == assess.variant_coordinates});
+
+        if let Some(index) = existing_index {
+            let mut entry = list.remove(index);
+            if entry.variant_category != assess.variant_category {
+                return Err(format!("Disagreement with previous variant category: previous: {} and current {}",
+                    entry.variant_category, assess.variant_category));
+            }
+        for new_ann in assess.annotations {
+            if !entry.annotations.iter().any(|a| a.citation == new_ann.citation) {
+                entry.annotations.push(new_ann);
+            }
+        }
         
         for bioc in assess.biocuration {
             entry.biocuration.push(bioc);

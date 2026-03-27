@@ -93,7 +93,7 @@ createCurationEvent(orcid: string): CurationEvent {
 }
 
 
-  addNcVariantAssesment( assess: NcVariantAssessment): Promise<NcVariantAssessment[]> {
+  addNcVariantAssessment( assess: NcVariantAssessment): Promise<NcVariantAssessment[]> {
     return invoke<NcVariantAssessment[]>('add_nc_variant_assesment', {assess: assess});
   }
 

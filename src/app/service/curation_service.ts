@@ -1,12 +1,15 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject, NgZone } from '@angular/core';
 import { invoke } from '@tauri-apps/api/core';
 import { NcVariantAssessment, NcVariantEvaluation } from './models';
+import { NotificationService } from './notification.service';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class CurationService {
+  private ngZone = inject(NgZone);
+  private notificationService = inject(NotificationService);
   private _variants = signal<NcVariantAssessment[]>([]);
   readonly variants = this._variants.asReadonly();
   private _currentPath = signal<string>('');
@@ -56,19 +59,34 @@ export class CurationService {
       try {
         const data = await invoke<NcVariantAssessment[]>('load_variants_file');
         this._variants.set(data);
-        console.log("loadCurationFile, this variants", this.variants());
       } catch (err) {
         console.error('Failed to load file:', err);
         throw err;
       }
     }
 
-  updateNcVariantAssessmentList(list: NcVariantAssessment[]): void {
-    this._variants.set(list);
-  }
+    async saveVariant(assess: NcVariantAssessment) {
+      try {
+        // 1. Rust does the work and returns the final state
+        const newVariantList = await invoke<NcVariantAssessment[]>('add_nc_variant_assessment', { assess });
+        
+        // 2. Update the Signal once. No more race conditions!
+        this.ngZone.run(() => {
+          this._variants.set(newVariantList);
+        });
+        
+        return true;
+      } catch (err) {
+        console.error(err);
+        return false;
+      }
+    }
+
 
   // Helper to clear state if needed
   clear() {
-    this._variants.set([]);
+     this.ngZone.run(() => {
+        this._variants.set([]);
+      });
   }
 }

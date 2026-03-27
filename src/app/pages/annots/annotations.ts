@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit } from '@angular/core';
+import { Component, computed, effect, inject, OnInit } from '@angular/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { CommonModule } from '@angular/common';
@@ -28,13 +28,21 @@ export class AnnotationTable implements OnInit {
     displayedColumns: string[] = ['label', 'category', 'symbol', 'curator'];
 
   // Create a reactive data source for the Material Table
-  dataSource = computed(() => {
-    return new MatTableDataSource<NcVariantAssessment>(this.curationService.variants());
-  });
+  dataSource = new MatTableDataSource<NcVariantAssessment>();
 
+  constructor() {
+    effect(() => {
+      this.dataSource.data = this.curationService.variants();
+      console.log("effect, data=", this.dataSource.data);
+    });
+  }
+  
 
   ngOnInit(): void {
-    this.curationService.loadCurationFile();
+    // Only load from file if we don't already have data in memory
+    if (this.curationService.variants().length === 0) {
+      this.curationService.loadCurationFile();
+    }
   }
   /**
    * Helper to extract a display label from the variant enum
