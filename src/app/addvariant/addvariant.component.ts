@@ -359,7 +359,7 @@ export class AddVariantComponent {
   }
 
   async onSelectFile() {
-    await this.curationService.loadCurationFile();
+    await this.curationService.selecteAndLoadCurationFile();
   }
 
 }

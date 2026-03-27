@@ -1,4 +1,4 @@
-use std::{fs::{self, OpenOptions}, path::PathBuf, sync::{Arc, Mutex}};
+use std::{fs::{self}, path::PathBuf, sync::{Arc, Mutex}};
 
 use ga4ghphetools::dto::{
     hgvs_variant::HgvsVariant, intergenic_variant::IntergenicHgvsVariant,
@@ -58,6 +58,7 @@ pub fn run() {
             get_annot_count,
             get_biocuration_orcid,
             get_settings,
+            load_variants_file,
             retrieve_pmid_citation,
             select_curation_file,
             serialize_variant_assessments,
@@ -192,6 +193,33 @@ async fn select_curation_file(
     }
     Err("User canceled selection".into())
 }
+
+#[tauri::command]
+async fn load_variants_file(state: tauri::State<'_, Arc<AppState>>)
+    -> Result<Vec<NcVariantAssessment>, String> {
+        let settings = state.settings.lock()
+                .map_err(|_| "Failed to lock settings".to_string())?;
+        let path_buf = match &settings.curation_json_path {
+            Some(json_path) => json_path.clone(),
+            None => {return Err(format!("Could not find nc-variant file in settings")); },
+        };
+         let contents = fs::read_to_string(&path_buf)
+            .map_err(|e| format!("Failed to read file: {}", e))?;
+            
+        let evaluations: Vec<NcVariantAssessment> = serde_json::from_str(&contents)
+            .map_err(|e| format!("Failed to parse JSON: {}", e))?;
+        {
+            let mut list = state.curated_variant_list.lock()
+                .map_err(|_| "Failed to lock variant list".to_string())?;
+            *list = evaluations.clone();
+        }
+        return Ok(evaluations);
+    
+    
+    }
+
+
+
 
 
 #[tauri::command]

@@ -10,7 +10,7 @@ import { VariantCategorySelectorComponent } from "../../widgets/variantcategory/
 import { NcEvaluationCurationComponent } from "../../widgets/evaluationwidget/evaluationwidget";
 import { ConfigService } from '../../service/configService';
 import { CurationService } from '../../service/curation_service';
-import { Router } from '@angular/router'; // <--- Import this
+import { Router } from '@angular/router'; 
 
 
 export interface AddVariantDialogData {

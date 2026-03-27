@@ -52,7 +52,7 @@ export class Setup {
 
   async onSelectFile() {
     try {
-      await this.curationService.loadCurationFile();
+      await this.curationService.selecteAndLoadCurationFile();
     } catch (err) {
       this.notificationService.showError(`File selection not successful: ${err}.`)
     } 

@@ -1,4 +1,4 @@
-use std::fmt;
+use std::{cmp::Ordering, fmt};
 
 use crate::dto::citation::Citation;
 use ga4ghphetools::dto::{
@@ -7,7 +7,7 @@ use ga4ghphetools::dto::{
 };
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug, Deserialize, Serialize, PartialEq)]
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub enum VariantClass {
     Utr5,
@@ -18,6 +18,34 @@ pub enum VariantClass {
     LncRna,
     Icr,
     MultiGene,
+}
+
+impl VariantClass {
+    // Helper to define your custom priority/rank
+    fn rank(&self) -> u8 {
+        match self {
+            VariantClass::Promoter  => 1,
+            VariantClass::Enhancer  => 2,
+            VariantClass::Utr5      => 3,
+            VariantClass::Utr3      => 4,
+            VariantClass::MicroRNA  => 5,
+            VariantClass::LncRna    => 6,
+            VariantClass::Icr       => 7,
+            VariantClass::MultiGene => 8,
+        }
+    }
+}
+
+impl Ord for VariantClass {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.rank().cmp(&other.rank())
+    }
+}
+
+impl PartialOrd for VariantClass {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
 }
 
 impl fmt::Display for VariantClass {
@@ -101,6 +129,8 @@ pub enum NcVariant {
     Intergenic(IntergenicHgvsVariant),
 }
 
+
+
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CurationEvent {
@@ -123,30 +153,50 @@ pub struct NcVariantAssessment {
     pub biocuration: Vec<CurationEvent>,
 }
 
-impl NcVariantAssessment {
-    pub fn fake_remove_later() -> Self {
-        let fake_sv = StructuralVariant::new(
-            "fake".to_string(),
-            "fake".to_string(),
-            "NM_fake.1".to_string(),
-            "HGNC:123456789".to_string(),
-            ga4ghphetools::dto::structural_variant::SvType::Del,
-            "fake".to_string(),
-        )
-        .unwrap();
 
-        Self {
-            variant_coordinates: NcVariant::Structural(fake_sv),
-            variant_category: VariantClass::Enhancer,
-            annotations: vec![],
-            biocuration: vec![],
+
+impl PartialEq for NcVariantAssessment {
+    fn eq(&self, other: &Self) -> bool {
+        self.variant_coordinates == other.variant_coordinates
+    }
+}
+
+impl Eq for NcVariantAssessment {}
+
+impl PartialOrd for NcVariantAssessment {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for NcVariantAssessment {
+    fn cmp(&self, other: &Self) -> Ordering {
+        let class_cmp = self.variant_category.cmp(&other.variant_category);
+        if class_cmp != Ordering::Equal {
+            return class_cmp;
+        }
+
+        match (&self.variant_coordinates, &other.variant_coordinates) {
+            // 1. If both are the same category, compare the inner data
+            (NcVariant::Hgvs(a), NcVariant::Hgvs(b)) => a.cmp(&b),
+            (NcVariant::Structural(a), NcVariant::Structural(b)) => a.cmp(&b),
+            (NcVariant::Intergenic(a), NcVariant::Intergenic(b)) => a.cmp(&b),
+            // 2. If they are different variants, define the order of the variants themselves
+            (NcVariant::Hgvs(_), _) => Ordering::Less,    // Hgvs is "smallest" (first)
+            (_, NcVariant::Hgvs(_)) => Ordering::Greater,
+
+            (NcVariant::Structural(_), NcVariant::Intergenic(_)) => Ordering::Less,
+            (NcVariant::Intergenic(_), NcVariant::Structural(_)) => Ordering::Greater,
         }
     }
 }
 
+
+
+
 #[cfg(test)]
 mod test {
-    use rstest::{fixture, rstest};
+    use rstest::{rstest};
 
     #[rstest]
     fn retrieve_citation() {}

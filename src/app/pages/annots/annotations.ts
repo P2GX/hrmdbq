@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, OnInit } from '@angular/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { CommonModule } from '@angular/common';
@@ -18,7 +18,8 @@ import { NotificationService } from '../../service/notification.service';
   templateUrl: './annotations.html',
   styleUrl: './annotations.css'
 })
-export class AnnotationTable {
+export class AnnotationTable implements OnInit {
+
 
     public curationService = inject(CurationService);
     private configService = inject(ConfigService);
@@ -31,6 +32,10 @@ export class AnnotationTable {
     return new MatTableDataSource<NcVariantAssessment>(this.curationService.variants());
   });
 
+
+  ngOnInit(): void {
+    this.curationService.loadCurationFile();
+  }
   /**
    * Helper to extract a display label from the variant enum
    */

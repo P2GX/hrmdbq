@@ -15,6 +15,6 @@ export class VariantListComponent {
   totalCount = this.curationService.count;
 
   async onSelectFile() {
-    await this.curationService.loadCurationFile();
+    await this.curationService.selecteAndLoadCurationFile();
   }
 }
