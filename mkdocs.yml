@@ -51,6 +51,8 @@ nav:
   - Liftover: 'curation/liftover.md'
   - UTR5: 'curation/utr5.md'
   - Promoter: 'curation/promoter.md'
+  - HGVS: 'curation/hgvs.md'
+  - Functional evidence: 'curation/functional.md'
 - Developers: 'curation.md'
 
 
