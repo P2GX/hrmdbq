@@ -1,5 +1,5 @@
 import { Component, computed, inject, input, output, signal } from "@angular/core";
-import { NcVariantEvaluation, Pathomechanism, PATHOMECHANISM_LABELS, Reporter, VariantClass } from "../../service/models";
+import { Pathomechanism, PATHOMECHANISM_LABELS, VariantClass } from "../../service/models";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { MatDividerModule } from "@angular/material/divider";
@@ -10,9 +10,7 @@ import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { MatCardModule } from "@angular/material/card";
 import { MatCheckboxModule } from '@angular/material/checkbox'; // <--- Import this
 import { NotificationService } from "../../service/notification.service";
-import { PubmedComponent } from "../pubmed/pubmed.component";
-import { Citation } from "../../service/citation";
-import { single } from "rxjs";
+
 
 
 export interface PathoGroup {
@@ -63,30 +61,18 @@ export class PathomechanismCurationComponent {
   //reporters = signal<Reporter[]>([]);
   //cosegregation = signal<boolean>(false);
   //comment = signal<string | undefined>(undefined);
-  //submitted = signal<boolean>(false);
+  
 
   stepFinished = computed(() => {
    return  !!this.pathomechanism() 
   });
  
 
-  /*  addReporter() {
-        // Use .update() to create a new array with the new object appended
-        this.reporters.update(currentReporters => [
-            ...currentReporters, 
-            { assay: 'luciferase', regulation: 'unchanged' }
-        ]);
-    }
-
-    removeReporter(index: number) {
-        this.reporters.update(currentReporters => 
-            currentReporters.filter((_, i) => i !== index)
-        );
-    }
-
-    isEvaluationValid(): boolean {
-        return !!(this.pathomechanism() && this.citation());
-    }*/
+  setPathomechanism(pm: Pathomechanism): void {
+    this.pathomechanism.set(pm);
+    this.submitted.set(true);
+    this.stepComplete.emit(pm);
+  }
 
     submit() {
         const pathomechanism = this.pathomechanism();
@@ -143,9 +129,40 @@ export class PathomechanismCurationComponent {
     }
 
 
- /* handleNewCitation(cite: Citation) {
-    this.citation.set(cite);
-  }*/
+ 
+  pathomechanismLabel(): string {
+    let pat = this.pathomechanism();
+    if (! pat) return "Unknown";
+    const labels: Record<Pathomechanism, string> = {
+        lossOfFunction: "Loss of function",
+        gainOfFunction: "Gain of function",
+        dominantNegative: "Dominant negative",
+        reducedTranscription: "Reduced transcription",
+        increasedTranscription: "Increased transcriptiom",
+        reducedExpression: "Reduced expression",
+        increasedExpression: "Increased expression",
+        enhancerHijacking: "Enhancer hijacking",
+        insulatorLoss: "Insulator loss",
+        spliceDefect: "Splice defect",
+        mrnaStability: "Altered mRNA stability",
+        secondaryStructure: "Altered RNA secondary structure",
+        impairedRnaProcessing: "Impaired RNA processing",
+        uORFCreation: "uORF creation",
+        uORFDisruption: "uORF disruption",
+        kozakDisruption: "Kozak sequence disruption",
+        reducedTranslation: "Reduced translation",
+        increasedTranslation: "Increased translation",
+        microRNAbindingSiteDisruption: "miRNA binding site disruption",
+        microRNAbindingSiteCreation: "miRNA binding site creation",
+        iREdisruption: "iron-responsive element disruption",
+        iRESdisruption: "internaql ribosome entry site disruption",
+        rBPbindingSiteDisruption: "RNA binding protein site disruption",
+        unknown: "Unknown"
+    };
+   
+    return labels[pat];
+   
+  }
 
 
 

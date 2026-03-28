@@ -11,7 +11,9 @@ import { PathomechanismCurationComponent } from "../../widgets/pathomechanismwid
 import { ConfigService } from '../../service/configService';
 import { CurationService } from '../../service/curation_service';
 import { Router } from '@angular/router';
-import { ReporterWidgetComponent } from "../../widgets/reporter/reporter"; 
+import { ReporterWidgetComponent } from "../../widgets/reporter/reporter";
+import { CitationComponent, CitationPacket } from "../../widgets/citationwidget/citation";
+import { MatIconModule } from "@angular/material/icon"; 
 
 
 export interface AddVariantDialogData {
@@ -30,7 +32,9 @@ export interface AddVariantDialogData {
     AddVariantComponent,
     VariantCategorySelectorComponent,
     PathomechanismCurationComponent,
-    ReporterWidgetComponent
+    ReporterWidgetComponent,
+    CitationComponent,
+    MatIconModule
 ],
   templateUrl: './curate.html',
   styleUrl: './curate.css'
@@ -38,7 +42,7 @@ export interface AddVariantDialogData {
 export class CurationWidget {
 
   readonly VariantKind = VariantKind;
-  currentStep = signal(108); 
+  currentStep = signal(1); 
 
     // 2. Data collection from steps
   geneData = signal<GeneStepResult | null>(null);
@@ -46,6 +50,7 @@ export class CurationWidget {
   variantClass = signal<VariantClass | null>(null);
   pathomechanism = signal<Pathomechanism | null>(null);
   reporters = signal<Reporter[]>([]);
+  cite_packet = signal<CitationPacket | null>(null);
 
   private notificationService = inject(NotificationService);
    private configService = inject(ConfigService);
@@ -70,6 +75,7 @@ export class CurationWidget {
 
   onPathomechanismStepComplete(pathomechanism: Pathomechanism): void {
     this.pathomechanism.set(pathomechanism);
+    console.log("setting path", pathomechanism);
     this.currentStep.set(5);
   }
 
@@ -78,7 +84,11 @@ export class CurationWidget {
     this.currentStep.set(6);
   }
 
-  // 4. Reset logic (if user goes back)
+  onCitationStepComplete(citePacket: CitationPacket): void {
+    this.cite_packet.set(citePacket);
+    this.currentStep.set(7);
+  }
+
   resetToStep(step: number) {
     this.currentStep.set(step);
     if (step === 1) {
@@ -86,19 +96,35 @@ export class CurationWidget {
       this.variantData.set(null);
        this.variantClass.set(null);
        this.pathomechanism.set(null);
+       this.reporters.set([]);
+       this.cite_packet.set(null);
        this.currentStep.set(0);
     } else if (step === 2) {
       this.variantData.set(null);
        this.variantClass.set(null);
        this.pathomechanism.set(null);
+       this.reporters.set([]);
+       this.cite_packet.set(null);
         this.currentStep.set(1);
     } else if (step === 3) {
        this.variantClass.set(null);
        this.pathomechanism.set(null);
+       this.reporters.set([]);
+       this.cite_packet.set(null);
         this.currentStep.set(2);
     } else if (step === 4) {
       this.pathomechanism.set(null);
+      this.reporters.set([]);
+      this.cite_packet.set(null);
        this.currentStep.set(3);
+    } else if (step === 5) {
+      this.pathomechanism.set(null);
+      this.reporters.set([]);
+      this.cite_packet.set(null);
+       this.currentStep.set(4);
+    } else if (step === 6) {
+      this.cite_packet.set(null);
+       this.currentStep.set(5);
     }
   }
 
@@ -119,10 +145,10 @@ export class CurationWidget {
       return;
     }
 
-
-    const annot = null; //this.evaluation();
-    if (! annot) {
-       this.notificationService.showError("Cannot save without variant Evaluation");
+    const reporter_list = this.reporters(); // allowed to be empty, no check performed
+    const citation = this.cite_packet();
+    if (! citation ) {
+       this.notificationService.showError("Cannot save without citation");
       return;
     }
     const currentOrcid = this.configService.getOrcid();
@@ -131,6 +157,23 @@ export class CurationWidget {
       return;
     }
     const curation = this.configService.createCurationEvent(currentOrcid);
+
+    const annot: NcVariantEvaluation = {
+      pathomechanism: pathomechanism,
+      reporter: reporter_list,
+      citation: citation.citation
+    };
+
+    if (citation.cosegregation) {
+      annot.cosegregation_evidence = true;
+    }
+    if (citation.phenotypicEvidence) {
+      annot.phenotypic_evidence = true;
+    }
+    let cmt = citation.comment;
+    if (cmt && cmt.length > 0) {
+      annot.comment = cmt;
+    }
 
     const ncAssess: NcVariantAssessment = {
       variantCoordinates: variant,

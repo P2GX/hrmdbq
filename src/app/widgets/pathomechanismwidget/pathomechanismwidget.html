@@ -35,7 +35,7 @@
           
           <div class="patho-grid">
             @for (pm of group.options; track pm) {
-              <button type="button" class="patho-badge" (click)="pathomechanism.set(pm)">
+              <button type="button" class="patho-badge" (click)="setPathomechanism(pm)">
                 <span class="truncate">{{ getPathoLabel(pm) }}</span>
                 <mat-icon class="text-slate-300 scale-75">add_circle_outline</mat-icon>
               </button>
@@ -81,23 +81,27 @@
           (citationRetrieved)="handleNewCitation($event)">
         </app-pubmed>
     </section> -->
-
-    <div class="flex justify-end gap-3 border-t pt-4">
-      <button mat-button (click)="cancel()">Reset</button>
-      <button mat-raised-button color="primary" 
-              [disabled]="!pathomechanism()"
-              (click)="submit()">
-        Add Pathomechanism to Assessment
-      </button>
-    </div>
   </mat-card>
 } @else {
- <div class="confirmed-badge">
-    <div class="data-info">
+    <div class="confirmed-badge">
+      <div class="data-info">
         <mat-icon class="success-icon">check_circle</mat-icon>
-
         <span class="label">Pathomechanism:</span>
-        <strong>{{ pathomechanism() }}</strong>
+        <strong>{{ pathomechanismLabel() }}</strong>
+      </div>
+    
+      <button 
+        mat-icon-button 
+        color="warn" 
+        (click)="cancel()" 
+        matTooltip="Reset and Edit"
+        class="shrink-0">
+        <mat-icon>restart_alt</mat-icon>
+      </button>
+    </div>
+
+
+
 
      <!--   
 
@@ -112,14 +116,7 @@
         <span class="label">Comment:</span>
         <strong>{{ comment() || 'N/A' }}</strong>
 -->
-        <button 
-            class="reset-btn"
-            mat-icon-button color="warn" 
-            (click)="cancel()" 
-            matTooltip="Reset Variant and Edit">
-            <mat-icon>restart_alt</mat-icon>
-        </button>
-    </div>
-</div>
+   
+
 }
 

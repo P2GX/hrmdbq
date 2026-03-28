@@ -1,9 +1,5 @@
 
 
-/* TODO. Make these interfaces exact correspondences to the Rust structs */
-
-import { Citation } from "./citation";
-
 export interface NcVariantAssessment {
   variantCoordinates: NcVariant;
   variantCategory: VariantClass;
@@ -116,7 +112,8 @@ export const PATHOMECHANISM_LABELS: Record<Pathomechanism, string> = {
 
 export interface NcVariantEvaluation {
   pathomechanism: Pathomechanism;
-  cosegregation?: boolean;
+  cosegregation_evidence?: boolean;
+  phenotypic_evidence?: boolean;
   reporter: Reporter[]; 
   comment?: string;
   citation: Citation; 
@@ -318,3 +315,27 @@ export interface HgncBundle {
 }
 
 
+
+export interface Citation {
+  authorList: string;
+  title: string;
+  journal: string;
+  year: number;
+  volume: string;
+  pages: string;
+  pmid: string;
+}
+
+
+
+export function defaultCitation(): Citation {
+    return {
+         authorList: '',
+            title: '',
+            journal: '',
+            year: 0,
+            volume: '',
+            pages: '',
+            pmid: ''
+    };
+}

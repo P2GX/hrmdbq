@@ -1,5 +1,5 @@
 <div class="curation-container">
-    <h2>Variant Curation Wizard {{currentStep()}}</h2>
+    <h2>Variant Curation Wizard: Step {{currentStep()}}/7</h2>
 
     <div class="step-wrapper" [class.active]="currentStep() === 1">
         <app-gene-curation-widget 
@@ -28,11 +28,11 @@
     @if(currentStep() >=4 && variantClass(); as vc) {
         <app-pathomechanism
             [variantClass]="vc"
-             (stepComplete)="onPathomechanismStepComplete($event)">
+            (stepComplete)="onPathomechanismStepComplete($event)">
         </app-pathomechanism>
     }
    @if (currentStep() > 4) { <mat-divider/>  }
-    @if(currentStep() >=0 ) {
+    @if(currentStep() >=5 ) {
         <app-reporter
              (stepComplete)="onReporterStepComplete($event)">
         </app-reporter>
@@ -40,11 +40,27 @@
    @if (currentStep() > 5) { <mat-divider/>  }
 
     @if (currentStep() >= 6) {
-        <div class="step-wrapper fade-in">
-            <h3>Review & Save</h3>
-            <button mat-raised-button color="accent" (click)="onFinalSave()">
-                Save
-            </button>
-        </div>
+        <app-citation
+            (stepComplete)="onCitationStepComplete($event)">
+        </app-citation>
     } 
+    @if (currentStep() > 6) { <mat-divider/>  }
+    @if (currentStep() >= 7) {
+        <div class="final-step-container animate-in">
+            <div class="review-card">
+            <div class="text-center mb-6">
+                <mat-icon class="final-check-icon">auto_awesome</mat-icon>
+                <h3 class="text-slate-800 font-black text-xl mb-1">Curation Complete</h3>
+            </div>
+
+            <button mat-flat-button 
+                    class="commit-button" 
+                    (click)="onFinalSave()">
+                <mat-icon>verified_user</mat-icon>
+                Commit to Database
+            </button>
+            </div>
+        </div>
+        }
+
 </div>

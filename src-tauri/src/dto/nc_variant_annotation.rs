@@ -213,7 +213,13 @@ pub struct NcVariantEvaluation {
     /// e.g. reduced transcription
     pub pathomechanism: Pathomechanism,
     /// Was the variant shown to cosegregate in the current paper?
-    pub cosegregation: Option<bool>,
+    /// Note that we would never enter false because in this case we would assume the variant is not causal
+    /// Thus, we are entering either "true" or "n/a"
+    pub cosegregation_evidence: Option<bool>,
+    /// Were clinical manifestations consistent with the disease in the current paper?
+    /// Note that we would never enter false because in this case we would assume the variant is not causal
+    /// Thus, we are entering either "true" or "n/a"
+    pub phenotypic_evidence: Option<bool>,
     pub reporter: Vec<Reporter>,
     pub comment: Option<String>,
     pub citation: Citation,

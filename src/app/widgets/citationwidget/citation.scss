@@ -1,0 +1,31 @@
+.section-header {
+  @apply flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400;
+  mat-icon { 
+    @apply text-sm; 
+}
+}
+
+.evidence-card {
+  @apply p-4 rounded-xl border border-slate-200 bg-white transition-all;
+  
+  &.active {
+    @apply border-blue-200 bg-blue-50/30 shadow-sm;
+  }
+
+  ::ng-deep .mat-checkbox-layout {
+    @apply whitespace-normal;
+  }
+}
+
+.final-save-btn {
+  @apply px-8 py-6 rounded-xl font-bold text-lg transition-transform;
+  
+  &:not([disabled]):hover {
+    @apply scale-105 shadow-lg;
+  }
+}
+
+/* Ensure the PubMed component matches our style */
+app-pubmed {
+  @apply block bg-white rounded-xl border border-slate-200 p-1;
+}

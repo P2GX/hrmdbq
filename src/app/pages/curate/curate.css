@@ -1,0 +1,39 @@
+.final-step-container {
+  @apply flex justify-center py-12 mt-8 border-t-2 border-dashed border-slate-100;
+}
+
+.review-card {
+  @apply bg-white p-8 rounded-3xl shadow-xl border border-slate-100 text-center max-w-md w-full;
+  
+  .final-check-icon {
+    @apply text-blue-500 scale-[2] mb-6;
+  }
+}
+
+.commit-button {
+  @apply w-full py-8 rounded-2xl font-black text-lg uppercase tracking-widest transition-all !important;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+  color: white !important;
+  box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+
+  mat-icon {
+    @apply mr-2;
+  }
+
+  &:hover {
+    @apply scale-[1.02] shadow-2xl;
+    filter: brightness(1.1);
+  }
+
+  &:active {
+    @apply scale-[0.98];
+  }
+
+  animation: button-pulse 2s infinite;
+}
+
+@keyframes button-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4); }
+  70% { box-shadow: 0 0 0 15px rgba(37, 99, 235, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
+}

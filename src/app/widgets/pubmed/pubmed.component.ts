@@ -1,8 +1,8 @@
-import { Component, computed, inject, output, signal } from '@angular/core';
+import { Component, inject, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ConfigService } from '../../service/configService';
-import { Citation } from '../../service/citation';
+import { Citation } from '../../service/models';
 import { MatInputModule } from "@angular/material/input";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatIconModule } from "@angular/material/icon";

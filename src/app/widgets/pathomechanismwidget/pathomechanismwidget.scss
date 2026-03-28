@@ -91,39 +91,7 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-.data-info {
-  display: grid;
-  // Column 1: fits the widest label; Column 2: takes the rest
-  grid-template-columns: max-content 1fr; 
-  gap: 8px 16px; // Vertical gap: 8px, Horizontal gap: 16px
-  align-items: center;
-  padding: 1rem;
-  background: #f8fafc;
-  border-radius: 8px;
 
-  .success-icon {
-    grid-column: 1 / -1; // Make the icon span the full width of the first row
-    justify-self: center;
-    margin-bottom: 8px;
-  }
-
-  .label {
-    font-weight: 600;
-    color: #64748b;
-    text-transform: uppercase;
-    font-size: 0.75rem;
-  }
-
-  strong {
-    word-break: break-word; // Prevents long strings from breaking the layout
-  }
-
-  .reset-btn {
-    grid-column: 1 / -1; // Push the reset button to its own full-width row at the bottom
-    justify-self: end;
-    margin-top: 8px;
-  }
-}
 
 .patho-section {
   @apply border-l-2 border-slate-100 pl-4 py-1 transition-colors;
