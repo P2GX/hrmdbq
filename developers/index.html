@@ -473,6 +473,24 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Developers
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -489,6 +507,47 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#git-tags" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Git tags
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#manual-release" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Manual release
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -512,7 +571,43 @@
 
 
 <h1 id="developers">Developers</h1>
-<p>todo</p>
+<p>This page explains the release process whereby installers are added to a Release on the project GitHub page.</p>
+<p>Following an important update, increment the Application version (we are using the same version number in Cargo.toml and package.json and tauri.conf.json).
+The version number will be something like 0.5.12. 
+The <code>npm version patch</code> script will increment patch version in Cargo.toml and <code>package.json</code> and create the tag. You will see the new
+tag version on the shell. Use this (adjust <code>v.0.5.???</code>) to push to origin. This will trigger a new release. </p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>add<span class="w"> </span>.
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;&lt;whatever&gt;&quot;</span>
+npm<span class="w"> </span>version<span class="w"> </span>patch<span class="w">  </span>
+git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>&lt;tag&gt;
+</code></pre></div>
+<p>(e.g., <code>git push origin v0.5.129</code>)</p>
+<p>If all goes well, this will add a new release with Mac, Windows, and Debian/Ubuntu installers.</p>
+<h3 id="git-tags">Git tags</h3>
+<p>Here are some tips for dealing with the tags.</p>
+<ol>
+<li>Update the local tags
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>fetch<span class="w"> </span>--prune<span class="w"> </span>--prune-tags<span class="w"> </span>origin
+</code></pre></div></li>
+<li>
+<p>Show the available tags
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>tag
+</code></pre></div></p>
+</li>
+<li>
+<p>Show latest tag
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>describe<span class="w"> </span>--tags<span class="w"> </span>--abbrev<span class="o">=</span><span class="m">0</span>
+</code></pre></div></p>
+</li>
+</ol>
+<p>Note that we have run the following command
+<div class="highlight"><pre><span></span><code>npm<span class="w"> </span>config<span class="w"> </span><span class="nb">set</span><span class="w"> </span>tag-version-prefix<span class="w"> </span>v
+</code></pre></div></p>
+<h3 id="manual-release">Manual release</h3>
+<p>To create an installer locally (for the current OS), enter the following command
+<div class="highlight"><pre><span></span><code>npm<span class="w"> </span>run<span class="w"> </span>tauri<span class="w"> </span>build
+</code></pre></div></p>
+<p>This will create an installer under <code>src-tauri/target/release/bundle/</code>.</p>
 
 
 
