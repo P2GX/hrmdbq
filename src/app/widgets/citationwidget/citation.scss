@@ -29,3 +29,61 @@
 app-pubmed {
   @apply block bg-white rounded-xl border border-slate-200 p-1;
 }
+
+.grid-row-1 {
+  display: grid;
+  /* Fixed width for checkboxes, auto-grow for the search */
+  grid-template-columns: 180px 180px 1fr; 
+  gap: 16px;
+  align-items: end; /* This keeps the checkboxes level with the search input */
+}
+
+.evidence-card {
+  @apply flex items-center px-4 rounded-xl border border-slate-200 bg-white;
+  height: 56px; /* Matches the height of a standard Material outline input */
+  
+  &.active {
+    @apply border-blue-400 bg-blue-50/50;
+  }
+}
+
+.checkbox-label {
+  @apply font-bold text-xs uppercase tracking-tight text-slate-600;
+}
+
+.pubmed-wrapper {
+  min-width: 0; /* Prevents flex/grid blowouts */
+  
+  app-pubmed {
+    display: block;
+    width: 100%;
+  }
+}
+
+.section-header {
+  @apply flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-slate-400;
+  mat-icon { font-size: 14px; width: 14px; height: 14px; }
+}
+
+mat-form-field.w-full {
+  display: block;
+  width: 100%;
+
+  /* Ensures the textarea starts thin but grows */
+  textarea {
+    resize: none; 
+    line-height: 1.4;
+    padding-top: 2px;
+    padding-bottom: 2px;
+  }
+
+  /* Kills the extra padding Material adds for error messages */
+  ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+    display: none !important;
+  }
+}
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}

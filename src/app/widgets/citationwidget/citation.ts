@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { Citation } from '../../service/models'; 
 import { PubmedComponent } from '../pubmed/pubmed.component';
 import { NotificationService } from '../../service/notification.service';
+import { TextFieldModule } from '@angular/cdk/text-field';
 
 
 /* This widget returns a few bits of data-"everything else", including the PMID */
@@ -30,7 +31,8 @@ export interface CitationPacket {
     MatInputModule, 
     MatButtonModule, 
     MatIconModule,
-    PubmedComponent
+    PubmedComponent,
+    TextFieldModule
   ],
   templateUrl: './citation.html',
   styleUrl: './citation.scss'

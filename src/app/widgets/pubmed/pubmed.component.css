@@ -1,17 +1,10 @@
 /* pubmed.component.css */
 
 .pubmed-dialog {
-  padding: 20px;
   max-width: 600px;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-.pubmed-dialog h2 {
-  margin: 0 0 20px 0;
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #1a202c;
-}
 
 .form-group {
   margin-bottom: 20px;
@@ -151,4 +144,17 @@
   .spacer {
     display: none;
   }
+}
+
+.dense-field {
+  /* This ensures the Material form field doesn't add its own bottom margin */
+  margin-bottom: 0 !important;
+
+  ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+    display: none; /* Secondary fallback to kill vertical space */
+  }
+}
+
+.animate-in {
+  @apply w-full; /* Ensure the container spans the grid column */
 }

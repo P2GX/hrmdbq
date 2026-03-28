@@ -90,42 +90,13 @@ export class CurationWidget {
   }
 
   resetToStep(step: number) {
+    if (step <= 6) this.cite_packet.set(null);
+    if (step <= 5) this.reporters.set([]);
+    if (step <= 4) this.pathomechanism.set(null);
+    if (step <= 3) this.variantClass.set(null);
+    if (step <= 2) this.variantData.set(null);
+    if (step <= 1) this.geneData.set(null);
     this.currentStep.set(step);
-    if (step === 1) {
-      this.geneData.set(null);
-      this.variantData.set(null);
-       this.variantClass.set(null);
-       this.pathomechanism.set(null);
-       this.reporters.set([]);
-       this.cite_packet.set(null);
-       this.currentStep.set(0);
-    } else if (step === 2) {
-      this.variantData.set(null);
-       this.variantClass.set(null);
-       this.pathomechanism.set(null);
-       this.reporters.set([]);
-       this.cite_packet.set(null);
-        this.currentStep.set(1);
-    } else if (step === 3) {
-       this.variantClass.set(null);
-       this.pathomechanism.set(null);
-       this.reporters.set([]);
-       this.cite_packet.set(null);
-        this.currentStep.set(2);
-    } else if (step === 4) {
-      this.pathomechanism.set(null);
-      this.reporters.set([]);
-      this.cite_packet.set(null);
-       this.currentStep.set(3);
-    } else if (step === 5) {
-      this.pathomechanism.set(null);
-      this.reporters.set([]);
-      this.cite_packet.set(null);
-       this.currentStep.set(4);
-    } else if (step === 6) {
-      this.cite_packet.set(null);
-       this.currentStep.set(5);
-    }
   }
 
   async onFinalSave() {

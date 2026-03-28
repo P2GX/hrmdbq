@@ -63,7 +63,7 @@ export class ReporterWidgetComponent {
         this.reporters.update(list => 
             list.map(r => r.assay === assay ? { ...r, regulation: reg } : r)
         );
-        this.stepComplete.emit(this.reporters());
+        //this.stepComplete.emit(this.reporters());
     }
 
    

@@ -1,39 +1,47 @@
 <div class="pubmed-container">
   <label class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 block">
-    Supporting Citation
+    PMID
   </label>
 
   @if (!isConfirmed()) {
-    <div class="animate-in">
-      <div class="flex gap-2 mb-3">
-        <mat-form-field appearance="outline" class="flex-1 dense-field">
-          <mat-label>PMID</mat-label>
-          <input matInput 
-                 [ngModel]="pmidInput()" 
-                 (ngModelChange)="pmidInput.set($event)"
-                 placeholder="Enter PMID"
-                 (keyup.enter)="retrieveCitation()">
-        </mat-form-field>
-        
-        <button mat-flat-button color="primary" class="h-[56px]"
-                [disabled]="!pmidInput() || isLoading()" 
-                (click)="retrieveCitation()">
-          @if (isLoading()) { <mat-spinner diameter="20"></mat-spinner> }
-          @else { Retrieve }
-        </button>
+   <div class="animate-in">
+  <div class="flex items-start gap-2">
+    
+    <mat-form-field appearance="outline" class="flex-1 dense-field" subscriptSizing="dynamic">
+      <mat-label>PMID</mat-label>
+      <input matInput 
+             [ngModel]="pmidInput()" 
+             (ngModelChange)="pmidInput.set($event)"
+             placeholder="Enter PMID"
+             (keyup.enter)="retrieveCitation()">
+    </mat-form-field>
+    
+    <button mat-flat-button 
+            color="primary" 
+            class="h-[56px] px-8 font-bold uppercase tracking-wide transition-all hover:brightness-110 active:scale-95 whitespace-nowrap"
+            [disabled]="!pmidInput() || isLoading()" 
+            (click)="retrieveCitation()">
+      
+      <div class="flex items-center gap-2">
+        @if (isLoading()) { 
+          <mat-spinner diameter="20" color="accent"></mat-spinner> 
+          <span>Searching...</span>
+        } @else { 
+          <mat-icon>search</mat-icon>
+          <span>Retrieve</span> 
+        }
       </div>
+    </button>
+  </div>
 
-      @if (citation(); as citation) {
-        <div class="p-3 bg-slate-50 border rounded-lg mb-4 animate-pop-in">
-          <div class="text-sm font-medium text-slate-800">{{ citation.title }}</div>
-          <div class="flex justify-end mt-2 gap-2">
-            <button mat-button color="warn" (click)="clear()">Cancel</button>
-            <button mat-raised-button color="success" (click)="accept()">Confirm & Use</button>
-          </div>
-        </div>
-      }
+  @if (citation(); as citation) {
+    <div class="p-2 mt-2 bg-blue-50 border border-blue-100 rounded-lg flex items-center justify-between animate-pop-in">
+        <span class="text-xs font-medium text-blue-800 truncate px-2">
+          Found: {{ citation.title }}
+        </span>
     </div>
-
+  }
+</div>
   } @else {
     <div class="citation-confirmed-card animate-pop-in">
       @if(citation(); as citation) {
