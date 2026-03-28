@@ -16,7 +16,7 @@ export class VariantCategorySelectorComponent {
   stepComplete = output<VariantClass>();
   categories: VariantClass[] = [
     'utr5', 'promoter', 'enhancer', 'utr3', 
-    'microRna', 'lncRna', 'icr', 'multiGene'
+    'microRna', 'lncRna', 'icr', 'multiGene','tRna', 'snRna', 'snoRna'
   ];
 
   selectedCategory = signal<VariantClass | null>(null);
@@ -38,7 +38,10 @@ export class VariantCategorySelectorComponent {
       microRna: "microRNA",
       lncRna: "lncRNA",
       icr: "ICR",
-      multiGene: "Multi-Gene"
+      multiGene: "Multi-Gene",
+      tRna: 'tRNA',
+      snRna: 'snRNA',
+      snoRna: 'snoRNA'
     };
     if (cat) {
       return labels[cat];

@@ -1,4 +1,4 @@
-use std::{cmp::Ordering, fmt};
+use std::cmp::Ordering;
 
 use crate::dto::citation::Citation;
 use ga4ghphetools::dto::{
@@ -7,21 +7,24 @@ use ga4ghphetools::dto::{
 };
 use serde::{Deserialize, Serialize};
 
+
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub enum VariantClass {
-    Utr5,
     Promoter,
     Enhancer,
+    Utr5,
     Utr3,
     MicroRNA,
     LncRna,
-    Icr,
+    TRna,          // Added for tRNA (Mitochondrial/Nuclear)
+    SnRna,         // Added for Spliceosomal RNAs (e.g., RNU4ATAC)
+    SnoRna,        // Added for Small Nucleolar RNAs
+    Icr,           // Imprinting Control Region
     MultiGene,
 }
 
 impl VariantClass {
-    // Helper to define your custom priority/rank
     fn rank(&self) -> u8 {
         match self {
             VariantClass::Promoter  => 1,
@@ -30,11 +33,15 @@ impl VariantClass {
             VariantClass::Utr3      => 4,
             VariantClass::MicroRNA  => 5,
             VariantClass::LncRna    => 6,
-            VariantClass::Icr       => 7,
-            VariantClass::MultiGene => 8,
+            VariantClass::TRna      => 7,
+            VariantClass::SnRna     => 8,
+            VariantClass::SnoRna    => 9,
+            VariantClass::Icr       => 10,
+            VariantClass::MultiGene => 11,
         }
     }
 }
+
 
 impl Ord for VariantClass {
     fn cmp(&self, other: &Self) -> Ordering {
@@ -48,15 +55,18 @@ impl PartialOrd for VariantClass {
     }
 }
 
-impl fmt::Display for VariantClass {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+impl std::fmt::Display for VariantClass {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let label = match self {
-            Self::Utr5 => "5' UTR",
             Self::Promoter => "Promoter",
             Self::Enhancer => "Enhancer",
+            Self::Utr5 => "5' UTR",
             Self::Utr3 => "3' UTR",
             Self::MicroRNA => "microRNA",
             Self::LncRna => "lncRNA",
+            Self::TRna => "tRNA",
+            Self::SnRna => "snRNA",
+            Self::SnoRna => "snoRNA",
             Self::Icr => "ICR",
             Self::MultiGene => "Multi-Gene",
         };
@@ -64,27 +74,75 @@ impl fmt::Display for VariantClass {
     }
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub enum Pathomechanism {
+    // General / Functional
     LossOfFunction,
     GainOfFunction,
     DominantNegative,
+    
+    // Transcriptional / Architecture
     ReducedTranscription,
     IncreasedTranscription,
-    IREdisruption,
-    SpliceDefect,
-    UORFCreation,
-    UORFDisruption,
-    ReducedTranslation,
-    IncreasedTranslation,
     ReducedExpression,
     IncreasedExpression,
+    EnhancerHijacking,
+    InsulatorLoss,
+    
+    // RNA Processing & Stability
+    SpliceDefect,
+    MrnaStability,
+    SecondaryStructure,
+    ImpairedRnaProcessing,
+    
+    // Translational Control (5' UTR)
+    UORFCreation,
+    UORFDisruption,
+    KozakDisruption,
+    ReducedTranslation,
+    IncreasedTranslation,
+    
+    // Regulatory Site Interaction (UTRs)
     MicroRNAbindingSiteDisruption,
     MicroRNAbindingSiteCreation,
-    KozakDisruption,
-    SecondaryStructure,
+    IREdisruption,      // Iron Responsive Element
+    IRESdisruption,     // Internal Ribosome Entry Site
+    RBPbindingSiteDisruption,
+    
     Unknown,
+}
+
+impl std::fmt::Display for Pathomechanism {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let label = match self {
+            Self::LossOfFunction => "Loss of Function (LoF)",
+            Self::GainOfFunction => "Gain of Function (GoF)",
+            Self::DominantNegative => "Dominant Negative",
+            Self::ReducedTranscription => "Reduced transcription",
+            Self::IncreasedTranscription => "Increased transcription",
+            Self::ReducedExpression => "Reduced expression",
+            Self::IncreasedExpression => "Increased expression",
+            Self::EnhancerHijacking => "Enhancer hijacking",
+            Self::InsulatorLoss => "Insulator/CTCF site loss",
+            Self::SpliceDefect => "Splice defect",
+            Self::MrnaStability => "mRNA stability alteration",
+            Self::SecondaryStructure => "Secondary structure alteration",
+            Self::ImpairedRnaProcessing => "Impaired ncRNA processing",
+            Self::UORFCreation => "uORF creation",
+            Self::UORFDisruption => "uORF disruption",
+            Self::KozakDisruption => "Kozak sequence disruption",
+            Self::ReducedTranslation => "Reduced translation",
+            Self::IncreasedTranslation => "Increased translation",
+            Self::MicroRNAbindingSiteDisruption => "microRNA binding site disruption",
+            Self::MicroRNAbindingSiteCreation => "microRNA binding site creation",
+            Self::IREdisruption => "IRE disruption",
+            Self::IRESdisruption => "IRES disruption",
+            Self::RBPbindingSiteDisruption => "RBP site disruption",
+            Self::Unknown => "Unknown pathomechanism",
+        };
+        write!(f, "{}", label)
+    }
 }
 
 
@@ -93,6 +151,12 @@ pub enum Pathomechanism {
 pub enum ReporterAssay {
     Qpcr,
     Luciferase,
+    Emsa,
+    WesternBlot,
+    Splicing,
+    ClinicalRna,
+    ClinicalProtein,
+    ClinicalEnzymeActivity
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -102,6 +166,40 @@ pub enum ReporterRegulation {
     Down,
     Unchanged,
 }
+
+impl Default for ReporterRegulation {
+    fn default() -> Self {
+        Self::Unchanged
+    }
+}
+
+impl std::fmt::Display for ReporterAssay {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let label = match self {
+            Self::Qpcr => "qPCR",
+            Self::Luciferase => "Luciferase",
+            Self::Emsa => "EMSA",
+            Self::WesternBlot => "Western Blot",
+            Self::Splicing => "Splicing Assay",
+            Self::ClinicalRna => "Patient-derived RNA Study",
+            Self::ClinicalProtein => "Patient-derived Protein Study",
+            Self::ClinicalEnzymeActivity => "Patient-derived Enzyme Activity",
+        };
+        write!(f, "{}", label)
+    }
+}
+
+impl std::fmt::Display for ReporterRegulation {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let label = match self {
+            Self::Up => "Increased (UP)",
+            Self::Down => "Decreased (DOWN)",
+            Self::Unchanged => "No Change (N/A)",
+        };
+        write!(f, "{}", label)
+    }
+}
+
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Reporter {

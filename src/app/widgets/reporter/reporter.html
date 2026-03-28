@@ -1,0 +1,89 @@
+<div class="reporter-dashboard">
+  @if (!submitted()) {
+
+  <div>
+    <div class="assay-section-label">
+      <mat-icon class="!text-sm">science</mat-icon> In-Vitro / Model Systems
+    </div>
+    <div class="assay-grid">
+      @for (assay of experimentalAssays; track assay) {
+        <ng-container *ngTemplateOutlet="tileTmpl; context: { $implicit: assay }"></ng-container>
+      }
+    </div>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <div>
+    <div class="assay-section-label text-blue-500">
+      <mat-icon class="!text-sm">medication</mat-icon> Patient-Derived Evidence
+    </div>
+    <div class="assay-grid">
+      @for (assay of clinicalAssays; track assay) {
+        <ng-container *ngTemplateOutlet="tileTmpl; context: { $implicit: assay, isClinical: true }"></ng-container>
+      }
+    </div>
+  </div>
+
+  <ng-template #tileTmpl let-assay let-isClinical="isClinical">
+    @let rep = getReporter(assay);
+    <div class="assay-tile" 
+         [class.is-active]="rep.regulation !== 'unchanged'"
+         [class.clinical-type]="isClinical"
+         [class.bg-up]="rep.regulation === 'up'"
+         [class.bg-down]="rep.regulation === 'down'">
+      
+      <span class="text-[9px] font-bold text-center leading-tight mb-1">
+        {{ getDisplayLabel(assay) }}
+      </span>
+
+      <div class="control-group">
+        <button type="button" class="btn-up" [class.active]="rep.regulation === 'up'" (click)="setReg(assay, 'up')">UP</button>
+        <button type="button" class="btn-na" [class.active]="rep.regulation === 'unchanged'" (click)="setReg(assay, 'unchanged')">N/A</button>
+        <button type="button" class="btn-down" [class.active]="rep.regulation === 'down'" (click)="setReg(assay, 'down')">DN</button>
+      </div>
+    </div>
+  </ng-template>
+  <div class="flex justify-between items-center mb-4">
+       <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+         Record Functional Observations
+       </span>
+       @if (hasAnyData()) {
+         <button mat-button color="warn" class="dense-btn" (click)="reset()">
+           <mat-icon class="scale-75">restart_alt</mat-icon> Clear All
+         </button>
+       }
+    </div>
+
+    <div class="flex justify-end pt-4 mt-4 border-t border-slate-200">
+      <button mat-flat-button color="primary" 
+              [disabled]="!hasAnyData()" 
+              (click)="submit()">
+        Confirm & Save Evidence
+      </button>
+    </div>
+  } @else {
+    <div class="confirmed-badge flex items-center justify-between p-4 bg-emerald-50 border border-emerald-200 rounded-2xl animate-in">
+    <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
+      <mat-icon class="text-emerald-600">check_circle</mat-icon>
+      <span class="font-bold text-emerald-900 text-sm">Evidence Recorded:</span>
+      
+      <div class="flex flex-wrap gap-2">
+        @for (rep of reporters(); track rep.assay) {
+          @if (rep.regulation !== 'unchanged') {
+            <div class="summary-chip">
+              <span class="label">{{ getDisplayLabel(rep.assay) }}</span>
+              <span class="val" [class.up]="rep.regulation === 'up'">
+                {{ rep.regulation | uppercase }}
+              </span>
+            </div>
+          }
+        }
+      </div>
+    </div>
+
+    <button mat-icon-button (click)="reset()" matTooltip="Return to Editor">
+      <mat-icon class="text-emerald-700">edit</mat-icon>
+    </button>
+  </div>
+  }

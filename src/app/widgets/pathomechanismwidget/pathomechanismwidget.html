@@ -10,16 +10,40 @@
       
       
       @if (!pathomechanism()) {
-          <label class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 block">
-          1. Pathomechanism
-      </label>
-          <div class="patho-grid animate-in">
-          @for (pm of pathomechanismOptions; track pm) {
+          <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 block">
+    1. Select Pathomechanism by Category
+  </label>
+  
+  <div class="space-y-6 animate-in">
+      @for (group of pathoGroups; track group.label) {
+        <div class="patho-section" 
+       [class.is-suggested]="group.label === activeGroupLabel()">
+          <div class="flex items-center gap-2 mb-3">
+          <mat-icon [class.text-purple-500]="group.label === activeGroupLabel()" 
+                  class="text-slate-300 !text-sm">
+          {{ group.icon }}
+          </mat-icon>
+          <span class="text-xs font-bold" 
+              [class.text-purple-700]="group.label === activeGroupLabel()"
+              [class.text-slate-600]="group.label !== activeGroupLabel()">
+              {{ group.label }}
+            @if(group.label === activeGroupLabel()) {
+              <span class="ml-2 text-[9px] bg-purple-100 text-purple-600 px-1.5 py-0.5 rounded-full uppercase">Suggested</span>
+            }
+          </span>
+      </div>
+          
+          <div class="patho-grid">
+            @for (pm of group.options; track pm) {
               <button type="button" class="patho-badge" (click)="pathomechanism.set(pm)">
-              {{ getPathoLabel(pm) }}
+                <span class="truncate">{{ getPathoLabel(pm) }}</span>
+                <mat-icon class="text-slate-300 scale-75">add_circle_outline</mat-icon>
               </button>
-          }
+            }
           </div>
+        </div>
+      }
+    </div>
       } @else {
           <div class="!flex !flex-row items-center justify-start gap-4 p-3 bg-blue-50 border border-blue-200 rounded-xl animate-pop-in">
           <div class="flex items-center gap-20 shrink-0">
@@ -39,37 +63,8 @@
       </div>
     </section>
 
-    <section class="mb-6 p-4 bg-slate-50 rounded-lg border border-slate-200">
-      <div class="flex justify-between items-center mb-3">
-        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">2. Reporter Results</label>
-        <button mat-button color="primary" (click)="addReporter()" size="small">
-          <mat-icon>add</mat-icon> Add Assay
-        </button>
-      </div>
-
-      @for (rep of reporters(); track $index) {
-        <div class="flex items-center gap-4 mb-3 p-2 bg-white rounded border border-slate-200 animate-in">
-          <mat-form-field appearance="outline" class="flex-1 dense-form">
-            <mat-label>Assay</mat-label>
-            <mat-select [(ngModel)]="rep.assay">
-              <mat-option value="qpcr">qPCR</mat-option>
-              <mat-option value="luciferase">Luciferase</mat-option>
-            </mat-select>
-          </mat-form-field>
-
-          <mat-button-toggle-group [(ngModel)]="rep.regulation" class="h-[40px]">
-            <mat-button-toggle value="up"><mat-icon class="text-green-600">trending_up</mat-icon></mat-button-toggle>
-            <mat-button-toggle value="unchanged"><mat-icon class="text-slate-400">remove</mat-icon></mat-button-toggle>
-            <mat-button-toggle value="down"><mat-icon class="text-red-600">trending_down</mat-icon></mat-button-toggle>
-          </mat-button-toggle-group>
-
-          <button mat-icon-button color="warn" (click)="removeReporter($index)">
-            <mat-icon>delete_outline</mat-icon>
-          </button>
-        </div>
-      }
-    </section>
-
+   
+<!--
     <section class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
       <div class="flex items-center gap-2">
         <mat-checkbox [(ngModel)]="cosegregation">Evidence of Cosegregation?</mat-checkbox>
@@ -85,14 +80,14 @@
         <app-pubmed 
           (citationRetrieved)="handleNewCitation($event)">
         </app-pubmed>
-    </section> 
+    </section> -->
 
     <div class="flex justify-end gap-3 border-t pt-4">
       <button mat-button (click)="cancel()">Reset</button>
       <button mat-raised-button color="primary" 
-              [disabled]="!isEvaluationValid()"
+              [disabled]="!pathomechanism()"
               (click)="submit()">
-        Add Evaluation to Assessment
+        Add Pathomechanism to Assessment
       </button>
     </div>
   </mat-card>
@@ -104,20 +99,19 @@
         <span class="label">Pathomechanism:</span>
         <strong>{{ pathomechanism() }}</strong>
 
-        @for(reporter of reporters(); track $index) {
-            <span class="label">{{ reporter.assay }}:</span>
-            <strong>{{ reporter.regulation }}</strong>
-        }
+     <!--   
 
         <span class="label">Cosegregation:</span>
         <strong>{{ cosegregation() }}</strong>
+        <span class="label">Clinical match:</span>
+        <strong>{{ clinical() }}</strong>
 
         <span class="label">Citation:</span>
         <strong>{{ citation() }}</strong>
 
         <span class="label">Comment:</span>
         <strong>{{ comment() || 'N/A' }}</strong>
-
+-->
         <button 
             class="reset-btn"
             mat-icon-button color="warn" 

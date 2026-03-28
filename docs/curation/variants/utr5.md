@@ -7,7 +7,7 @@ The following Figure shows a view of the 5'UTR of the [F9 gene](https://genome.u
 
 ## Example
 
-[Kosem etl al (2012)](https://pubmed.ncbi.nlm.nih.gov/23108224/) report on a  Cathepsin C gene 5'-untranslated region mutation in papillon-lefèvre syndrome (PLS)
+[Kosem etl al (2012)](https://pubmed.ncbi.nlm.nih.gov/23108224/) report on a  Cathepsin C gene 5'-untranslated region mutation in Papillon-Lefèvre syndrome (PLS)
 The authors analyzed 6 PLS cases and 12 unaffected relatives. 
 A homozygous substitution was named c.-55C>A was detected in all patients in a homozygous state. Unaffecteds were heterozygous or had homozygous wildtype (thus, there was *cosegregation*).
 The patients had fairly characteristic clinical manifestations (thus, there was *characteristic Clinical phenotype*).

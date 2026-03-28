@@ -11,9 +11,28 @@ export interface NcVariantAssessment {
   biocuration: CurationEvent[];
 }
 
-export type VariantClass = 'utr5' | 'promoter' | 'enhancer' | 'utr3' | 'microRna' | 'lncRna' | 'icr' | 'multiGene';
+export type VariantClass = 
+  | 'utr5' 
+  | 'promoter' 
+  | 'enhancer' 
+  | 'utr3' 
+  | 'microRna' 
+  | 'lncRna' 
+  | 'tRna'       
+  | 'snRna'      
+  | 'snoRna'    
+  | 'icr' 
+  | 'multiGene';
 
-export type ReporterAssay = 'qpcr' | 'luciferase';
+export type ReporterAssay = 
+  | 'qpcr'
+  | 'luciferase'
+  | 'emsa'
+  | 'westernBlot'
+  | 'splicing'
+  | 'clinicalRna'
+  | 'clinicalProtein'
+  | 'clinicalEnzymeActivity';
 
 export type ReporterRegulation = 'up' | 'down' | 'unchanged';
 
@@ -23,47 +42,77 @@ export interface Reporter {
 }
 
 export type Pathomechanism = 
-  'lossOfFunction'
+  // General/Functional
+  | 'lossOfFunction'
   | 'gainOfFunction'
   | 'dominantNegative'
+  
+  // Transcriptional Control (Promoters/Enhancers/ICR)
   | 'reducedTranscription'
   | 'increasedTranscription'
-  | 'iREdisruption'
+  | 'reducedExpression'       // General "lower levels"
+  | 'increasedExpression'     // General "higher levels"
+  | 'enhancerHijacking'       // SVs moving enhancers
+  | 'insulatorLoss'           // ICR/CTCF disruption
+  
+  // RNA Processing & Stability (Introns/3' UTR)
   | 'spliceDefect'
+  | 'mrnaStability'           // Changes in RNA half-life
+  | 'secondaryStructure'      // Folding changes (rRNA/snRNA/tRNA)
+  | 'impairedRnaProcessing'
+  
+  // Translational Control (5' UTR)
   | 'uORFCreation'
   | 'uORFDisruption'
+  | 'kozakDisruption'
   | 'reducedTranslation'
   | 'increasedTranslation'
-  | 'reducedExpression'
-  | 'increasedExpression'
+  
+  // Regulatory Site Interaction (UTRs)
   | 'microRNAbindingSiteDisruption'
   | 'microRNAbindingSiteCreation'
-  | 'kozakDisruption'
-  | 'secondaryStructure'
+  | 'iREdisruption'            // Iron Responsive Element
+  | 'iRESdisruption' // internal ribosome entry site 
+  | 'rBPbindingSiteDisruption' // RNA-Binding Protein sites (generic)
+  
   | 'unknown';
 
-
 export const PATHOMECHANISM_LABELS: Record<Pathomechanism, string> = {
+    // General / Functional
     lossOfFunction: 'Loss of Function (LoF)',
     gainOfFunction: 'Gain of Function (GoF)',
     dominantNegative: 'Dominant Negative',
-    unknown: 'Unknown Pathomechanism',
+    
+    // Transcriptional / Architecture
     reducedTranscription: "Reduced transcription",
     increasedTranscription: "Increased transcription",
-    iREdisruption: "Internal ribosome entry site disruption",
-    spliceDefect: "Splice defect",
-    uORFCreation: "upstream ORF creation",
-    uORFDisruption: "upstream ORF disruption",
-    reducedTranslation: "Reduced translatiom",
-    increasedTranslation: "Increased translation",
     reducedExpression: "Reduced expression",
     increasedExpression: "Increased expression",
+    enhancerHijacking: "Enhancer hijacking",
+    insulatorLoss: "Insulator/CTCF site loss",
+    
+    // RNA Processing & Stability
+    spliceDefect: "Splice defect",
+    mrnaStability: "mRNA stability alteration",
+    secondaryStructure: "Secondary structure alteration",
+    impairedRnaProcessing: "Impaired ncRNA processing",
+    
+    // Translational Control (5' UTR)
+    uORFCreation: "uORF creation",
+    uORFDisruption: "uORF disruption",
+    kozakDisruption: "Kozak sequence disruption",
+    reducedTranslation: "Reduced translation",
+    increasedTranslation: "Increased translation",
+    
+    // Regulatory Site Interaction (UTRs)
     microRNAbindingSiteDisruption: "microRNA binding site disruption",
     microRNAbindingSiteCreation: "microRNA binding site creation",
-    kozakDisruption: "Kozak sequence disruption",
-    secondaryStructure: "Secondary structure alteration",
+    iREdisruption: "Iron Responsive Element (IRE) disruption",
+    iRESdisruption: "Internal Ribosome Entry Site (IRES) disruption",
+    rBPbindingSiteDisruption: "RNA-binding protein (RBP) site disruption",
+    
+    unknown: 'Unknown pathomechanism',
 };
-
 
 export interface NcVariantEvaluation {
   pathomechanism: Pathomechanism;

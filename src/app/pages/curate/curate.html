@@ -1,5 +1,5 @@
 <div class="curation-container">
-    <h2>Variant Curation Wizard</h2>
+    <h2>Variant Curation Wizard {{currentStep()}}</h2>
 
     <div class="step-wrapper" [class.active]="currentStep() === 1">
         <app-gene-curation-widget 
@@ -25,14 +25,21 @@
         </app-variant-category-selector>
     }
     @if (currentStep() > 3) { <mat-divider/>  }
-    @if(currentStep() >=4) {
-        <app-evaluation-widget
-             (stepComplete)="onEvaluationStepComplete($event)">
-        </app-evaluation-widget>
+    @if(currentStep() >=4 && variantClass(); as vc) {
+        <app-pathomechanism
+            [variantClass]="vc"
+             (stepComplete)="onPathomechanismStepComplete($event)">
+        </app-pathomechanism>
     }
    @if (currentStep() > 4) { <mat-divider/>  }
+    @if(currentStep() >=0 ) {
+        <app-reporter
+             (stepComplete)="onReporterStepComplete($event)">
+        </app-reporter>
+    }
+   @if (currentStep() > 5) { <mat-divider/>  }
 
-    @if (currentStep() >= 5) {
+    @if (currentStep() >= 6) {
         <div class="step-wrapper fade-in">
             <h3>Review & Save</h3>
             <button mat-raised-button color="accent" (click)="onFinalSave()">

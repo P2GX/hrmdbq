@@ -124,3 +124,35 @@
     margin-top: 8px;
   }
 }
+
+.patho-section {
+  @apply border-l-2 border-slate-100 pl-4 py-1 transition-colors;
+}
+
+.patho-section:hover {
+  @apply border-purple-200;
+}
+
+.patho-grid {
+  display: grid;
+  /* Adjust minmax to ensure labels don't get too squished */
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
+  gap: 0.5rem;
+}
+
+.patho-badge {
+  @apply px-3 py-2 text-xs font-medium border rounded-md transition-all 
+         flex items-center justify-between bg-white text-slate-600;
+  border-color: theme('colors.slate.200');
+}
+
+.patho-badge:hover {
+  @apply border-purple-400 bg-purple-50 text-purple-700;
+}
+
+/* Make icons smaller inside the badges */
+.patho-badge mat-icon {
+  width: 16px;
+  height: 16px;
+  font-size: 16px;
+}

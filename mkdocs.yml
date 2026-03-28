@@ -5,6 +5,9 @@ theme:
   features:
     - navigation.tabs
     - navigation.sections
+    - navigation.expand      # Opens the current path automatically
+    - navigation.prune       # Hides anything not in the current path
+    - navigation.indexes     # Optional: makes the parent "Variant types" a clickable link
     - toc.integrate
     - navigation.top
     - search.suggest
@@ -49,11 +52,15 @@ nav:
 - Curation:
   - Overview: 'curation/index.md'
   - Liftover: 'curation/liftover.md'
-  - UTR5: 'curation/utr5.md'
-  - Promoter: 'curation/promoter.md'
+  - Variant types:
+    - Overview: 'curation/variants/overview.md'
+    - UTR5: 'curation/variants/utr5.md'
+    - Promoter: 'curation/variants/promoter.md'
+    - Enhancer: 'curation/variants/enhancer.md'
+    - RNA genes: 'curation/variants/rna.md'
   - HGVS: 'curation/hgvs.md'
   - Functional evidence: 'curation/functional.md'
-- Developers: 'curation.md'
+- Developers: 'developers.md'
 
 
 
