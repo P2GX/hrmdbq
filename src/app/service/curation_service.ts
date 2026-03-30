@@ -1,6 +1,6 @@
 import { Injectable, signal, computed, inject, NgZone } from '@angular/core';
 import { invoke } from '@tauri-apps/api/core';
-import { GeneCuration, GeneCurationFile, HgncBundle, NcVariantAssessment, NcVariantEvaluation } from './models';
+import { GeneCuration, GeneCurationFile, GeneNote, HgncBundle, NcVariantAssessment, NcVariantEvaluation, WebResource } from './models';
 import { NotificationService } from './notification.service';
 
 
@@ -18,6 +18,13 @@ export class CurationService {
 
   private _currentCuration = signal<GeneCuration | null>(null);
   readonly currentCuration = this._currentCuration.asReadonly();
+
+  private _hasUnsavedChanges = signal<boolean>(false);
+  readonly hasUnsavedChanges = this._hasUnsavedChanges.asReadonly();
+
+  clearChanges(): void {
+    this._hasUnsavedChanges.set(false);
+  }
 
   // 4. Helper Computeds
   readonly isGeneLoaded = computed(() => !!this._currentCuration());
@@ -91,22 +98,20 @@ export class CurationService {
     }
 
     async saveVariant(assess: NcVariantAssessment) {
-      this.notificationService.showError("REFACT");
       try {
-        // 1. Rust does the work and returns the final state
         const newVariantList = await invoke<NcVariantAssessment[]>('add_nc_variant_assessment', { assess });
-        
-        // 2. Update the Signal once. No more race conditions!
-        this.ngZone.run(() => {
-          //this._variants.set(newVariantList);
+        this._currentCuration.update(current => {
+          if (!current) return null;
+          return {
+            ...current,           
+            annotations: newVariantList 
+          };
         });
-        
         return true;
       } catch (err) {
         console.error(err);
         return false;
       }
-      
     }
 
   async createGeneCuration(symbol: string, hgnc: HgncBundle): Promise<boolean> {
@@ -118,6 +123,82 @@ export class CurationService {
        this.notificationService.showError(`Could not create gene curation: ${err}.`);
     }
     return false;
+  }
+
+  /**
+   * Persists the entire current state to the file system.
+   */
+  async saveActiveCurationToDisk() {
+    const data = this._currentCuration();
+    if (!data) return;
+
+    try {
+      // Assuming your Rust command takes the whole object
+      await invoke('save_gene_curation_file', { curation: data });
+      
+      this._hasUnsavedChanges.set(false); // Reset dirty flag
+      this.notificationService.showSuccess(`Saved ${data.geneData.symbol} to disk.`);
+    } catch (err) {
+      this.notificationService.showError(`Save failed: ${err}`);
+    }
+  }
+
+  addWebResource(name: string, url: string) {
+    this._currentCuration.update(current => {
+      if (!current) return null;
+      const newResource: WebResource = { name, url };
+      return {
+        ...current,
+        webResources: [...(current.webResources || []), newResource]
+      };
+    });
+    console.log("service addWebResource name=", name, "n=", this.currentCuration()?.webResources.length);
+    const cc = this.currentCuration();
+    console.log(cc);
+    this._hasUnsavedChanges.set(true);
+  }
+
+  addGeneNote(title: string, content: string) {
+    this._currentCuration.update(current => {
+      if (!current) return null;
+      
+      const newNote: GeneNote = {
+        id: crypto.randomUUID(), 
+        title: title,
+        content: content,
+        dateModified: new Date().toISOString()
+      };
+
+      return {
+        ...current,
+        notes: [...(current.notes || []), newNote]
+      };
+    });
+    this._hasUnsavedChanges.set(true);
+  }
+
+  /** Removes a web resource by matching its unique URL */
+  removeWebResource(url: string) {
+    this._currentCuration.update(current => {
+      if (!current) return null;
+      return {
+        ...current,
+        webResources: current.webResources.filter(res => res.url !== url)
+      };
+    });
+    this._hasUnsavedChanges.set(true);
+  }
+
+  /** Removes a note by its unique ID */
+  removeGeneNote(id: string) {
+    this._currentCuration.update(current => {
+      if (!current) return null;
+      return {
+        ...current,
+        notes: current.notes.filter(note => note.id !== id)
+      };
+    });
+    this._hasUnsavedChanges.set(true);
   }
 
 

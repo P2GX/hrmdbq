@@ -21,14 +21,29 @@ export type VariantClass =
   | 'multiGene';
 
 export type ReporterAssay = 
+  // --- Experimental / Functional ---
   | 'qpcr'
   | 'luciferase'
   | 'emsa'
   | 'westernBlot'
   | 'splicing'
+  
+  // --- Clinical / Patient Derived ---
   | 'clinicalRna'
   | 'clinicalProtein'
-  | 'clinicalEnzymeActivity';
+  | 'clinicalEnzymeActivity'
+
+  // --- Computational (In Silico) ---
+  | 'inSilicoSplicePredictor'
+  | 'inSilicoMissensePredictor'
+  | 'tfbsChangePrediction'
+  | 'conservationScore'
+  
+  // --- Regulatory/Other ---
+  | 'chromatinAccessibility'
+  | 'promoterEnhancerAnalysis'
+  | 'otherExperimental'
+  | 'otherComputational';
 
 export type ReporterRegulation = 'up' | 'down' | 'unchanged';
 

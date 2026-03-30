@@ -163,63 +163,6 @@ async fn select_curation_directory(
 }
 
 
-/*
-/// Open the native Save/As window
-#[tauri::command]
-async fn select_curation_file(
-    app: tauri::AppHandle,
-    state: tauri::State<'_, Arc<AppState>>
-) -> Result<SelectionResponse, String> {
-     let settings = state
-        .settings
-        .lock()
-        .map_err(|_| "Failed to lock settings")?;
-    let save_dir = settings.get_hrmd_dir()?;
-    
-    let file_path = FileDialog::new()
-        .set_directory(save_dir)
-        .set_title("Save HR JSON template")
-        //.set_file_name(template_name)
-        .add_filter("JSON", &["json"]) // Strongly suggested
-        .pick_file();
-
-    if let Some(mut path) = file_path {
-        if path.extension().and_then(|s| s.to_str()) != Some("json") {
-            path.set_extension("json");
-        }
-        let is_empty = fs::metadata(&path).map(|m| m.len() == 0).unwrap_or(true);
-
-        if !path.exists() || is_empty {
-            // Initialize with an empty JSON array if the file was empty
-            fs::write(&path, "[]")
-                .map_err(|e| format!("Failed to initialize empty JSON file: {}", e))?;
-        }
-        {
-            let mut settings = state.settings.lock()
-                .map_err(|_| "Failed to lock settings".to_string())?;
-            settings.set_curation_file(path.clone())?;
-            app.emit("settings-update", settings.clone()).map_err(|e|e.to_string() )?;
-        }
-       
-        let contents = fs::read_to_string(&path)
-            .map_err(|e| format!("Failed to read file: {}", e))?;
-            
-        let evaluations: Vec<NcVariantAssessment> = serde_json::from_str(&contents)
-            .map_err(|e| format!("Failed to parse JSON: {}", e))?;
-        {
-            let mut list = state.curated_variant_list.lock()
-                .map_err(|_| "Failed to lock variant list".to_string())?;
-            *list = evaluations.clone();
-        }
-        return Ok(SelectionResponse {
-            evaluations,
-            path,
-        });
-    }
-    Err("User canceled selection".into())
-}
-*/
-
 
 #[tauri::command]
 async fn load_gene_curation_file(state: tauri::State<'_, AppState>, symbol: String)
@@ -287,18 +230,17 @@ fn add_nc_variant_assessment(
       state: tauri::State<'_, AppState>,
       assess: NcVariantAssessment
 ) -> Result<Vec<NcVariantAssessment>, String> {
-   /*   let mut guard = state.curated_variant_list
+    let mut gene_curation_guard = state.current_gene_curation
         .lock()
         .map_err(|_| "Failed to lock mutex".to_string())?;
-    let current_list = std::mem::take(&mut *guard);
+    let gene_curation = gene_curation_guard.as_mut()
+        .ok_or("No active gene curation found in state")?;
+    let current_list = std::mem::take(&mut gene_curation.annotations);
     println!("add_nc_variant_assesment current list size= {}", current_list.len());
-    let updated_list = ncvar::ncvar_assessment::update_ncvar_list(current_list, assess)?;
+    let updated_list: Vec<NcVariantAssessment> = ncvar::ncvar_assessment::update_ncvar_list(current_list, assess)?;
     println!("add_nc_variant_assesment updated list size= {}", updated_list.len());
-    *guard = updated_list.clone();
+    gene_curation.annotations = updated_list.clone();
     Ok(updated_list)
-    */
-    println!("TODO refactor add_nc_variant_assessment");
-    Ok(vec![])
 }
 
 
@@ -306,9 +248,9 @@ fn add_nc_variant_assessment(
 #[tauri::command]
 fn serialize_gene_curation(
     state: tauri::State<'_, AppState>,
-    gene_curation: GeneCuration
+    curation: GeneCuration
 ) -> Result<(), String> {
-    let gene_symbol = gene_curation.get_symbol().to_string();
+    let gene_symbol = curation.get_symbol().to_string();
     let guard = state.gene_list
         .lock()
         .map_err(|_| "Failed to lock mutex".to_string())?;
@@ -316,7 +258,7 @@ fn serialize_gene_curation(
         Some(pb) => pb,
         None => { return Err(format!("Could not retrieve path for {}", gene_symbol)); },
     };
-    crate::util::gene_curation::save_gene_curation(&path_buf, &gene_curation)?;
+    crate::util::gene_curation::save_gene_curation(&path_buf, &curation)?;
     Ok(())
 }
 

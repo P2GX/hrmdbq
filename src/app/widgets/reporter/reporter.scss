@@ -69,3 +69,18 @@
   &.bg-up { @apply border-green-400 bg-green-50/50; }
   &.bg-down { @apply border-red-400 bg-red-50/50; }
 }
+
+/* Add to your existing CSS */
+.comp-type.is-active {
+  border-color: #fbbf24 !important; /* Amber-400 */
+}
+
+/* If you want the 'HI' (UP) state for computational to be amber instead of green */
+.comp-type.bg-up {
+  background-color: #fffbeb !important; /* Amber-50 */
+  border-color: #f59e0b !important; /* Amber-500 */
+}
+
+.comp-type .btn-up.active {
+  background-color: #f59e0b !important;
+}

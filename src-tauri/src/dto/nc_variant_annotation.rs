@@ -156,7 +156,17 @@ pub enum ReporterAssay {
     Splicing,
     ClinicalRna,
     ClinicalProtein,
-    ClinicalEnzymeActivity
+    ClinicalEnzymeActivity,
+    // --- Computational (In Silico) ---
+    InSilicoSplicePredictor, // e.g., SpliceAI, MaxEntScan
+    InSilicoMissensePredictor, // e.g., REVEL, CADD, PolyPhen
+    TfbsChangePrediction,     // Transcription Factor Binding Site
+    ConservationScore,        // e.g., PhyloP, GERP++, PhastCons
+    // --- Regulatory/Other ---
+    ChromatinAccessibility,   // e.g., ATAC-seq data
+    PromoterEnhancerAnalysis,
+    OtherExperimental,
+    OtherComputational
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -184,6 +194,15 @@ impl std::fmt::Display for ReporterAssay {
             Self::ClinicalRna => "Patient-derived RNA Study",
             Self::ClinicalProtein => "Patient-derived Protein Study",
             Self::ClinicalEnzymeActivity => "Patient-derived Enzyme Activity",
+    
+            Self::InSilicoSplicePredictor => "In silico splicing predictor",
+            Self::InSilicoMissensePredictor => "In silico missense predictor",
+            Self::TfbsChangePrediction => "TFBS Change prediction",
+            Self::ConservationScore => "Conservation score",
+            Self::ChromatinAccessibility => "Chromatic accessibility",
+            Self::PromoterEnhancerAnalysis => "Computational Promoter/enhancer analysis",
+            Self::OtherExperimental => "Other experimental",
+            Self::OtherComputational => "Other computational",
         };
         write!(f, "{}", label)
     }

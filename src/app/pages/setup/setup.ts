@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { CommonModule } from '@angular/common';
 import { CurationService } from '../../service/curation_service';
@@ -27,7 +27,8 @@ import { Router } from '@angular/router';
   templateUrl: './setup.html',
   styleUrl: './setup.css'
 })
-export class Setup {
+export class Setup implements OnInit {
+
 
   public curationService = inject(CurationService);
   private configService = inject(ConfigService);
@@ -46,7 +47,10 @@ export class Setup {
 
   currentHgncBundle = signal<HgncBundle|null>(null);
 
-
+  ngOnInit(): void {
+    this.curationService.initialize();
+  }
+  
   public orcidDisplay = computed(() => {
     const orcid = this.configService.settings()?.orcid_id;
     return orcid && orcid.trim() !== '' ? orcid : 'N/A';

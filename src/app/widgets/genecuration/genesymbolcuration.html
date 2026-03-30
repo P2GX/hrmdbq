@@ -22,24 +22,14 @@
     } @else {
         <section class="search-section">
             <div class="search-row">
-                <mat-form-field appearance="outline" class="symbol-input">
-                    <mat-label>Gene Symbol</mat-label>
-                    <input matInput 
-                           [ngModel]="geneSymbol()" 
-                           (ngModelChange)="geneSymbol.set($event.toUpperCase())" 
-                           placeholder="e.g., FBN1"
-                           autocomplete="off"
-                           spellcheck="false"
-                           (keyup.enter)="onSearchGene()">
-                </mat-form-field>
-
-                <div class="action-buttons">
-                    <button mat-flat-button color="primary" 
-                            (click)="onSearchGene()" 
-                            [disabled]="isSearching() || !geneSymbol()">
-                        {{ isSearching() ? 'Fetching...' : 'Lookup Gene' }}
-                    </button>
-                </div>
+               <p>Select a gene for curation from the setup page first.</p>
+                <button mat-icon-button 
+                color="warn" 
+                (click)="onReset()" 
+                matTooltip="Reset and Edit"
+                class="shrink-0">
+                <mat-icon>restart_alt</mat-icon>
+            </button>
             </div>
         </section>
     }

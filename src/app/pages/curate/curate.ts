@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -22,6 +22,10 @@ export interface AddVariantDialogData {
 }
 
 
+
+
+
+
 @Component({
   selector: 'app-about',
   imports: [
@@ -39,7 +43,7 @@ export interface AddVariantDialogData {
   templateUrl: './curate.html',
   styleUrl: './curate.css'
 })
-export class CurationWidget {
+export class CurationWidget implements OnInit {
 
   readonly VariantKind = VariantKind;
   currentStep = signal(1); 
@@ -51,6 +55,24 @@ export class CurationWidget {
   pathomechanism = signal<Pathomechanism | null>(null);
   reporters = signal<Reporter[]>([]);
   cite_packet = signal<CitationPacket | null>(null);
+
+
+
+  ngOnInit(): void {
+    const activeCuration = this.curationService.currentCuration();
+    if (activeCuration) {
+      const initialGene: GeneStepResult = {
+        symbol: activeCuration.geneData.symbol,
+        hgncId: activeCuration.geneData.hgncId,
+        maneId: activeCuration.geneData.maneId
+      };
+      this.geneData.set(initialGene);
+      this.currentStep.set(2); 
+      this.notificationService.showSuccess(`Initialized workspace for ${initialGene.symbol}`);
+    } else {
+      this.notificationService.showError("Could not initialize gene curation. Go back to setup page!")
+    }
+  }
 
   private notificationService = inject(NotificationService);
    private configService = inject(ConfigService);

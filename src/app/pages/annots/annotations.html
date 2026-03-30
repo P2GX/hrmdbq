@@ -1,60 +1,126 @@
 
 <div class="curation-container">
-<div class="table-header">
-  <h2><mat-icon>dna</mat-icon>
-        Curation: {{ activeGeneSymbol() }}</h2>
-  <div class="actions">
-    <button mat-flat-button color="accent" 
-            [disabled]="curationService.variants().length === 0"
-            (click)="exportData()">
-      <mat-icon>download</mat-icon>
-      Export JSON
+  @if (curationService.currentCuration(); as curation) {
+    <div class="table-header">
+      <h2><mat-icon>dna</mat-icon> Curation: {{ activeGeneSymbol() }}</h2>
+      <div class="actions">
+        @if (curationService.hasUnsavedChanges()) {
+           <span class="unsaved-indicator"> Unsaved Changes *  </span>
+        }
+        <button mat-flat-button color="accent" (click)="exportData()">
+          <mat-icon>save</mat-icon> Commit to Disk
+        </button>
+      </div>
+    </div>
+
+    <div class="resources-section mat-elevation-z1">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h3><mat-icon>link</mat-icon> External Resources</h3>
+      
+        <button mat-stroked-button color="primary" (click)="openAddResourceDialog()">
+          <mat-icon>add</mat-icon> Add Resource
+        </button>
+      </div>
+    
+      <div class="resource-chips" style="margin-top: 15px;">
+        @for (res of curationService.currentCuration()?.webResources; track res.url) {
+          <a [href]="res.url" target="_blank" class="resource-link">
+            <mat-icon>open_in_new</mat-icon>
+           {{ res.name }}
+          </a>
+        } @empty {
+          <span class="text-muted">No external resources added yet.</span>
+        }
+      </div>
+  </div>
+
+  <div class="notes-section mat-elevation-z1">
+  <div class="section-header">
+    <h3><mat-icon>note_alt</mat-icon> Curator Notes</h3>
+    <button mat-stroked-button color="primary" (click)="openAddNoteDialog()">
+      <mat-icon>add</mat-icon> Add Note
     </button>
   </div>
+
+  <div class="notes-grid">
+    @for (note of curationService.currentCuration()?.notes; track note.id) {
+      <mat-card class="note-card">
+        <mat-card-header>
+          <mat-card-title>{{ note.title }}</mat-card-title>
+          <mat-card-subtitle>{{ note.dateModified | date:'medium' }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p class="note-body">{{ note.content }}</p>
+        </mat-card-content>
+        <mat-card-actions align="end">
+            <button mat-icon-button color="warn" (click)="deleteNote(note.id)">
+                <mat-icon>delete</mat-icon>
+            </button>
+        </mat-card-actions>
+      </mat-card>
+    } @empty {
+      <p class="text-muted">No notes recorded for this curation session.</p>
+    }
+  </div>
+   <div class="notes-section mat-elevation-z1">
+      <button mat-icon-button color="warn" (click)="addNewVariantCuration()">New curation<mat-icon>new</mat-icon>
+            </button>
+
+   </div>
 </div>
 
-<div class="table-wrapper mat-elevation-z2">
-  
-  @if (curationService.variants().length > 0) {
-    <table mat-table [dataSource]="dataSource()">
+  <div class="table-wrapper mat-elevation-z2">
+    
+    @if (curationService.variants().length > 0) {
+      <table mat-table [dataSource]="dataSource()">
 
-      <ng-container matColumnDef="label">
-        <th mat-header-cell *matHeaderCellDef> Variant Label </th>
-        <td mat-cell *matCellDef="let row"> 
-          <code class="variant-code">{{ getVariantLabel(row.variantCoordinates) }}</code>
-        </td>
-      </ng-container>
+        <ng-container matColumnDef="label">
+          <th mat-header-cell *matHeaderCellDef> Variant Label </th>
+          <td mat-cell *matCellDef="let row"> 
+            <code class="variant-code">{{ getVariantLabel(row.variantCoordinates) }}</code>
+          </td>
+        </ng-container>
 
-      <ng-container matColumnDef="category">
-        <th mat-header-cell *matHeaderCellDef> Category </th>
-        <td mat-cell *matCellDef="let row"> 
-          <span class="category-badge" [attr.data-type]="row.variantCategory">
-            {{ row.variantCategory }}
-          </span>
-        </td>
-      </ng-container>
+        <ng-container matColumnDef="category">
+          <th mat-header-cell *matHeaderCellDef> Category </th>
+          <td mat-cell *matCellDef="let row"> 
+            <span class="category-badge" [attr.data-type]="row.variantCategory">
+              {{ row.variantCategory }}
+            </span>
+          </td>
+        </ng-container>
 
-      <ng-container matColumnDef="symbol">
-        <th mat-header-cell *matHeaderCellDef> Gene </th>
-        <td mat-cell *matCellDef="let row"> 
-          {{ getGeneSymbol(row.variantCoordinates) }}
-        </td>
-      </ng-container>
+        <ng-container matColumnDef="symbol">
+          <th mat-header-cell *matHeaderCellDef> Gene </th>
+          <td mat-cell *matCellDef="let row"> 
+            {{ getGeneSymbol(row.variantCoordinates) }}
+          </td>
+        </ng-container>
 
-      <ng-container matColumnDef="curator">
-        <th mat-header-cell *matHeaderCellDef> Curator </th>
-        <td mat-cell *matCellDef="let row"> 
-          {{ row.biocuration[0]?.orcid || 'System' }}
-        </td>
-      </ng-container>
+        <ng-container matColumnDef="curator">
+          <th mat-header-cell *matHeaderCellDef> Curator </th>
+          <td mat-cell *matCellDef="let row"> 
+            {{ row.biocuration[0]?.orcid || 'System' }}
+          </td>
+        </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>
-  } @else {
-    <div class="empty-state">
-      <p>No annotations found. Please use the Setup page to load data.</p>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    } @else {
+      <div class="empty-state">
+        <p>No annotations found. Please use the Setup page to load data.</p>
+      </div>
+    }
+  </div>
+} @else {
+  <div class="no-workspace-state mat-elevation-z1">
+      <mat-icon color="warn">warning</mat-icon>
+      <h2>No Active Curation Workspace</h2>
+      <p>Please select a gene from the <strong>Setup</strong> page to begin curating.</p>
+      <button mat-flat-button color="primary" (click)="gotToSetup()">
+        Go to Setup
+      </button>
     </div>
-  }
-</div>
+}
 </div>

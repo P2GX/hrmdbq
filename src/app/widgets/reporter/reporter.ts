@@ -10,6 +10,44 @@ import { Reporter, ReporterAssay, ReporterRegulation } from "../../service/model
 import { MatListModule } from "@angular/material/list";
 
 
+export const ReporterAssayLabels: Record<ReporterAssay, string> = {
+  qpcr: 'qPCR / Expression',
+  luciferase: 'Luciferase Reporter',
+  emsa: 'EMSA (Gel Shift)',
+  westernBlot: 'Western Blot',
+  splicing: 'Splicing Assay',
+  clinicalRna: 'Patient RNA-seq',
+  clinicalProtein: 'Patient Protein Analysis',
+  clinicalEnzymeActivity: 'Enzyme Activity Assay',
+  inSilicoSplicePredictor: 'Splice Predictor (SpliceAI/MaxEntScan)',
+  inSilicoMissensePredictor: 'Missense Predictor (REVEL/CADD)',
+  tfbsChangePrediction: 'TFBS Binding Prediction',
+  conservationScore: 'Conservation (PhyloP/GERP)',
+  chromatinAccessibility: 'Chromatin Accessibility (ATAC-seq)',
+  promoterEnhancerAnalysis: 'Promoter/Enhancer Analysis',
+  otherExperimental: 'Other Experimental Evidence',
+  otherComputational: 'Other Computational Evidence'
+};
+
+export const EVIDENCE_GROUPS = [
+  {
+    label: 'Experimental / Functional',
+    options: ['qpcr', 'luciferase', 'emsa', 'westernBlot', 'splicing']
+  },
+  {
+    label: 'Clinical / Patient Derived',
+    options: ['clinicalRna', 'clinicalProtein', 'clinicalEnzymeActivity']
+  },
+  {
+    label: 'Computational (In Silico)',
+    options: ['inSilicoSplicePredictor', 'inSilicoMissensePredictor', 'tfbsChangePrediction', 'conservationScore']
+  },
+  {
+    label: 'Regulatory / Other',
+    options: ['chromatinAccessibility', 'promoterEnhancerAnalysis', 'otherExperimental', 'otherComputational']
+  }
+];
+
 
 @Component({
   selector: 'app-reporter',
@@ -35,8 +73,15 @@ export class ReporterWidgetComponent {
     reporters = signal<Reporter[]>(
         this.DEFAULT_ASSAYS.map(assay => ({ assay, regulation: 'unchanged' } as Reporter))
     );
-    experimentalAssays: ReporterAssay[] = ['luciferase', 'qpcr', 'emsa', 'westernBlot', 'splicing'];
+   
     clinicalAssays: ReporterAssay[] = ['clinicalRna', 'clinicalProtein', 'clinicalEnzymeActivity'];
+    experimentalAssays: ReporterAssay[]  = ['qpcr', 'luciferase', 'emsa', 'westernBlot', 'splicing'];
+    computationalAssays: ReporterAssay[] = [ 'inSilicoSplicePredictor',  'inSilicoMissensePredictor',   'tfbsChangePrediction',  'conservationScore'];
+    regulatoryAssays: ReporterAssay[] = ['chromatinAccessibility', 'promoterEnhancerAnalysis'];
+
+    evidenceGroups = EVIDENCE_GROUPS;
+    labels = ReporterAssayLabels;
+
     hasAnyData = computed(() => 
         this.reporters().some(r => r.regulation !== 'unchanged')
     );
@@ -46,17 +91,7 @@ export class ReporterWidgetComponent {
     }
 
     getDisplayLabel(assay: ReporterAssay): string {
-        const labels: Record<ReporterAssay, string> = {
-            luciferase: 'Luciferase',
-            qpcr: 'qPCR',
-            emsa: 'EMSA',
-            westernBlot: 'Western',
-            splicing: 'Splicing',
-            clinicalRna: 'RNA Study',
-            clinicalProtein: 'Protein Study',
-            clinicalEnzymeActivity: 'Enzyme Act.'
-        };
-        return labels[assay];
+        return this.labels[assay];
     }
 
     setReg(assay: ReporterAssay, reg: ReporterRegulation) {
