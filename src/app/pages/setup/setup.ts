@@ -29,11 +29,6 @@ import { Router } from '@angular/router';
 })
 export class Setup {
 
-onGeneClick(arg0: any) {
-throw new Error('Method not implemented.');
-}
-
-
   public curationService = inject(CurationService);
   private configService = inject(ConfigService);
   private notificationService = inject(NotificationService);
@@ -41,11 +36,13 @@ throw new Error('Method not implemented.');
   private dialog = inject(MatDialog);
   selectedTab = 'introduction';
 
-  curationFiles = signal<GeneCurationFile[]>([]);
+  curationFiles = signal<GeneCurationFile[]>(this.curationService.curationFileList());
   displayedGeneSymbols = computed(() => {
     const symbols = this.curationFiles().map((cf) => cf.geneSymbol);
     return symbols;
   });
+
+
 
   currentHgncBundle = signal<HgncBundle|null>(null);
 
@@ -122,6 +119,16 @@ throw new Error('Method not implemented.');
     if (success) {
       this.router.navigate(["/annots"]);
     }
+  }
+
+  public async onGeneClick(gene: GeneCurationFile): Promise<void> {
+      const symbol = gene.geneSymbol;
+      let success = await this.curationService.loadCurationFile(symbol);
+      if (success) {
+        this.notificationService.showSuccess(`Loaded ${symbol}.`);
+        this.router.navigate(["/annots"]);
+      }
+     
   }
 
 }

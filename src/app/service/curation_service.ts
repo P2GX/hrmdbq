@@ -79,13 +79,14 @@ export class CurationService {
    
   }
 
-    async loadCurationFile(): Promise<void> {
+    async loadCurationFile(symbol: string): Promise<boolean> {
       try {
-        const data = await invoke<NcVariantAssessment[]>('load_variants_file');
-        //this._variants.set(data);
+        const gc = await invoke<GeneCuration>('load_gene_curation_file', {symbol:symbol});
+        this._currentCuration.set(gc);
+        return true;
       } catch (err) {
         console.error('Failed to load file:', err);
-        throw err;
+        return false;
       }
     }
 

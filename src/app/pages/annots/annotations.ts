@@ -44,10 +44,7 @@ export class AnnotationTable implements OnInit {
   
 
   ngOnInit(): void {
-    // Only load from file if we don't already have data in memory
-    if (this.curationService.variants().length === 0) {
-      this.curationService.loadCurationFile();
-    }
+  
   }
   /**
    * Helper to extract a display label from the variant enum

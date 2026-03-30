@@ -47,7 +47,7 @@
   <div class="table-section">
     <h3>Existing Curations</h3>
     <div class="table-wrapper mat-elevation-z2">
-      <table mat-table [dataSource]="curationFiles()">
+      <table mat-table [dataSource]="curationService.curationFileList()">
         
         <ng-container matColumnDef="symbol">
           <th mat-header-cell *matHeaderCellDef> Gene Symbol </th>
@@ -66,7 +66,7 @@
         <tr mat-header-row *matHeaderRowDef="['symbol', 'path']"></tr>
         <tr mat-row 
             *matRowDef="let row; columns: ['symbol', 'path'];"
-            (click)="onGeneClick(row.geneSymbol)"
+            (click)="onGeneClick(row)"
             class="clickable-row">
         </tr>
       </table>
