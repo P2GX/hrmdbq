@@ -1,63 +1,75 @@
-<div class="page-header">
+<div class="curation-container">
+  <div class="header-section">
     <h1 class="page-title">HRMDBQ</h1>
-    <div style="margin-left:2rem; display:flex; gap:2em;">
-        <h2 class="sub-title">Human Regulatory Mutation Database</h2>
+    <p class="subtitle">Human regulatory mutation database curation tool.</p>
+  </div>
+
+  <div class="setup-list">
+    
+    <div class="setup-row">
+      <div class="row-info">
+        <span class="row-label">Biocurator Identity</span>
+        <span class="row-value"><code>{{ orcidDisplay() }}</code></span>
+      </div>
+      <button class="setup-button" (click)="setBiocuratorOrcid()">
+        <span class="material-symbols-outlined">fingerprint</span>
+        Update ORCID
+      </button>
     </div>
-</div>
-<div class="about-body">
-    <div class="about-wrapper">
-        <div class="tabs-container">
-            <button class="tab-button" [class.active]="selectedTab === 'files'"
-                (click)="selectTab('files')">Load/Create curation file
-            </button>
-            <mat-divider class="vertical" [vertical]="true"></mat-divider>
-            <button class="tab-button" [class.active]="selectedTab === 'orcid'" (click)="selectTab('orcid')">ORCID
-            </button>
-            <mat-divider class="vertical" [vertical]="true"></mat-divider>
+
+    <div class="setup-row">
+      <div class="row-info">
+        <span class="row-label">Curation Directory</span>
+        <span class="row-value">{{ curationDirectoryDisplay() || 'No directory selected' }}</span>
+      </div>
+      <button class="setup-button" (click)="onSelectFile()">
+        <span class="material-symbols-outlined">folder_open</span>
+        Change Folder
+      </button>
+    </div>
+
+    <div class="setup-row">
+      <div class="row-info">
+        <span class="row-label">Create New Curation</span>
+        <div class="input-wrapper">
+          <input #newGeneInput type="text" placeholder="Enter Gene Symbol (e.g. SHH)..." 
+                 (keyup.enter)="createNewGeneCuration(newGeneInput.value); newGeneInput.value=''">
         </div>
-
-        @switch (selectedTab) {
-            @case ('files') {
-                <div class="tab-content">
-                <p class="instruction-text">
-                To begin curating, please select an existing JSON curation file or create a new one.
-            </p>
-            
-            <button class="button" (click)="onSelectFile()">
-                <span class="material-symbols-outlined">folder_open</span>
-                {{ curationService.variants().length > 0 ? 'Change File' : 'Select File' }}
-            </button>
-                <div class="file-status">
-                    <mat-icon class="success-icon">check_circle</mat-icon>
-                    <span [matTooltip]="curationService.currentPath()" 
-                        matTooltipPosition="above"
-                        class="file-badge">
-                        {{ curationFileDisplay() }}
-                    </span>
-                </div>
-            </div>
-            }
-
-            @case ('orcid') {
-                <div class="tab-content">
-                    <h3>Biocurator Identity</h3>
-                        <p class="instruction-text">
-                            Your ORCID iD is used to attribute your curations correctly in the database.
-                        </p>
-
-                        <div class="id-display-card">
-                            <span class="label">Current ORCID:</span>
-                            <code [class.not-available]="orcidDisplay() === 'N/A'">
-                                {{ orcidDisplay() }}
-                            </code>
-                        </div>
-
-                        <button class="button" (click)="setBiocuratorOrcid()">
-                            <span class="material-symbols-outlined">fingerprint</span>
-                            {{ orcidDisplay() === 'N/A' ? 'Set ORCID iD' : 'Update ORCID iD' }}
-                        </button>
-                </div>
-            }
-        }
+      </div>
+      <button class="setup-button primary" (click)="createNewGeneCuration(newGeneInput.value); newGeneInput.value=''">
+        <span class="material-symbols-outlined">add_circle</span>
+        Create File
+      </button>
     </div>
+
+  </div>
+
+  <div class="table-section">
+    <h3>Existing Curations</h3>
+    <div class="table-wrapper mat-elevation-z2">
+      <table mat-table [dataSource]="curationFiles()">
+        
+        <ng-container matColumnDef="symbol">
+          <th mat-header-cell *matHeaderCellDef> Gene Symbol </th>
+          <td mat-cell *matCellDef="let element"> 
+            <strong>{{element.geneSymbol}}</strong> 
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="path">
+          <th mat-header-cell *matHeaderCellDef> File Path </th>
+          <td mat-cell *matCellDef="let element" class="path-text"> 
+            {{element.file}} 
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="['symbol', 'path']"></tr>
+        <tr mat-row 
+            *matRowDef="let row; columns: ['symbol', 'path'];"
+            (click)="onGeneClick(row.geneSymbol)"
+            class="clickable-row">
+        </tr>
+      </table>
+    </div>
+  </div>
 </div>

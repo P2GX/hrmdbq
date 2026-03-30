@@ -339,3 +339,46 @@ export function defaultCitation(): Citation {
             pmid: ''
     };
 }
+
+
+/**
+ * Information about the current gene being curated
+ */
+export interface GeneTranscriptData {
+  symbol: string;
+  hgncId: string; // Matches camelCase rename
+  maneId: string; // Matches camelCase rename
+}
+
+export interface WebResource {
+  name: string;
+  url: string;
+}
+
+/**
+ * Individual evidence or curator notes
+ */
+export interface GeneNote {
+  id: string;
+  title: string;
+  content: string;
+  dateModified: string; // Matches camelCase rename
+}
+
+/**
+ * The master workspace object for a single gene curation session
+ */
+export interface GeneCuration {
+  geneData: GeneTranscriptData;
+  webResources: WebResource[];
+  notes: GeneNote[];
+  annotations: NcVariantAssessment[]; // Assuming this interface is defined elsewhere
+}
+
+/**
+ * Used for the landing page list/scrollbar
+ */
+export interface GeneCurationFile {
+  geneSymbol: string;
+  file: string; // PathBuf serializes to a string in JSON
+}

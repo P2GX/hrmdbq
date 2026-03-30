@@ -1,131 +1,112 @@
-
-h2 {
-    font-weight: 200;
-    margin-bottom: 0.5rem;
-    margin-top: 0;
-    max-width: 27rem;
-    font-size: 1.3rem;
+.curation-container {
+  padding: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
-
-.about-wrapper {
-    display: flex;
-    flex-direction: column;
-    width: 80cqw;
+.setup-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 40px;
 }
 
-.about-body {
-    display: flex;
-    padding: 0 1.5rem;
-    justify-content: center;
-    margin-bottom: 2rem;
+.setup-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  transition: box-shadow 0.2s;
 }
 
-.button {
-    background-color: var(--md-sys-color-primary);
-    align-self: center;
-    color: white;
-    border-radius: 3em;
-    width: 10rem;
-    height: 3rem;
-    border: none;
-    font-size: 1rem;
-    cursor: pointer;
-    box-shadow: 0 0.2em 0.5em rgba(0, 0, 0, 0.3);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 0.5rem;
+.setup-row:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
-.button:hover {
-    background-color: var(--md-sys-color-primary-hover);
-    transition: background-color 0.2s ease;
-    box-shadow: 0 0.2em 0.5em rgba(0, 0, 0, 0.4)
+.row-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
 }
 
-.material-symbols-outlined {
-    color: white;
-
+.row-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-button.tab-button {
-    font-size: 1rem;
-    padding: 0.5rem 1rem;
-    border: none;
-    background-color: transparent;
-    cursor: pointer;
-    width: 15rem;
-    transition: background-color 0.2s ease;
-    margin: 0.3em;
-    border-radius: 0.3rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 0.5rem;
-
+.row-value {
+  font-size: 15px;
+  color: #333;
 }
 
-button.tab-button.active {
-    background-color: var(--md-sys-color-primary-container);
-    color: black;
+.input-wrapper {
+  margin-top: 4px;
+  max-width: 300px;
 }
 
-button.tab-button:hover:not(.active) {
-    background-color: var(--md-sys-color-primary-container);
+.input-wrapper input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
 }
 
-.tabs-container {
-    display: flex;
-    box-shadow: 0 2px 4px var(--shadow-header);
-    background-color: var(--md-sys-color-on-primary);
-    border-radius: 0.5rem;
-    position: relative;
-    animation-timing-function: ease-in;
-    animation: mymove 0.5s;
-    margin-bottom: 2rem;
+/* Button Styling */
+.setup-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1px solid #1976d2;
+  background: white;
+  color: #1976d2;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  white-space: nowrap;
 }
 
-@keyframes mymove {
-    from {
-        top: -1rem;
-    }
-
-    to {
-        top: 0rem;
-    }
+.setup-button:hover {
+  background: #f0f7ff;
 }
 
-.mat-divider.vertical {
-    width: 1px;
-    color: var(--md-sys-color-outline);
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
+.setup-button.primary {
+  background: #1976d2;
+  color: white;
 }
 
-
-.material-symbols-outlined.tab-icon {
-    color: rgb(50, 50, 50);
-    font-size: 20px;
+.setup-button.primary:hover {
+  background: #1565c0;
 }
 
-
-.mat-divider {
-    width: 40%;
-    color: var(--md-sys-color-outline);
+/* Table Styling Re-fix */
+.table-section h3 {
+  margin-bottom: 12px;
+  color: #444;
 }
 
-.control-header {
-    display: flex;
-    justify-content: space-between;
-    width: 80cqw;
-    margin-bottom: 1.5rem;
-    padding: 0 1.5rem;
-    min-width: 700px;
-    max-width: 1400px;
+.table-wrapper {
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e0e0e0;
 }
 
-p {
-    font-weight: 300;
-    margin: 0;
+table {
+  width: 100%;
+}
+
+.clickable-row {
+  cursor: pointer;
+}
+
+.clickable-row:hover {
+  background-color: #fafafa;
 }

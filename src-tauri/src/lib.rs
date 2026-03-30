@@ -7,61 +7,51 @@ use ga4ghphetools::dto::{
 use tauri::Emitter;
 
 use crate::{
-    dto::{citation::Citation, nc_variant_annotation::{NcVariantAssessment}},
-    util::{hgnc_rest::HgncBundle, settings::HrmdbqSettings},
+    dto::{citation::Citation, nc_variant_annotation::{GeneCuration, GeneCurationFile, NcVariantAssessment}},
+    util::{gene_curation::get_path, hgnc_rest::HgncBundle, settings::HrmdbqSettings},
 };
 
-
+use rfd::FileDialog;
 
 pub mod dto;
 pub mod util;
 pub mod ncvar;
 
 struct AppState {
-    curated_variant_list: Mutex<Vec<NcVariantAssessment>>,
-    settings: Mutex<HrmdbqSettings>,
+    pub settings: Mutex<HrmdbqSettings>,
+    pub gene_list: Mutex<Vec<GeneCurationFile>>,
+    pub current_gene_curation: Mutex<Option<GeneCuration>>,
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let initial_settings = HrmdbqSettings::load_settings();
-
-    let mut initial_variants: Vec<NcVariantAssessment> = Vec::new();
-    if let Some(ref path_buf) = initial_settings.curation_json_path {
-        if path_buf.exists() {
-            match fs::read_to_string(path_buf) {
-                Ok(contents) => {
-                    // Try to deserialize. If it fails, we just start with an empty list.
-                    if let Ok(evals) = serde_json::from_str::<Vec<NcVariantAssessment>>(&contents) {
-                        initial_variants = evals;
-                        println!("Successfully loaded {} items from saved path.", initial_variants.len());
-                    }
-                }
-                Err(e) => eprintln!("Failed to read saved curation file: {}", e),
-            }
-        }
-    } 
-
-
-    let app_state = Arc::new(AppState {
-        curated_variant_list: Mutex::new(initial_variants),
-        settings: Mutex::new(initial_settings),
-    });
+    let mut curation_list: Vec<GeneCurationFile> = Vec::new();
+    if let Ok(dir_path) = initial_settings.get_hrmd_dir() {
+        curation_list = util::gene_curation::scan_curation_directory(&dir_path);
+    }
+    let app_state = AppState {
+                settings: Mutex::new(initial_settings),
+                gene_list: Mutex::new(curation_list),
+                current_gene_curation: Mutex::new(None)
+    };
     tauri::Builder::default()
+        .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_dialog::init())
         .manage(app_state)
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             add_nc_variant_assessment,
+            create_gene_curation,
             fetch_gene_data_from_hgnc,
             get_variant_assessments,
-            get_annot_count,
             get_biocuration_orcid,
+            get_gene_curation_list,
             get_settings,
-            load_variants_file,
+            load_gene_curation_file,
             retrieve_pmid_citation,
-            select_curation_file,
-            serialize_variant_assessments,
+            select_curation_directory,
+            serialize_gene_curation,
             set_biocuration_orcid,
             update_orcid,
             validate_hgvs_variant,
@@ -73,28 +63,20 @@ pub fn run() {
 }
 
 
-#[tauri::command]
-fn get_annot_count(state: tauri::State<'_, Arc<AppState>>) -> usize {
-    let state_handle = state.inner().clone();
-    let singleton = state_handle.curated_variant_list.lock().unwrap();
-    singleton.len()
-}
+
 
 #[tauri::command]
 fn get_variant_assessments(
-    state: tauri::State<'_, Arc<AppState>>,
+    state: tauri::State<'_, AppState>,
 ) -> Result<Vec<NcVariantAssessment>, String> {
-    let assessments = (|| -> anyhow::Result<Vec<NcVariantAssessment>> {
-        let state_handle = state.inner().clone();
-        let singleton = state_handle
-            .curated_variant_list
-            .lock()
-            .map_err(|_| anyhow::anyhow!("Mutex poisoned"))?;
-
-        Ok(singleton.clone())
-    })()
-    .map_err(|e| e.to_string())?;
-    Ok(assessments)
+    let curation_guard = state.current_gene_curation.lock()
+        .map_err(|_| "Failed to lock gene curation state".to_string())?;
+    if let Some(curation) = curation_guard.as_ref() {
+        Ok(curation.annotations.clone())
+    } else {
+        /* When we just create an object for a gene, we have no annotations yet, this is not an error */
+        Ok(Vec::new())
+    }
 }
 
 #[tauri::command]
@@ -130,7 +112,7 @@ fn validate_intergenic_variant(
 }
 
 #[tauri::command]
-fn get_settings(state: tauri::State<Arc<AppState>>) -> Result<HrmdbqSettings, String> {
+fn get_settings(state: tauri::State<AppState>) -> Result<HrmdbqSettings, String> {
     let settings = state
         .settings
         .lock()
@@ -139,7 +121,7 @@ fn get_settings(state: tauri::State<Arc<AppState>>) -> Result<HrmdbqSettings, St
 }
 
 #[tauri::command]
-fn update_orcid(state: tauri::State<Arc<AppState>>, orcid: String) -> Result<(), String> {
+fn update_orcid(state: tauri::State<AppState>, orcid: String) -> Result<(), String> {
     let mut settings = state
         .settings
         .lock()
@@ -147,39 +129,79 @@ fn update_orcid(state: tauri::State<Arc<AppState>>, orcid: String) -> Result<(),
     settings.save_biocurator_orcid(orcid)
 }
 
+#[derive(serde::Serialize)]
+pub struct SelectionResponse {
+    pub evaluations: Vec<GeneCurationFile>,
+    pub path: PathBuf,
+}
 
+
+#[tauri::command]
+async fn select_curation_directory(
+    app: tauri::AppHandle,
+    state: tauri::State<'_, AppState>
+) -> Result<SelectionResponse, String> {
+    let mut settings = state
+        .settings
+        .lock()
+        .map_err(|_| "Failed to lock settings")?;
+     let home_dir = settings.get_home_dir()?;
+     let file_path = FileDialog::new()
+        .set_directory(home_dir)
+        .set_title("Select gene curation directory")
+        .pick_folder();
+    match file_path {
+        Some(path) => {
+            settings.set_hrmdata_path(&path)?;
+            let curation_files = crate::util::gene_curation::scan_curation_directory(&path);
+            Ok(SelectionResponse { evaluations: curation_files, path })
+        }
+        None => {
+            return Err(format!("Could not retrieve path to directory"));
+        }
+    }
+}
+
+
+/*
 /// Open the native Save/As window
 #[tauri::command]
 async fn select_curation_file(
     app: tauri::AppHandle,
     state: tauri::State<'_, Arc<AppState>>
-) -> Result<Vec<NcVariantAssessment>, String> {
-    use tauri_plugin_dialog::DialogExt;
+) -> Result<SelectionResponse, String> {
+     let settings = state
+        .settings
+        .lock()
+        .map_err(|_| "Failed to lock settings")?;
+    let save_dir = settings.get_hrmd_dir()?;
+    
+    let file_path = FileDialog::new()
+        .set_directory(save_dir)
+        .set_title("Save HR JSON template")
+        //.set_file_name(template_name)
+        .add_filter("JSON", &["json"]) // Strongly suggested
+        .pick_file();
 
+    if let Some(mut path) = file_path {
+        if path.extension().and_then(|s| s.to_str()) != Some("json") {
+            path.set_extension("json");
+        }
+        let is_empty = fs::metadata(&path).map(|m| m.len() == 0).unwrap_or(true);
 
-   let file_path = app.dialog()
-        .file()
-        .set_title("Select or Create Curation File")
-        .add_filter("JSON", &["json"])
-        .blocking_pick_file(); 
-
-    if let Some(path) = file_path {
-        let path_buf = PathBuf::from(path.to_string());
-
-        let metadata = fs::metadata(&path_buf).map_err(|e| format!("Could not read file metadata: {}", e))?;
-        if metadata.len() == 0 {
+        if !path.exists() || is_empty {
             // Initialize with an empty JSON array if the file was empty
-            fs::write(&path_buf, "[]")
+            fs::write(&path, "[]")
                 .map_err(|e| format!("Failed to initialize empty JSON file: {}", e))?;
         }
         {
             let mut settings = state.settings.lock()
                 .map_err(|_| "Failed to lock settings".to_string())?;
-            settings.set_curation_file(path_buf.clone())?;
+            settings.set_curation_file(path.clone())?;
             app.emit("settings-update", settings.clone()).map_err(|e|e.to_string() )?;
         }
        
-        let contents = fs::read_to_string(&path_buf)
+        let contents = fs::read_to_string(&path)
             .map_err(|e| format!("Failed to read file: {}", e))?;
             
         let evaluations: Vec<NcVariantAssessment> = serde_json::from_str(&contents)
@@ -189,31 +211,38 @@ async fn select_curation_file(
                 .map_err(|_| "Failed to lock variant list".to_string())?;
             *list = evaluations.clone();
         }
-        return Ok(evaluations);
+        return Ok(SelectionResponse {
+            evaluations,
+            path,
+        });
     }
     Err("User canceled selection".into())
 }
+*/
+
 
 #[tauri::command]
-async fn load_variants_file(state: tauri::State<'_, Arc<AppState>>)
-    -> Result<Vec<NcVariantAssessment>, String> {
-        let settings = state.settings.lock()
+async fn load_gene_curation_file(state: tauri::State<'_, AppState>, symbol: String)
+    -> Result<GeneCuration, String> {
+        let gene_list = state.gene_list.lock()
                 .map_err(|_| "Failed to lock settings".to_string())?;
-        let path_buf = match &settings.curation_json_path {
-            Some(json_path) => json_path.clone(),
-            None => {return Err(format!("Could not find nc-variant file in settings")); },
-        };
+        let gfile = gene_list
+            .iter()
+            .find(|g| g.gene_symbol == symbol)
+            // 2. Convert Option to Result with a custom error message
+            .ok_or_else(|| format!("Gene symbol '{}' not found in the current directory", symbol))?;
+        let path_buf = gfile.file.clone();
+
          let contents = fs::read_to_string(&path_buf)
-            .map_err(|e| format!("Failed to read file: {}", e))?;
-            
-        let evaluations: Vec<NcVariantAssessment> = serde_json::from_str(&contents)
+            .map_err(|e| format!("Failed to read file: {}", e))?;  
+        let curation: GeneCuration= serde_json::from_str(&contents)
             .map_err(|e| format!("Failed to parse JSON: {}", e))?;
         {
-            let mut list = state.curated_variant_list.lock()
-                .map_err(|_| "Failed to lock variant list".to_string())?;
-            *list = evaluations.clone();
-        }
-        return Ok(evaluations);
+            let mut current_lock = state.current_gene_curation.lock()
+                .map_err(|_| "Failed to lock current curation".to_string())?;
+            *current_lock = Some(curation.clone());
+        } 
+        return Ok(curation);
     }
 
 
@@ -222,7 +251,7 @@ async fn load_variants_file(state: tauri::State<'_, Arc<AppState>>)
 
 #[tauri::command]
 async fn get_biocuration_orcid(
-   state: tauri::State<'_, Arc<AppState>>
+   state: tauri::State<'_, AppState>
 ) -> Result<String, String> {
  let  settings = state
         .settings
@@ -233,7 +262,7 @@ async fn get_biocuration_orcid(
 
 #[tauri::command]
 async fn set_biocuration_orcid(
-   state: tauri::State<'_, Arc<AppState>>,
+   state: tauri::State<'_, AppState>,
    orcid: String
 ) -> Result<(), String> {
     let mut settings = state
@@ -255,10 +284,10 @@ async fn retrieve_pmid_citation(
 
 #[tauri::command]
 fn add_nc_variant_assessment(
-      state: tauri::State<'_, Arc<AppState>>,
+      state: tauri::State<'_, AppState>,
       assess: NcVariantAssessment
 ) -> Result<Vec<NcVariantAssessment>, String> {
-     let mut guard = state.curated_variant_list
+   /*   let mut guard = state.curated_variant_list
         .lock()
         .map_err(|_| "Failed to lock mutex".to_string())?;
     let current_list = std::mem::take(&mut *guard);
@@ -267,20 +296,84 @@ fn add_nc_variant_assessment(
     println!("add_nc_variant_assesment updated list size= {}", updated_list.len());
     *guard = updated_list.clone();
     Ok(updated_list)
+    */
+    println!("TODO refactor add_nc_variant_assessment");
+    Ok(vec![])
 }
 
 
 
 #[tauri::command]
-fn serialize_variant_assessments(
-    state: tauri::State<'_, Arc<AppState>>,
-    variants: Vec<NcVariantAssessment>
+fn serialize_gene_curation(
+    state: tauri::State<'_, AppState>,
+    gene_curation: GeneCuration
 ) -> Result<(), String> {
-    let settings = state.settings.lock().unwrap();
-    let path = settings.curation_json_path.as_ref()
-        .ok_or("No save path configured in settings")?;
-    ncvar::ncvar_assessment::save_curation_list(path, &variants)?;
-
-
+    let gene_symbol = gene_curation.get_symbol().to_string();
+    let guard = state.gene_list
+        .lock()
+        .map_err(|_| "Failed to lock mutex".to_string())?;
+    let path_buf = match get_path(&guard, &gene_symbol) {
+        Some(pb) => pb,
+        None => { return Err(format!("Could not retrieve path for {}", gene_symbol)); },
+    };
+    crate::util::gene_curation::save_gene_curation(&path_buf, &gene_curation)?;
     Ok(())
+}
+
+#[tauri::command]
+async fn get_gene_curation_list(
+    directory: PathBuf,
+    state: tauri::State<'_, AppState>,
+) -> Result<Vec<GeneCurationFile>, String> {
+    let mut gene_list = Vec::new();
+    let entries = std::fs::read_dir(&directory)
+        .map_err(|e| format!("Failed to read directory: {}", e))?;
+
+    for entry in entries.flatten() {
+        let path = entry.path();
+        if path.is_file() && path.extension().and_then(|s| s.to_str()) == Some("json") {
+            if let Ok(content) = std::fs::read_to_string(&path) {
+                // Using the full GeneCuration struct for now, 
+                // but consider a 'Light' version if performance dips
+                if let Ok(curation) = serde_json::from_str::<GeneCuration>(&content) {
+                    gene_list.push(GeneCurationFile {
+                        gene_symbol: curation.gene_data.symbol,
+                        file: path,
+                    });
+                }
+            }
+        }
+    }
+    gene_list.sort_by(|a, b| a.gene_symbol.to_lowercase().cmp(&b.gene_symbol.to_lowercase()));
+    let mut state_list = state.gene_list.lock().map_err(|_| "State lock poisoned")?;
+    *state_list = gene_list.clone();
+
+    Ok(gene_list)
+}
+
+
+#[tauri::command]
+fn create_gene_curation(
+    state: tauri::State<'_, AppState>,
+    symbol: String,
+    hgnc: HgncBundle
+) -> Result<GeneCuration, String> {
+    let guard = state.gene_list
+        .lock()
+        .map_err(|_| "Failed to lock mutex".to_string())?;
+     let settings = state.settings
+        .lock()
+        .map_err(|_| "Failed to lock mutex".to_string())?;
+    let curation_dir = settings.get_hrmd_dir()?;
+    let file_path = curation_dir.join(format!("{}.json", symbol));
+    let already_exists = guard
+        .iter()
+        .find_map(|gc| Some(gc.gene_symbol == symbol))
+        .is_some();
+    if already_exists {
+        return Err(format!("Curation file for {} exists already!", symbol));
+    }
+    let gene_curation =  GeneCuration::from_hgnc_bundle(symbol, hgnc);
+    crate::util::gene_curation::save_gene_curation(&file_path, &gene_curation)?;
+    Ok(gene_curation)
 }

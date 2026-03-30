@@ -1,10 +1,11 @@
 use serde::{Deserialize, Serialize};
 
+/// 
 #[derive(Deserialize, Debug, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct HgncBundle {
-    hgnc_id: String,
-    mane_select: String,
+    pub hgnc_id: String,
+    pub mane_select: String,
 }
 
 pub async fn fetch_gene_data(symbol: &str) -> Result<HgncBundle, Box<dyn std::error::Error>> {

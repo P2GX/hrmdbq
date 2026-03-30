@@ -10,37 +10,42 @@ use std::path::PathBuf;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct HrmdbqSettings {
-    /// Directory where we store go-basic.json and annotation files
-    pub(crate) go_dir: Option<PathBuf>,
     /// Research ID of curator
     pub(crate) orcid_id: Option<String>,
-    /// Path to the file in which we keep our curations
-    pub(crate) curation_json_path: Option<PathBuf>
+    /// Directory for curation files
+    pub(crate) hrmdata_dir_path: Option<PathBuf>
 }
 
 impl HrmdbqSettings {
     fn empty() -> Self {
         Self {
-            go_dir: None,
             orcid_id: None,
-            curation_json_path: None
+            hrmdata_dir_path: None
         }
     }
 
-    pub fn set_go_dir_path<P: Into<PathBuf>>(&mut self, go_dir: P) -> Result<(), String> {
-        let path = go_dir.into();
+    pub fn set_hrmdata_path<P: Into<PathBuf>>(&mut self, hrmd_dir: P) -> Result<(), String> {
+        let path = hrmd_dir.into();
         if !path.is_dir() {
             return Err(format!("Did not find directory at {}", path.display()));
         }
-        self.go_dir = Some(path);
+        self.hrmdata_dir_path = Some(path);
         self.save_settings()
     }
 
-    pub fn get_go_dir(&self) -> Result<PathBuf, String> {
-        match &self.go_dir {
-            Some(godir) => Ok(godir.clone()),
-            None => Err(format!("GO data directory not initialized")),
-        }
+    pub fn get_hrmd_dir(&self) -> Result<PathBuf, String> {
+        self.hrmdata_dir_path
+            .clone()
+            .map(Ok)
+            .unwrap_or_else(|| {
+                dirs::home_dir()
+                    .ok_or_else(|| "Could not determine home directory".to_string())
+            })
+    }
+
+    pub fn get_home_dir(&self)  -> Result<PathBuf, String> {
+        dirs::home_dir()
+                .ok_or_else(|| "Could not determine home directory".to_string())
     }
 
     pub fn set_curation_file<P: Into<PathBuf>>(&mut self, path: P) -> Result<(), String> {
@@ -50,8 +55,8 @@ impl HrmdbqSettings {
             if !parent.is_dir() && parent.to_string_lossy() != "" {
                 return Err(format!("Parent directory does not exist: {}", parent.display()));
             }
+             self.hrmdata_dir_path = Some(parent.to_path_buf());
         }
-        self.curation_json_path = Some(p);
         self.save_settings()
     }
 

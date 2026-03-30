@@ -1,5 +1,5 @@
 import { inject, Injectable, NgZone, signal } from '@angular/core';
-import { CurationEvent, HgvsVariant, HrmdbqSettings, IntergenicHgvsVariant, NcVariantAssessment, NcVariantEvaluation, StructuralVariant } from './models';
+import { CurationEvent, GeneCurationFile, HgvsVariant, HrmdbqSettings, IntergenicHgvsVariant, NcVariantAssessment, NcVariantEvaluation, StructuralVariant } from './models';
 import { invoke } from '@tauri-apps/api/core';
 import { Citation, VariantDto } from './models';
 import { listen } from '@tauri-apps/api/event';
@@ -50,9 +50,7 @@ export class ConfigService {
   }
 
 
-  async loadFile(): Promise<NcVariantEvaluation[]> {
-      return invoke<NcVariantEvaluation[]>('select_curation_file');
-  }
+
 
   async setOrcid(orcid: string) : Promise<void> {
      invoke<null>('set_biocuration_orcid', {orcid: orcid});

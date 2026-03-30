@@ -1,6 +1,6 @@
-use std::cmp::Ordering;
+use std::{cmp::Ordering, path::PathBuf};
 
-use crate::dto::citation::Citation;
+use crate::{dto::citation::Citation, util::hgnc_rest::HgncBundle};
 use ga4ghphetools::dto::{
     hgvs_variant::HgvsVariant, intergenic_variant::IntergenicHgvsVariant,
     structural_variant::StructuralVariant,
@@ -312,6 +312,68 @@ impl Ord for NcVariantAssessment {
         }
     }
 }
+
+/// Information about the current gene being curated
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq, PartialOrd, Ord)]
+#[serde(rename_all = "camelCase")]
+pub struct  GeneTranscriptData {
+    pub symbol: String,
+    pub hgnc_id: String,
+    pub mane_id: String
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct WebResource {
+    pub name: String,
+    pub url: String,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
+#[serde(rename_all = "camelCase")]
+pub struct GeneNote {
+    pub id: String, // Useful for tracking/deleting in Angular
+    pub title: String,
+    pub content: String,
+    pub date_modified: String,
+}
+
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct GeneCuration {
+    pub gene_data: GeneTranscriptData,
+    pub web_resources: Vec<WebResource>,
+    pub notes: Vec<GeneNote>,
+    pub annotations: Vec<NcVariantAssessment>,
+}
+
+
+impl GeneCuration {
+    pub fn new(gene_data: GeneTranscriptData) -> Self {
+        Self { gene_data, web_resources: vec![], notes: vec![], annotations: vec![] }
+    }
+
+    pub fn get_symbol(&self) -> &str {
+        &self.gene_data.symbol
+    }
+
+    pub fn from_hgnc_bundle(symbol: String, hgnc: HgncBundle) -> Self {
+        let gene_data = GeneTranscriptData { 
+            symbol: symbol, 
+            hgnc_id: hgnc.hgnc_id, 
+            mane_id: hgnc.mane_select
+        };
+        GeneCuration::new(gene_data)
+    }
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct GeneCurationFile {
+    pub gene_symbol: String,
+    pub file: PathBuf
+}
+
 
 
 

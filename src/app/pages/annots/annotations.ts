@@ -27,14 +27,19 @@ export class AnnotationTable implements OnInit {
 
     displayedColumns: string[] = ['label', 'category', 'symbol', 'curator'];
 
-  // Create a reactive data source for the Material Table
-  dataSource = new MatTableDataSource<NcVariantAssessment>();
+    readonly activeGeneSymbol = computed(() => 
+      this.curationService.currentCuration()?.geneData.symbol ?? 'No Gene Selected'
+    );
+    readonly dataSource = computed(() => 
+      new MatTableDataSource<NcVariantAssessment>(this.curationService.variants())
+    );
+
+ 
 
   constructor() {
-    effect(() => {
-      this.dataSource.data = this.curationService.variants();
-      console.log("effect, data=", this.dataSource.data);
-    });
+    if (!this.curationService.isGeneLoaded()) {
+      this.notificationService.showError("No active curation found. Return to setup to initialize gene.");
+    }
   }
   
 

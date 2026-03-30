@@ -8,14 +8,20 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfigService } from '../../service/configService';
-
+import { GeneCurationFile, HgncBundle } from '../../service/models';
+import { MatTableModule } from '@angular/material/table';
+import { MatButtonModule } from '@angular/material/button';
+import { invoke } from '@tauri-apps/api/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-about',
   imports: [
     CommonModule,
+    MatButtonModule,
     MatDividerModule,
     MatIconModule,
+    MatTableModule,
     MatTooltipModule
  ],
   templateUrl: './setup.html',
@@ -23,12 +29,25 @@ import { ConfigService } from '../../service/configService';
 })
 export class Setup {
 
+onGeneClick(arg0: any) {
+throw new Error('Method not implemented.');
+}
+
 
   public curationService = inject(CurationService);
   private configService = inject(ConfigService);
   private notificationService = inject(NotificationService);
+  private router = inject(Router);
   private dialog = inject(MatDialog);
   selectedTab = 'introduction';
+
+  curationFiles = signal<GeneCurationFile[]>([]);
+  displayedGeneSymbols = computed(() => {
+    const symbols = this.curationFiles().map((cf) => cf.geneSymbol);
+    return symbols;
+  });
+
+  currentHgncBundle = signal<HgncBundle|null>(null);
 
 
   public orcidDisplay = computed(() => {
@@ -36,12 +55,12 @@ export class Setup {
     return orcid && orcid.trim() !== '' ? orcid : 'N/A';
   });
 
-  public curationFileDisplay = computed(() => {
-    const fpath = this.configService.settings()?.curation_json_path;
+  public curationDirectoryDisplay = computed(() => {
+    const fpath = this.curationService.curationDirectory();
     if (fpath) {
-      return `Curation file: ${fpath}`;
+      return `Curation directory: ${fpath}`;
     } else {
-      return "Curation file not loaded";
+      return "Curation directory not loaded";
     }
   });
 
@@ -50,9 +69,17 @@ export class Setup {
     this.selectedTab = tab;
   }
 
+   async selectCurationDirectory(): Promise<void> {
+      try {
+        await this.curationService.selectCurationDirectory();
+      } catch (err) {
+        this.notificationService.showError(`Could not load curation directory: ${err}.`);
+      }
+  }
+
   async onSelectFile() {
     try {
-      await this.curationService.selecteAndLoadCurationFile();
+      await this.curationService.selectCurationDirectory();
     } catch (err) {
       this.notificationService.showError(`File selection not successful: ${err}.`)
     } 
@@ -77,6 +104,24 @@ export class Setup {
           this.notificationService.showError("Failed to save ORCID");
       }
     });
+  }
+
+
+  async createNewGeneCuration(symbol: string): Promise<void> {
+    if (!symbol) return;
+    this.currentHgncBundle.set(null);
+    let hgncBundle: HgncBundle;
+    try {
+      hgncBundle = await invoke<HgncBundle>('fetch_gene_data_from_hgnc', { symbol });
+      this.currentHgncBundle.set(hgncBundle);
+    } catch (err) {
+      this.notificationService.showError(`Could not retrieve HGNC data: ${err}.`);
+      return;
+    } 
+    const success =  await this.curationService.createGeneCuration(symbol, hgncBundle);
+    if (success) {
+      this.router.navigate(["/annots"]);
+    }
   }
 
 }
