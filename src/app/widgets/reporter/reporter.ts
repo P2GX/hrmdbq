@@ -6,11 +6,11 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatSelectModule } from "@angular/material/select";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
-import { Reporter, ReporterAssay, ReporterRegulation } from "../../service/models";
+import { EvidenceRecord, EvidenceSource, EvidenceType } from "../../service/models";
 import { MatListModule } from "@angular/material/list";
 
 
-export const ReporterAssayLabels: Record<ReporterAssay, string> = {
+export const ReporterAssayLabels: Record<EvidenceSource, string> = {
   qpcr: 'qPCR / Expression',
   luciferase: 'Luciferase Reporter',
   emsa: 'EMSA (Gel Shift)',
@@ -67,51 +67,61 @@ export const EVIDENCE_GROUPS = [
 })
 export class ReporterWidgetComponent {
 
-    stepComplete = output<Reporter[]>();
+    stepComplete = output<EvidenceRecord[]>();
     submitted = signal<boolean>(false);
-    private readonly DEFAULT_ASSAYS = ['luciferase', 'qpcr', 'emsa', 'westernBlot', 'splicing', 'clinicalRna', 'clinicalProtein', 'clinicalEnzymeActivity'];
-    reporters = signal<Reporter[]>(
-        this.DEFAULT_ASSAYS.map(assay => ({ assay, regulation: 'unchanged' } as Reporter))
-    );
    
-    clinicalAssays: ReporterAssay[] = ['clinicalRna', 'clinicalProtein', 'clinicalEnzymeActivity'];
-    experimentalAssays: ReporterAssay[]  = ['qpcr', 'luciferase', 'emsa', 'westernBlot', 'splicing'];
-    computationalAssays: ReporterAssay[] = [ 'inSilicoSplicePredictor',  'inSilicoMissensePredictor',   'tfbsChangePrediction',  'conservationScore'];
-    regulatoryAssays: ReporterAssay[] = ['chromatinAccessibility', 'promoterEnhancerAnalysis'];
+   
+    clinicalAssays: EvidenceSource[] = ['clinicalRna', 'clinicalProtein', 'clinicalEnzymeActivity'];
+    experimentalAssays: EvidenceSource[]  = ['qpcr', 'luciferase', 'emsa', 'westernBlot', 'splicing'];
+    computationalAssays: EvidenceSource[] = [ 'inSilicoSplicePredictor',  'inSilicoMissensePredictor',   'tfbsChangePrediction',  'conservationScore'];
+    regulatoryAssays: EvidenceSource[] = ['chromatinAccessibility', 'promoterEnhancerAnalysis'];
+
+    private readonly all_assays = [
+      ...this.clinicalAssays,
+      ...this.experimentalAssays,
+      ...this.computationalAssays,
+      ...this.regulatoryAssays
+    ];
+
+    reporters = signal<EvidenceRecord[]>(
+        this.all_assays.map(assay => ({ source: assay, assessment: 'na' } as EvidenceRecord))
+    );
 
     evidenceGroups = EVIDENCE_GROUPS;
     labels = ReporterAssayLabels;
 
     hasAnyData = computed(() => 
-        this.reporters().some(r => r.regulation !== 'unchanged')
+        this.reporters().some(r => r.assessment !== 'na')
     );
 
-    getReporter(assay: ReporterAssay) {
-        return this.reporters().find(r => r.assay === assay) || { assay, regulation: 'unchanged' };
+    activeReporters = computed(() => {
+      return this.reporters().filter(r => r.assessment !== 'na');
+    })
+
+    getEvidenceSource(evsource: EvidenceSource) {
+        return this.reporters().find(r => r.source === evsource) || { source: evsource, assessment: 'na' };
     }
 
-    getDisplayLabel(assay: ReporterAssay): string {
-        return this.labels[assay];
+    getDisplayLabel(evsource: EvidenceSource): string {
+        return this.labels[evsource];
     }
 
-    setReg(assay: ReporterAssay, reg: ReporterRegulation) {
+    setReg(evsource: EvidenceSource, evtype: EvidenceType) {
         this.reporters.update(list => 
-            list.map(r => r.assay === assay ? { ...r, regulation: reg } : r)
+            list.map(r => r.source === evsource ? { ...r, assessment: evtype } : r)
         );
-        //this.stepComplete.emit(this.reporters());
     }
 
    
     submit() {
-        const activeReporters = this.reporters().filter(
-            rep => rep.regulation !== 'unchanged'
-        );
+        const activeReporters = this.activeReporters();
+        console.log("submit-evidence=", activeReporters);
         this.submitted.set(true);
         this.stepComplete.emit(activeReporters);
     }
 
     reset() {
-         this.submitted.set(false);
+        this.submitted.set(false);
         this.reporters.update(list => list.map(r => ({...r, regulation: 'unchanged'})));
     }
 }

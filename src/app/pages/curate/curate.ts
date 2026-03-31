@@ -2,7 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NcVariant, NcVariantAssessment, NcVariantEvaluation, Pathomechanism, Reporter, VariantClass, VariantKind } from '../../service/models';
+import { NcVariant, NcVariantAssessment, NcVariantEvaluation, Pathomechanism, EvidenceRecord, VariantClass, VariantKind } from '../../service/models';
 import { AddVariantComponent } from '../../addvariant/addvariant.component';
 import { NotificationService } from '../../service/notification.service';
 import { GeneStepResult, GeneCurationWidget } from '../../widgets/genecuration/genesymbolcuration';
@@ -53,7 +53,7 @@ export class CurationWidget implements OnInit {
   variantData = signal<NcVariant | null>(null);
   variantClass = signal<VariantClass | null>(null);
   pathomechanism = signal<Pathomechanism | null>(null);
-  reporters = signal<Reporter[]>([]);
+  evidenceList = signal<EvidenceRecord[]>([]);
   cite_packet = signal<CitationPacket | null>(null);
 
 
@@ -101,8 +101,9 @@ export class CurationWidget implements OnInit {
     this.currentStep.set(5);
   }
 
-  onReporterStepComplete(reporters: Reporter[]): void {
-    this.reporters.update(() => reporters);
+  onReporterStepComplete(reporters: EvidenceRecord[]): void {
+    console.log("onReporterStepComplete, reporters", reporters);
+    this.evidenceList.update(() => reporters);
     this.currentStep.set(6);
   }
 
@@ -113,7 +114,7 @@ export class CurationWidget implements OnInit {
 
   resetToStep(step: number) {
     if (step <= 6) this.cite_packet.set(null);
-    if (step <= 5) this.reporters.set([]);
+    if (step <= 5) this.evidenceList.set([]);
     if (step <= 4) this.pathomechanism.set(null);
     if (step <= 3) this.variantClass.set(null);
     if (step <= 2) this.variantData.set(null);
@@ -138,7 +139,7 @@ export class CurationWidget implements OnInit {
       return;
     }
 
-    const reporter_list = this.reporters(); // allowed to be empty, no check performed
+    const evidence_list = this.evidenceList(); // allowed to be empty, no check performed
     const citation = this.cite_packet();
     if (! citation ) {
        this.notificationService.showError("Cannot save without citation");
@@ -153,15 +154,15 @@ export class CurationWidget implements OnInit {
 
     const annot: NcVariantEvaluation = {
       pathomechanism: pathomechanism,
-      reporter: reporter_list,
+      evidence: evidence_list,
       citation: citation.citation
     };
 
     if (citation.cosegregation) {
-      annot.cosegregation_evidence = true;
+      annot.cosegregationEvidence = true;
     }
     if (citation.phenotypicEvidence) {
-      annot.phenotypic_evidence = true;
+      annot.phenotypicEvidence = true;
     }
     let cmt = citation.comment;
     if (cmt && cmt.length > 0) {

@@ -3,7 +3,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { CommonModule } from '@angular/common';
 import { CurationService } from '../../service/curation_service'; 
-import { NcVariant, NcVariantAssessment, ReporterAssay } from '../../service/models';
+import { NcVariant, NcVariantAssessment, EvidenceSource } from '../../service/models';
 import { MatIconModule } from "@angular/material/icon";
 import { ConfigService } from '../../service/configService';
 import { NotificationService } from '../../service/notification.service';

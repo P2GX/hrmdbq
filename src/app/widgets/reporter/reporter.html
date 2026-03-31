@@ -49,33 +49,61 @@
   </div>
 
   <ng-template #tileTmpl let-assay let-isClinical="isClinical" let-isComp="isComp">
-    @let rep = getReporter(assay);
+    @let rep = getEvidenceSource(assay);
     <div class="assay-tile" 
-         [class.is-active]="rep.regulation !== 'unchanged'"
+         [class.is-active]="rep.assessment !== 'na'"
          [class.clinical-type]="isClinical"
          [class.comp-type]="isComp"
-         [class.bg-up]="rep.regulation === 'up'"
-         [class.bg-down]="rep.regulation === 'down'">
+         [class.bg-up]="rep.assessment === 'supports'"
+         [class.bg-down]="rep.assessment === 'contradicts'">
       
       <span class="text-[9px] font-bold text-center leading-tight mb-1 h-[24px] flex items-center justify-center">
         {{ getDisplayLabel(assay) }}
       </span>
 
       <div class="control-group">
-        <button type="button" class="btn-up" [class.active]="rep.regulation === 'up'" (click)="setReg(assay, 'up')">
-            {{ isComp ? 'HI' : 'UP' }}
+        <button type="button" class="btn-up" [class.active]="rep.assessment === 'supports'" (click)="setReg(assay, 'supports')">
+            <mat-icon>check_circle</mat-icon>
         </button>
-        <button type="button" class="btn-na" [class.active]="rep.regulation === 'unchanged'" (click)="setReg(assay, 'unchanged')">N/A</button>
-        <button type="button" class="btn-down" [class.active]="rep.regulation === 'down'" (click)="setReg(assay, 'down')">
-            {{ isComp ? 'LO' : 'DN' }}
+        <button type="button" class="btn-na" [class.active]="rep.assessment === 'na'" (click)="setReg(assay, 'na')">N/A</button>
+        <button type="button" class="btn-down" [class.active]="rep.assessment === 'contradicts'" (click)="setReg(assay, 'contradicts')">
+           <mat-icon>cancel</mat-icon>
         </button>
       </div>
     </div>
   </ng-template>
+  <div class="flex gap-2">
+        <button mat-button color="warn" (click)="reset()" [disabled]="hasAnyData()">
+          <mat-icon class="scale-75">restart_alt</mat-icon>
+          Clear All
+        </button>
+
+        <button mat-flat-button color="primary" 
+                (click)="submit()" 
+                class="px-8 !rounded-full shadow-lg shadow-blue-100">
+          <mat-icon>check</mat-icon>
+          Confirm Evidence
+        </button>
+      </div>
   } @else {
-        <p>No reporters/clinical evidence provided</p>
-    <button mat-icon-button (click)="reset()" matTooltip="Return to Editor">
-      <mat-icon class="text-emerald-700">edit</mat-icon>
-    </button>
+      <div class="confirmed-badge">
+      <div class="data-info">
+        <mat-icon class="success-icon">check_circle</mat-icon>
+        @for (evi of activeReporters(); track $index) {
+          <strong>{{ evi }}</strong>&nbsp;&nbsp;&nbsp;
+        } @empty {
+          <p>No evidence chosen</p>
+        }
+      </div>
+    
+      <button 
+        mat-icon-button 
+        color="warn" 
+        (click)="reset()" 
+        matTooltip="Reset and Edit"
+        class="shrink-0">
+        <mat-icon>restart_alt</mat-icon>
+      </button>
+    </div>
 
   }

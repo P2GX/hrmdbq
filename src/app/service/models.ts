@@ -20,7 +20,7 @@ export type VariantClass =
   | 'icr' 
   | 'multiGene';
 
-export type ReporterAssay = 
+export type EvidenceSource = 
   // --- Experimental / Functional ---
   | 'qpcr'
   | 'luciferase'
@@ -45,12 +45,14 @@ export type ReporterAssay =
   | 'otherExperimental'
   | 'otherComputational';
 
-export type ReporterRegulation = 'up' | 'down' | 'unchanged';
+export type EvidenceType = 'supports' | 'contradicts' | 'na';
 
-export interface Reporter {
-  assay: ReporterAssay;
-  regulation: ReporterRegulation;
+export interface EvidenceRecord {
+  source: EvidenceSource;
+  assessment: EvidenceType;
 }
+
+
 
 export type Pathomechanism = 
   // General/Functional
@@ -127,9 +129,9 @@ export const PATHOMECHANISM_LABELS: Record<Pathomechanism, string> = {
 
 export interface NcVariantEvaluation {
   pathomechanism: Pathomechanism;
-  cosegregation_evidence?: boolean;
-  phenotypic_evidence?: boolean;
-  reporter: Reporter[]; 
+  cosegregationEvidence?: boolean;
+  phenotypicEvidence?: boolean;
+  evidence: EvidenceRecord[]; 
   comment?: string;
   citation: Citation; 
 }

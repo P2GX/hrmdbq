@@ -148,7 +148,7 @@ impl std::fmt::Display for Pathomechanism {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub enum ReporterAssay {
+pub enum EvidenceSource {
     Qpcr,
     Luciferase,
     Emsa,
@@ -171,19 +171,19 @@ pub enum ReporterAssay {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub enum ReporterRegulation {
-    Up,
-    Down,
-    Unchanged,
+pub enum EvidenceType {
+    Supports,
+    Contradicts,
+    Na,
 }
 
-impl Default for ReporterRegulation {
+impl Default for EvidenceType {
     fn default() -> Self {
-        Self::Unchanged
+        Self::Na
     }
 }
 
-impl std::fmt::Display for ReporterAssay {
+impl std::fmt::Display for EvidenceSource {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let label = match self {
             Self::Qpcr => "qPCR",
@@ -208,12 +208,12 @@ impl std::fmt::Display for ReporterAssay {
     }
 }
 
-impl std::fmt::Display for ReporterRegulation {
+impl std::fmt::Display for EvidenceType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let label = match self {
-            Self::Up => "Increased (UP)",
-            Self::Down => "Decreased (DOWN)",
-            Self::Unchanged => "No Change (N/A)",
+            Self::Supports => "Supports",
+            Self::Contradicts => "Contradicts",
+            Self::Na => "Not available/Not applicable (N/A)",
         };
         write!(f, "{}", label)
     }
@@ -221,9 +221,9 @@ impl std::fmt::Display for ReporterRegulation {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct Reporter {
-    assay: ReporterAssay,
-    regulation: ReporterRegulation,
+pub struct EvidenceRecord {
+    source: EvidenceSource,
+    assessment: EvidenceType,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -239,7 +239,7 @@ pub struct NcVariantEvaluation {
     /// Note that we would never enter false because in this case we would assume the variant is not causal
     /// Thus, we are entering either "true" or "n/a"
     pub phenotypic_evidence: Option<bool>,
-    pub reporter: Vec<Reporter>,
+    pub evidence: Vec<EvidenceRecord>,
     pub comment: Option<String>,
     pub citation: Citation,
 }
