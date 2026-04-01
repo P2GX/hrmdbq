@@ -57,11 +57,6 @@ export class PathomechanismCurationComponent {
 
   pathomechanism = signal<Pathomechanism | undefined>(undefined);
   submitted = signal<boolean>(false);
-  //citation = signal<Citation | undefined>(undefined);
-  //reporters = signal<Reporter[]>([]);
-  //cosegregation = signal<boolean>(false);
-  //comment = signal<string | undefined>(undefined);
-  
 
   stepFinished = computed(() => {
    return  !!this.pathomechanism() 
@@ -76,40 +71,12 @@ export class PathomechanismCurationComponent {
 
     submit() {
         const pathomechanism = this.pathomechanism();
-            if (!pathomechanism) {
-                this.notificationService.showError("Could not retrieve pathomechanism");
-                return;
-            }
-        /*
-        if (this.isEvaluationValid()) {
-            this.submitted.set(true);
-            const pathomechanism = this.pathomechanism();
-            if (!pathomechanism) {
-                this.notificationService.showError("Could not retrieve pathomechanism");
-                return;
-            }
-            const citation = this.citation();
-            if (! citation) {
-                this.notificationService.showError("Could not retrieve citation");
-                return;
-            }
-            const coseg = this.cosegregation();
-            const comment = this.comment();
-
-
-            const evaluation: NcVariantEvaluation = {
-                pathomechanism: pathomechanism,
-                reporter: this.reporters(),
-                cosegregation: coseg,
-                citation: citation
-            };
-            if (comment) {
-                evaluation.comment = comment;
-            }
-                */
-               this.submitted.set(true);
-            this.stepComplete.emit(pathomechanism);
-        
+        if (!pathomechanism) {
+            this.notificationService.showError("Could not retrieve pathomechanism");
+            return;
+        }
+        this.submitted.set(true);
+        this.stepComplete.emit(pathomechanism);      
     }
 
 

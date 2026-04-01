@@ -40,8 +40,7 @@ export type EvidenceSource =
   | 'conservationScore'
   
   // --- Regulatory/Other ---
-  | 'chromatinAccessibility'
-  | 'promoterEnhancerAnalysis'
+  | 'chromatinAccessibilityAssay'
   | 'otherExperimental'
   | 'otherComputational';
 
@@ -54,41 +53,38 @@ export interface EvidenceRecord {
 
 
 
-export type Pathomechanism = 
+export const PATHOMECHANISMS = 
   // General/Functional
-  | 'lossOfFunction'
-  | 'gainOfFunction'
-  | 'dominantNegative'
-  
+  ['lossOfFunction',
+   'gainOfFunction',
+   'dominantNegative',
   // Transcriptional Control (Promoters/Enhancers/ICR)
-  | 'reducedTranscription'
-  | 'increasedTranscription'
-  | 'reducedExpression'       // General "lower levels"
-  | 'increasedExpression'     // General "higher levels"
-  | 'enhancerHijacking'       // SVs moving enhancers
-  | 'insulatorLoss'           // ICR/CTCF disruption
-  
+   'reducedTranscription',
+   'increasedTranscription',
+   'reducedExpression',
+   'increasedExpression',
+   'enhancerHijacking',
+    'insulatorLoss',   
   // RNA Processing & Stability (Introns/3' UTR)
-  | 'spliceDefect'
-  | 'mrnaStability'           // Changes in RNA half-life
-  | 'secondaryStructure'      // Folding changes (rRNA/snRNA/tRNA)
-  | 'impairedRnaProcessing'
-  
+   'spliceDefect',
+   'mrnaStability',           // Changes in RNA half-life
+   'secondaryStructure',      // Folding changes (rRNA/snRNA/tRNA)
+   'impairedRnaProcessing',
   // Translational Control (5' UTR)
-  | 'uORFCreation'
-  | 'uORFDisruption'
-  | 'kozakDisruption'
-  | 'reducedTranslation'
-  | 'increasedTranslation'
-  
+  'uORFCreation',
+   'uORFDisruption',
+  'kozakDisruption',
+  'reducedTranslation',
+  'increasedTranslation',
   // Regulatory Site Interaction (UTRs)
-  | 'microRNAbindingSiteDisruption'
-  | 'microRNAbindingSiteCreation'
-  | 'iREdisruption'            // Iron Responsive Element
-  | 'iRESdisruption' // internal ribosome entry site 
-  | 'rBPbindingSiteDisruption' // RNA-Binding Protein sites (generic)
-  
-  | 'unknown';
+   'microRNAbindingSiteDisruption',
+  'microRNAbindingSiteCreation',
+  'iREdisruption',            // Iron Responsive Element
+   'iRESdisruption', // internal ribosome entry site 
+   'rBPbindingSiteDisruption', // RNA-Binding Protein sites (generic)
+   'unknown'];
+
+export type Pathomechanism = (typeof PATHOMECHANISMS)[number];
 
 export const PATHOMECHANISM_LABELS: Record<Pathomechanism, string> = {
     // General / Functional
@@ -389,7 +385,7 @@ export interface GeneCuration {
   geneData: GeneTranscriptData;
   webResources: WebResource[];
   notes: GeneNote[];
-  annotations: NcVariantAssessment[]; // Assuming this interface is defined elsewhere
+  annotations: NcVariantAssessment[];
 }
 
 /**

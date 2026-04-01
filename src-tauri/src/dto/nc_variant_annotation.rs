@@ -150,7 +150,7 @@ impl std::fmt::Display for Pathomechanism {
 #[serde(rename_all = "camelCase")]
 pub enum EvidenceSource {
     Qpcr,
-    Luciferase,
+    Luciferase,   // CAT or Luciferase
     Emsa,
     WesternBlot,
     Splicing,
@@ -163,8 +163,7 @@ pub enum EvidenceSource {
     TfbsChangePrediction,     // Transcription Factor Binding Site
     ConservationScore,        // e.g., PhyloP, GERP++, PhastCons
     // --- Regulatory/Other ---
-    ChromatinAccessibility,   // e.g., ATAC-seq data
-    PromoterEnhancerAnalysis,
+    ChromatinAccessibilityAssay,   // e.g., ATAC-seq data
     OtherExperimental,
     OtherComputational
 }
@@ -199,8 +198,7 @@ impl std::fmt::Display for EvidenceSource {
             Self::InSilicoMissensePredictor => "In silico missense predictor",
             Self::TfbsChangePrediction => "TFBS Change prediction",
             Self::ConservationScore => "Conservation score",
-            Self::ChromatinAccessibility => "Chromatic accessibility",
-            Self::PromoterEnhancerAnalysis => "Computational Promoter/enhancer analysis",
+            Self::ChromatinAccessibilityAssay => "Chromatic accessibility",
             Self::OtherExperimental => "Other experimental",
             Self::OtherComputational => "Other computational",
         };

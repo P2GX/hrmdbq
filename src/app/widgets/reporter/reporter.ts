@@ -23,8 +23,7 @@ export const ReporterAssayLabels: Record<EvidenceSource, string> = {
   inSilicoMissensePredictor: 'Missense Predictor (REVEL/CADD)',
   tfbsChangePrediction: 'TFBS Binding Prediction',
   conservationScore: 'Conservation (PhyloP/GERP)',
-  chromatinAccessibility: 'Chromatin Accessibility (ATAC-seq)',
-  promoterEnhancerAnalysis: 'Promoter/Enhancer Analysis',
+  chromatinAccessibilityAssay: 'Chromatin Accessibility (ATAC-seq)',
   otherExperimental: 'Other Experimental Evidence',
   otherComputational: 'Other Computational Evidence'
 };
@@ -44,7 +43,7 @@ export const EVIDENCE_GROUPS = [
   },
   {
     label: 'Regulatory / Other',
-    options: ['chromatinAccessibility', 'promoterEnhancerAnalysis', 'otherExperimental', 'otherComputational']
+    options: ['chromatinAccessibilityAssay', 'otherExperimental', 'otherComputational']
   }
 ];
 
@@ -74,7 +73,7 @@ export class ReporterWidgetComponent {
     clinicalAssays: EvidenceSource[] = ['clinicalRna', 'clinicalProtein', 'clinicalEnzymeActivity'];
     experimentalAssays: EvidenceSource[]  = ['qpcr', 'luciferase', 'emsa', 'westernBlot', 'splicing'];
     computationalAssays: EvidenceSource[] = [ 'inSilicoSplicePredictor',  'inSilicoMissensePredictor',   'tfbsChangePrediction',  'conservationScore'];
-    regulatoryAssays: EvidenceSource[] = ['chromatinAccessibility', 'promoterEnhancerAnalysis'];
+    regulatoryAssays: EvidenceSource[] = ['chromatinAccessibilityAssay','otherExperimental', 'otherComputational'];
 
     private readonly all_assays = [
       ...this.clinicalAssays,
