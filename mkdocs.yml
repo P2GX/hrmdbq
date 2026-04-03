@@ -57,7 +57,8 @@ nav:
     - UTR5: 'curation/variants/utr5.md'
     - Promoter: 'curation/variants/promoter.md'
     - Enhancer: 'curation/variants/enhancer.md'
-    - RNA genes: 'curation/variants/rna.md'
+    - RNA genes: 
+      - Overview: 'curation/variants/rna.md'
       - lincRNA: 'curation/variants/lincRNA.md'
       - microRNA: 'curation/variants/mirna.md'
   - HGVS: 'curation/hgvs.md'

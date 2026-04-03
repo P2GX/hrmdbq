@@ -1,53 +1,42 @@
-<div class="citation-form-container">
-  <h3>Citation Entry</h3>
+<div class="citation-form-container compact">
+  <div class="top-row">
+    <app-pubmed (citationRetrieved)="onCitationReceived($event)"></app-pubmed>
+    
+    <mat-form-field appearance="outline" class="note-field">
+      <mat-label>Note</mat-label>
+      <input matInput [(ngModel)]="working.note" placeholder="Quick note...">
+    </mat-form-field>
+  </div>
 
-  <!-- PMID / Citation text -->
-  <mat-form-field appearance="fill" class="full-width">
-    <mat-label>PMID / Citation</mat-label>
-    <input matInput [(ngModel)]="working.citation.pmid" placeholder="e.g., 12345678" />
-  </mat-form-field>
+  @if (working.citation?.title) {
+    <div class="mini-preview">
+      <mat-icon>check_circle</mat-icon>
+      <span class="truncate">{{ working.citation.title }}</span>
+    </div>
+  }
 
-  <!-- Optional note -->
-  <mat-form-field appearance="fill" class="full-width">
-    <mat-label>Note</mat-label>
-    <textarea matInput [(ngModel)]="working.note" rows="3" placeholder="Optional note about this citation"></textarea>
-  </mat-form-field>
-
-  <!-- Evidence levels -->
-  <div class="evidence-section">
+  <div class="evidence-list">
     @for (field of evidenceFields; track field) {
-        <div class="evidence-item">
-            <mat-label class="evidence-label">{{ field | titlecase }}</mat-label>
-            <mat-select [(ngModel)]="working[field]">
-                @for (option of evidenceOptions; track option){
-                    <mat-option [value]="option">{{ option }}</mat-option>
-                }
-            </mat-select>
+      <div class="evidence-row">
+        <span class="row-label">{{ field.replace('Evidence', '') | titlecase }}</span>
+        
+        <div class="segmented-control">
+          @for (option of evidenceOptions; track option.value) {
+            <button
+              type="button"
+              class="segment-btn"
+              [class.active]="working[field] === option.value"
+              (click)="working[field] = option.value">
+              {{ option.label }}
+            </button>
+          }
         </div>
+      </div>
     }
   </div>
 
-  <div class="evidence-section">
-       @for (field of evidenceFields; track field) {
-        <div class="evidence-tile">
-            <div class="tile-label">{{ field | titlecase }}</div>
-            <div class="tile-buttons">
-                @for (option of evidenceOptions; track option.value){
-                    <button
-                        mat-button
-                        [color]="working[field] === option.value ? 'primary' : ''"
-                        (click)="working[field] = option.value">
-                        {{ option }}
-                    </button>
-                }
-            </div>
-        </div>
-    }
-</div>
-
-  <!-- Actions -->
-  <div class="actions">
-    <button mat-flat-button color="primary" (click)="onSave()">Save</button>
-    <button mat-stroked-button color="warn" (click)="onCancel()">Cancel</button>
+  <div class="compact-actions">
+    <button mat-button color="warn" (click)="onCancel()">Cancel</button>
+    <button mat-flat-button color="primary" (click)="onSave()">Save Entry</button>
   </div>
 </div>

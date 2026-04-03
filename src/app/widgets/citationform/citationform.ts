@@ -6,6 +6,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 
 import { CitationEntry, EvidenceLevel, Citation } from '../../service/models';
+import { PubmedComponent } from "../pubmed/pubmed.component";
+import { MatIconModule } from "@angular/material/icon";
 
 
 
@@ -19,12 +21,15 @@ import { CitationEntry, EvidenceLevel, Citation } from '../../service/models';
     FormsModule,
     MatButtonModule,
     MatSelectModule,
-    MatInputModule
-  ],
+    MatInputModule,
+    PubmedComponent,
+    MatIconModule
+],
   templateUrl: './citationform.html',
   styleUrls: ['./citationform.scss']
 })
 export class CitationFormComponent {
+
     entry = input<CitationEntry|null>(null);
     saveCitationEntry = output<CitationEntry>();
     cancel = output<void>();
@@ -72,6 +77,10 @@ export class CitationFormComponent {
         if (! working.citation) return;
         this.saveCitationEntry.emit(structuredClone(working)); 
         this.working = this.createEmpty();
+    }
+
+    onCitationReceived(newCitation: Citation) {
+        this.working.citation = newCitation;
     }
 
   onCancel() {
