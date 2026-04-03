@@ -9,10 +9,10 @@
       
       
       
-        <link rel="prev" href="../promoter/">
+        <link rel="prev" href="../lincRNA/">
       
       
-        <link rel="next" href="../rna/">
+        <link rel="next" href="../../hgvs/">
       
       
         
@@ -23,7 +23,7 @@
     
     
       
-        <title>Enhancer - HRMDBQ</title>
+        <title>microRNA - HRMDBQ</title>
       
     
     
@@ -139,7 +139,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#enhancer" class="md-skip">
+        <a href="#microrna-gene-variants" class="md-skip">
           Skip to content
         </a>
       
@@ -173,7 +173,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Enhancer
+              microRNA
             
           </span>
         </div>
@@ -661,6 +661,154 @@
                 
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../enhancer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Enhancer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_3_5" id="__nav_2_3_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RNA genes
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_3_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_3_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    RNA genes
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rna/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lincRNA/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    lincRNA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -680,7 +828,7 @@
   <span class="md-ellipsis">
     
   
-    Enhancer
+    microRNA
   
 
     
@@ -695,62 +843,8 @@
 
               
             
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-      
-        
-        
-      
-    
-    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
-      
-        
-  
-  
-  
-    <a href="../rna/" class="md-nav__link">
-      
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    RNA genes
-  
-
-    
-  </span>
-  
-  
-
-      
-        <span class="md-nav__icon md-icon"></span>
-      
-    </a>
-  
-
+          </ul>
+        </nav>
       
     </li>
   
@@ -872,33 +966,9 @@
 
 
 
-<h1 id="enhancer">Enhancer</h1>
-<h1 id="example">Example</h1>
-<p><a href="https://pubmed.ncbi.nlm.nih.gov/24290376/">Bhatia S, et al. (2013)</a> discovered a mutation in a remote, ultraconserved PAX6 enhancer that causes aniridia. 
-They discovered a de novo point mutation in an ultraconserved cis-element located 150 kb downstream from PAX6 in an affected individual with intact coding region and chromosomal locus. The element SIMO acts as a strong enhancer in developing ocular structures. The mutation disrupts an autoregulatory PAX6 binding site, causing loss of enhancer activity, resulting in defective maintenance of PAX6 expression.</p>
-<p>They write:
-<code>We identified one individual with a single de novo nucleotide variant (chr11: 31,685,945G&gt;T [UCSC Genome Browser human reference sequence hg19]) in an ultraconserved sequence, SIMO (uc.325), located 150 kb downstream of PAX6</code>.</p>
-<p>We need to identify the HG38 coordinates to curate this publication. To do so, we can enter the following
-<code>``text
-chr11:31,685,945-31,685,945
-````
-in the [liftover](liftover.md) tool. We obtain</code>chr11:31821757-31821757`. We enter this in the HG38 UCSC browser and then zoom out 3x and 10x to see the surrounding sequence.  We can compare this with the sequence reported in the publication (see Suppleemtnal FIgure S5) AGCGTAT<strong>C/A</strong>ACTTCAG</p>
-<p>This variant happens to be located in an intron of another gene, ELP4. Therefore, we can represent the variant as <code>NM_019040.5:c.1143+14176C&gt;A</code>in HGVS (See <a href="https://www.ncbi.nlm.nih.gov/clinvar/RCV000106409">ClinVar</a>). We can use VariantValidator 
-to identifify the chromosomal location <code>NC_000011.10:g.31664397C&gt;A</code>.
-However, in HRMDBQ, we use the gene symbol of the gene with the presumed etiological role (PAX6). Therefore, we enter the following</p>
-<ul>
-<li>Gene: <code>PAX6</code> </li>
-<li>Variant: <code>NC_000011.10:g.31664397C&gt;A</code> (using the IG option)</li>
-<li>Variant category: <code>Enhancer</code> </li>
-<li>TODO-how to code the above stuff</li>
-<li>Citation: PMID:24290376</li>
-</ul>
-<p>The authors showed:
-- first performed a detailed characterization of the 800 bp SIMO cis-element in mouse and zebrafish reporter transgenics. In  zebrafish transgenic they show the variant abolishes activity ( LacZ expression on the lens)
-- DNA affinity-capture assay via biotinylated double-stranded oligonucleotides as probe also efficiently pulled down Pax6 protein from a nuclear extract of E14.5 eyes when the wild-type SIMO-G PAX6 binding sequence was used, but the efficiency of the Pax6 pulldown was strongly reduced with the SIMO-T mutant version of the probe 
-- confirmed by an EMSA competition experiment where the G&gt;T change strongly reduced the ability to compete for binding of purified PAX6 paired domain 
-- modified BAC constructs</p>
-<p>These results show that SIMO is an active enhancer in E14.5 eyes and that Pax6 efficiently binds to a wild-type SIMO-G but not a mutant SIMO-T fragment, albeit with lower affinity than the optimal PAX6 consensus site.1</p>
+<h1 id="microrna-gene-variants">MicroRNA Gene Variants</h1>
+<p>Variants that affect the gene sequence of a microRNA gene.</p>
+<p><img alt="MicroRNA Gene Structure" src="../../img/mi" title="Figure 1: Structure of a microRNA gene" /></p>
 
 
 
