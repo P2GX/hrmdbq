@@ -1,0 +1,53 @@
+<div class="citation-form-container">
+  <h3>Citation Entry</h3>
+
+  <!-- PMID / Citation text -->
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>PMID / Citation</mat-label>
+    <input matInput [(ngModel)]="working.citation.pmid" placeholder="e.g., 12345678" />
+  </mat-form-field>
+
+  <!-- Optional note -->
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Note</mat-label>
+    <textarea matInput [(ngModel)]="working.note" rows="3" placeholder="Optional note about this citation"></textarea>
+  </mat-form-field>
+
+  <!-- Evidence levels -->
+  <div class="evidence-section">
+    @for (field of evidenceFields; track field) {
+        <div class="evidence-item">
+            <mat-label class="evidence-label">{{ field | titlecase }}</mat-label>
+            <mat-select [(ngModel)]="working[field]">
+                @for (option of evidenceOptions; track option){
+                    <mat-option [value]="option">{{ option }}</mat-option>
+                }
+            </mat-select>
+        </div>
+    }
+  </div>
+
+  <div class="evidence-section">
+       @for (field of evidenceFields; track field) {
+        <div class="evidence-tile">
+            <div class="tile-label">{{ field | titlecase }}</div>
+            <div class="tile-buttons">
+                @for (option of evidenceOptions; track option.value){
+                    <button
+                        mat-button
+                        [color]="working[field] === option.value ? 'primary' : ''"
+                        (click)="working[field] = option.value">
+                        {{ option }}
+                    </button>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+  <!-- Actions -->
+  <div class="actions">
+    <button mat-flat-button color="primary" (click)="onSave()">Save</button>
+    <button mat-stroked-button color="warn" (click)="onCancel()">Cancel</button>
+  </div>
+</div>

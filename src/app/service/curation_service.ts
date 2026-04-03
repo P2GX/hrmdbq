@@ -1,6 +1,6 @@
 import { Injectable, signal, computed, inject, NgZone } from '@angular/core';
 import { invoke } from '@tauri-apps/api/core';
-import { GeneCuration, GeneCurationFile, GeneNote, HgncBundle, NcVariantAssessment, NcVariantEvaluation, WebResource } from './models';
+import { GeneCuration, GeneCurationFile, GeneNote, HgncBundle, NcVariantAssessment, WebResource } from './models';
 import { NotificationService } from './notification.service';
 
 

@@ -2,7 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NcVariant, NcVariantAssessment, NcVariantEvaluation, Pathomechanism, EvidenceRecord, VariantClass, VariantKind } from '../../service/models';
+import { NcVariant, NcVariantAssessment, Pathomechanism, VariantClass, VariantKind } from '../../service/models';
 import { AddVariantComponent } from '../../addvariant/addvariant.component';
 import { NotificationService } from '../../service/notification.service';
 import { GeneStepResult, GeneCurationWidget } from '../../widgets/genecuration/genesymbolcuration';
@@ -11,18 +11,16 @@ import { PathomechanismCurationComponent } from "../../widgets/pathomechanismwid
 import { ConfigService } from '../../service/configService';
 import { CurationService } from '../../service/curation_service';
 import { Router } from '@angular/router';
-import { ReporterWidgetComponent } from "../../widgets/reporter/reporter";
-import { CitationComponent, CitationPacket } from "../../widgets/citationwidget/citation";
+import { ActivatedRoute } from '@angular/router';
+import {  CitationListComponent } from "../../widgets/citationwidget/citation";
 import { MatIconModule } from "@angular/material/icon"; 
-
+import { CitationEntry } from '../../service/models';
+import { CitationFormComponent } from "../../widgets/citationform/citationform";
 
 export interface AddVariantDialogData {
   rowId: string;
   kind: VariantKind;
 }
-
-
-
 
 
 
@@ -36,9 +34,9 @@ export interface AddVariantDialogData {
     AddVariantComponent,
     VariantCategorySelectorComponent,
     PathomechanismCurationComponent,
-    ReporterWidgetComponent,
-    CitationComponent,
-    MatIconModule
+    MatIconModule,
+    CitationListComponent,
+    CitationFormComponent
 ],
   templateUrl: './curate.html',
   styleUrl: './curate.css'
@@ -52,14 +50,28 @@ export class CurationWidget implements OnInit {
   geneData = signal<GeneStepResult | null>(null);
   variantData = signal<NcVariant | null>(null);
   variantClass = signal<VariantClass | null>(null);
-  pathomechanism = signal<Pathomechanism | null>(null);
-  evidenceList = signal<EvidenceRecord[]>([]);
-  cite_packet = signal<CitationPacket | null>(null);
+  pathomechanism = signal<Pathomechanism[]>([]);
+  citations = signal<CitationEntry[]>([]);
+  currentCitation = signal<CitationEntry | null>(null);
+  editIndex = signal<number | null>(null);
+  addingOrEditingCitation = signal<{ index?: number; entry?: CitationEntry } | null>(null);
 
 
 
   ngOnInit(): void {
-    const activeCuration = this.curationService.currentCuration();
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.isEditMode.set(true);
+      this.editingId.set(id);
+      this.loadExistingCuration(id);
+    } else {
+      this.isEditMode.set(false);
+      this.handleNewCuration();
+    }
+  }
+
+  private handleNewCuration(): void {
+     const activeCuration = this.curationService.currentCuration();
     if (activeCuration) {
       const initialGene: GeneStepResult = {
         symbol: activeCuration.geneData.symbol,
@@ -74,10 +86,17 @@ export class CurationWidget implements OnInit {
     }
   }
 
+  private loadExistingCuration(id: string): void{
+    this.notificationService.showError(`IMPLEMENT ME- handle existing ${id}`)
+  }
+
   private notificationService = inject(NotificationService);
-   private configService = inject(ConfigService);
-   private curationService = inject(CurationService);
-   private router = inject(Router);
+  private configService = inject(ConfigService);
+  private curationService = inject(CurationService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  isEditMode = signal(false);
+  editingId = signal<string | null>(null);
 
   onGeneStepComplete(result: GeneStepResult) {
     this.geneData.set(result);
@@ -96,30 +115,86 @@ export class CurationWidget implements OnInit {
   }
 
   onPathomechanismStepComplete(pathomechanism: Pathomechanism): void {
-    this.pathomechanism.set(pathomechanism);
+    this.pathomechanism.update((lst) => [...lst, pathomechanism]);
     console.log("setting path", pathomechanism);
     this.currentStep.set(5);
   }
 
-  onReporterStepComplete(reporters: EvidenceRecord[]): void {
-    console.log("onReporterStepComplete, reporters", reporters);
-    this.evidenceList.update(() => reporters);
-    this.currentStep.set(6);
+  onCitationSaved(entry: CitationEntry) {
+    // If the citation already exists, replace it, otherwise push
+    this.citations.update(list => {
+        const index = list.findIndex(e => e.citation.pmid === entry.citation.pmid);
+        if (index >= 0) {
+            list[index] = entry;
+        } else {
+            list.push(entry);
+        }
+        return [...list]; // return new array to trigger signals
+    });
+}
+
+onCitationRemoved(entry: CitationEntry) {
+    this.citations.update(list => list.filter(e => e.citation.pmid !== entry.citation.pmid));
+}
+
+
+// Called when user clicks "Add"
+onAddCitation() {
+  this.addingOrEditingCitation.set({}); // new entry
+}
+
+  // Called when user clicks "Edit"
+  onEditCitation(event: { index: number; entry: CitationEntry }) {
+    this.addingOrEditingCitation.set(event);
   }
 
-  onCitationStepComplete(citePacket: CitationPacket): void {
-    this.cite_packet.set(citePacket);
+  onDeleteCitation(index: number) {
+    this.citations.update(list => list.filter((_, i) => i !== index));
+  }
+
+  // Called when form saves
+  onCitationFormSave(entry: CitationEntry) {
+    const edit = this.addingOrEditingCitation();
+    this.citations.update(list => {
+      if (edit?.index != null) {
+        list[edit.index] = entry; // edit existing
+      } else {
+        list.push(entry); // add new
+      }
+      return [...list];
+    });
+    this.addingOrEditingCitation.set(null);
     this.currentStep.set(7);
   }
 
+  // Called when form cancels
+  onCitationFormCancel() {
+    this.addingOrEditingCitation.set(null);
+  }
+
+
+  goToReview() {
+    if (this.citations().length === 0) {
+      this.notificationService.showError("Add at least one citation");
+      return;
+    }
+    this.currentStep.set(6);
+  }
+
   resetToStep(step: number) {
-    if (step <= 6) this.cite_packet.set(null);
-    if (step <= 5) this.evidenceList.set([]);
-    if (step <= 4) this.pathomechanism.set(null);
+    //if (step <= 6) this.cite_packet.set(null);
+    //if (step <= 5) this.evidenceList.set([]);
+    if (step <= 4) this.pathomechanism.set([]);
     if (step <= 3) this.variantClass.set(null);
     if (step <= 2) this.variantData.set(null);
     if (step <= 1) this.geneData.set(null);
     this.currentStep.set(step);
+  }
+
+  resetForm() {
+    // Navigates to the "New" version of this page and clears signals
+    this.router.navigate(['/curate']); 
+    this.resetToStep(1);
   }
 
   async onFinalSave() {
@@ -139,9 +214,9 @@ export class CurationWidget implements OnInit {
       return;
     }
 
-    const evidence_list = this.evidenceList(); // allowed to be empty, no check performed
-    const citation = this.cite_packet();
-    if (! citation ) {
+  
+    const citations = this.citations();
+    if (! citations || citations.length === 0 ) {
        this.notificationService.showError("Cannot save without citation");
       return;
     }
@@ -152,27 +227,12 @@ export class CurationWidget implements OnInit {
     }
     const curation = this.configService.createCurationEvent(currentOrcid);
 
-    const annot: NcVariantEvaluation = {
-      pathomechanism: pathomechanism,
-      evidence: evidence_list,
-      citation: citation.citation
-    };
-
-    if (citation.cosegregation) {
-      annot.cosegregationEvidence = true;
-    }
-    if (citation.phenotypicEvidence) {
-      annot.phenotypicEvidence = true;
-    }
-    let cmt = citation.comment;
-    if (cmt && cmt.length > 0) {
-      annot.comment = cmt;
-    }
-
     const ncAssess: NcVariantAssessment = {
+      id: crypto.randomUUID(),
       variantCoordinates: variant,
       variantCategory: cat,
-      annotations: [annot],
+      pathomechanisms: pathomechanism,
+      citation: citations,
       biocuration: [curation],
     };
     console.log("Adding ncAsses=", ncAssess);

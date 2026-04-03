@@ -26,9 +26,7 @@ export interface GeneStepResult {
     CommonModule,
     FormsModule,
     MatDividerModule,
-    MatFormField,
     MatInputModule,
-    MatLabel,
     MatIcon
 ]
 })

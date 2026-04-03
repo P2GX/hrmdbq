@@ -1,5 +1,5 @@
 import { inject, Injectable, NgZone, signal } from '@angular/core';
-import { CurationEvent, GeneCuration, GeneCurationFile, HgvsVariant, HrmdbqSettings, IntergenicHgvsVariant, NcVariantAssessment, NcVariantEvaluation, StructuralVariant } from './models';
+import { CurationEvent, GeneCuration, HgvsVariant, HrmdbqSettings, IntergenicHgvsVariant, NcVariantAssessment, StructuralVariant } from './models';
 import { invoke } from '@tauri-apps/api/core';
 import { Citation, VariantDto } from './models';
 import { listen } from '@tauri-apps/api/event';

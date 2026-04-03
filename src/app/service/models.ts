@@ -1,24 +1,34 @@
 
 
 export interface NcVariantAssessment {
+  id: string;
   variantCoordinates: NcVariant;
   variantCategory: VariantClass;
-  annotations: NcVariantEvaluation[];
+  pathomechanisms: Pathomechanism[];
+  variationId?: number;
+  comment?: string;
+  citation: CitationEntry[];
   biocuration: CurationEvent[];
 }
 
-export type VariantClass = 
-  | 'utr5' 
-  | 'promoter' 
-  | 'enhancer' 
-  | 'utr3' 
-  | 'microRna' 
-  | 'lncRna' 
-  | 'tRna'       
-  | 'snRna'      
-  | 'snoRna'    
-  | 'icr' 
-  | 'multiGene';
+
+
+
+
+export enum VariantClass {
+  Utr5 = 'utr5',
+  Promoter = 'promoter',
+  Enhancer = 'enhancer',
+  Utr3 = 'utr3',
+  MicroRna = 'microRna',
+  LncRna = 'lncRna',
+  TRna = 'tRna',       
+  SnRna = 'snRna',      
+  SnoRna = 'snoRna',    
+  Icr = 'icr', 
+  MultiGene = 'multiGene'
+}
+
 
 export type EvidenceSource = 
   // --- Experimental / Functional ---
@@ -123,14 +133,24 @@ export const PATHOMECHANISM_LABELS: Record<Pathomechanism, string> = {
     unknown: 'Unknown pathomechanism',
 };
 
-export interface NcVariantEvaluation {
-  pathomechanism: Pathomechanism;
-  cosegregationEvidence?: boolean;
-  phenotypicEvidence?: boolean;
-  evidence: EvidenceRecord[]; 
-  comment?: string;
-  citation: Citation; 
+
+
+
+export enum EvidenceLevel {
+    yes = 'yes',
+    notAvailable = 'notAValable',
+    no = 'no',
 }
+
+export interface CitationEntry {
+    citation: Citation;
+    note?: string;
+    cosegregationEvidence: EvidenceLevel,
+    phenotypicEvidence: EvidenceLevel,
+    experimentalEvidence: EvidenceLevel, 
+    computationalEvidence: EvidenceLevel 
+}
+
 
 export interface CurationEvent {
   orcid: string;

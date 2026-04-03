@@ -58,6 +58,8 @@ nav:
     - Promoter: 'curation/variants/promoter.md'
     - Enhancer: 'curation/variants/enhancer.md'
     - RNA genes: 'curation/variants/rna.md'
+      - lincRNA: 'curation/variants/lincRNA.md'
+      - microRNA: 'curation/variants/mirna.md'
   - HGVS: 'curation/hgvs.md'
   - Functional evidence: 'curation/functional.md'
 - Developers: 'developers.md'

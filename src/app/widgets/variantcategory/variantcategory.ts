@@ -14,10 +14,8 @@ import { MatSelectModule } from "@angular/material/select";
 export class VariantCategorySelectorComponent {
 
   stepComplete = output<VariantClass>();
-  categories: VariantClass[] = [
-    'utr5', 'promoter', 'enhancer', 'utr3', 
-    'microRna', 'lncRna', 'icr', 'multiGene','tRna', 'snRna', 'snoRna'
-  ];
+  categories: VariantClass[] = Object.values(VariantClass);
+
 
   selectedCategory = signal<VariantClass | null>(null);
   categoryConfirmed = signal(false);

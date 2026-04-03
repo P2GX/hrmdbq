@@ -193,7 +193,6 @@ impl std::fmt::Display for EvidenceSource {
             Self::ClinicalRna => "Patient-derived RNA Study",
             Self::ClinicalProtein => "Patient-derived Protein Study",
             Self::ClinicalEnzymeActivity => "Patient-derived Enzyme Activity",
-    
             Self::InSilicoSplicePredictor => "In silico splicing predictor",
             Self::InSilicoMissensePredictor => "In silico missense predictor",
             Self::TfbsChangePrediction => "TFBS Change prediction",
@@ -224,23 +223,6 @@ pub struct EvidenceRecord {
     assessment: EvidenceType,
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct NcVariantEvaluation {
-    /// e.g. reduced transcription
-    pub pathomechanism: Pathomechanism,
-    /// Was the variant shown to cosegregate in the current paper?
-    /// Note that we would never enter false because in this case we would assume the variant is not causal
-    /// Thus, we are entering either "true" or "n/a"
-    pub cosegregation_evidence: Option<bool>,
-    /// Were clinical manifestations consistent with the disease in the current paper?
-    /// Note that we would never enter false because in this case we would assume the variant is not causal
-    /// Thus, we are entering either "true" or "n/a"
-    pub phenotypic_evidence: Option<bool>,
-    pub evidence: Vec<EvidenceRecord>,
-    pub comment: Option<String>,
-    pub citation: Citation,
-}
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -279,15 +261,50 @@ pub struct CurationEvent {
     pub date: String,
 }
 
+
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub enum EvidenceLevel {
+    Yes,
+    NotAvailable,
+    No,
+}
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CitationEntry {
+    pub citation: Citation,
+    pub note: Option<String>, 
+    /// Was the variant shown to cosegregate in the current paper?
+    /// Yes = evidence present
+    /// No = evidence explicitly absent
+    /// NotAvailable = not assessed / not reported
+    pub cosegregation_evidence: EvidenceLevel,
+    /// Were clinical manifestations consistent with the disease in the current paper?
+    /// see above
+    pub phenotypic_evidence: EvidenceLevel,
+    /// Did the authors perform some experimental/molecular validation?
+    pub experimental_evidence: EvidenceLevel, 
+    /// Did the authors provide computational evidence in support of pathogenicity
+    pub computational_evidence: EvidenceLevel 
+}
+
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct NcVariantAssessment {
+    pub id: String,
     /// Data we receive from VariantValidator
     pub variant_coordinates: NcVariant,
     /// e.g., promotor, enhancer, ncRNA, 5UTR
     pub variant_category: VariantClass,
-    /// assessment of the pathogenicity in one PMID
-    pub annotations: Vec<NcVariantEvaluation>,
+    /// assessment of the pathogemechanism (Multiple are allowed)
+    pub pathomechanisms: Vec<Pathomechanism>,
+    /// ClinVar variation identifier
+    pub variation_id: Option<u64>,
+    /// Anything else?
+    pub comment: Option<String>,
+    /// List of PMIDs about the current variant
+    pub citation: Vec<CitationEntry>,
     /// ORCID id of curation and time of curation(s)
     pub biocuration: Vec<CurationEvent>,
 }
@@ -362,12 +379,15 @@ pub struct GeneCuration {
     pub web_resources: Vec<WebResource>,
     pub notes: Vec<GeneNote>,
     pub annotations: Vec<NcVariantAssessment>,
+    pub genome_assembly: String,
 }
 
+/// Standard assembly - presumably for some time to come.
+const ASSEMBLY: &str = "hg38";
 
 impl GeneCuration {
     pub fn new(gene_data: GeneTranscriptData) -> Self {
-        Self { gene_data, web_resources: vec![], notes: vec![], annotations: vec![] }
+        Self { gene_data, web_resources: vec![], notes: vec![], annotations: vec![], genome_assembly: ASSEMBLY.to_string() }
     }
 
     pub fn get_symbol(&self) -> &str {

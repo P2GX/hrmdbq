@@ -6,8 +6,8 @@ use std::path::PathBuf;
 impl NcVariantAssessment {
     /// returns Ok(()) if the pathomechanism is biologically plausible for the variant category
     pub fn validate_mechanism(&self) -> Result<(), String> {
-        for anno in &self.annotations {
-            match (&self.variant_category, &anno.pathomechanism) {
+        for anno in &self.pathomechanisms {
+            match (&self.variant_category, &anno) {
                 // 5' UTR specific
                 (VariantClass::Utr5, Pathomechanism::KozakDisruption | Pathomechanism::UORFCreation | Pathomechanism::UORFDisruption) => continue,
                 
@@ -40,7 +40,7 @@ pub fn update_ncvar_list(
     assess: NcVariantAssessment) 
     -> Result<Vec<NcVariantAssessment>, String> {
         assess.validate_mechanism()?; // Throw error is mechanism+variant class is improbable.
-        let existing_index = list.iter().position(|existing| 
+       /* let existing_index = list.iter().position(|existing| 
             {existing.variant_coordinates == assess.variant_coordinates});
 
         if let Some(index) = existing_index {
@@ -49,8 +49,8 @@ pub fn update_ncvar_list(
                 return Err(format!("Disagreement with previous variant category: previous: {} and current {}",
                     entry.variant_category, assess.variant_category));
             }
-        for new_ann in assess.annotations {
-            if !entry.annotations.iter().any(|a| a.citation == new_ann.citation) {
+        for new_ann in assess.citation {
+            if !entry.citation == new_ann.citation) {
                 entry.annotations.push(new_ann);
             }
         }
@@ -59,11 +59,15 @@ pub fn update_ncvar_list(
             entry.biocuration.push(bioc);
         };
         list.push(entry);
+       
+       
     } else {
         // first curation for this variant
         list.push(assess);
     }
     Ok(list)
+     */ 
+     return Err("NEED TO REFACTOR".to_ascii_lowercase());
 }
 
 

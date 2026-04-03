@@ -1,0 +1,25 @@
+.citation-form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  .full-width {
+    width: 100%;
+  }
+
+  .evidence-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+
+    .evidence-item {
+      flex: 1 1 200px; // responsive
+    }
+  }
+
+  .actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+  }
+}

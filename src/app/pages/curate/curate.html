@@ -32,20 +32,26 @@
         </app-pathomechanism>
     }
    @if (currentStep() > 4) { <mat-divider/>  }
-    @if(currentStep() >=5 ) {
-        <app-reporter
-             (stepComplete)="onReporterStepComplete($event)">
-        </app-reporter>
+   @if (currentStep() >= 5) {
+     <app-citation-list
+        [citations]="citations()"
+        (add)="onAddCitation()"
+        (edit)="onEditCitation($event)"
+        (delete)="onDeleteCitation($event)">
+    </app-citation-list>
+
+    <!-- Citation form (conditionally shown) -->
+    <ng-container *ngIf="addingOrEditingCitation() as edit">
+        <app-citation-form
+        [entry]="edit.entry ?? null"
+        (saveCitationEntry)="onCitationFormSave($event)"
+        (cancel)="onCitationFormCancel()">
+        </app-citation-form>
+    </ng-container>
     }
    @if (currentStep() > 5) { <mat-divider/>  }
 
     @if (currentStep() >= 6) {
-        <app-citation
-            (stepComplete)="onCitationStepComplete($event)">
-        </app-citation>
-    } 
-    @if (currentStep() > 6) { <mat-divider/>  }
-    @if (currentStep() >= 7) {
         <div class="final-step-container animate-in">
             <div class="review-card">
             <div class="text-center mb-6">
