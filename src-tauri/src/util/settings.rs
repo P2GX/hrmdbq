@@ -78,7 +78,6 @@ impl HrmdbqSettings {
             Ok(p) => p,
             Err(_) => return HrmdbqSettings::empty(),
         };
-
         if !path.exists() {
             let default_settings = HrmdbqSettings::empty();
             if let Ok(toml_string) = toml::to_string_pretty(&default_settings) {
@@ -88,15 +87,22 @@ impl HrmdbqSettings {
         }
 
         fs::read_to_string(&path)
-            .and_then(|contents| {
-                toml::from_str(&contents).map_err(|e| {
-                    std::io::Error::new(std::io::ErrorKind::InvalidData, e)
-                })
-            })
-            .unwrap_or_else(|err| {
-                eprintln!("Warning: Failed to load settings.toml: {}. Using defaults.", err);
-                HrmdbqSettings::empty()
-            })
+        .and_then(|contents| {
+            match toml::from_str::<HrmdbqSettings>(&contents) {
+                Ok(settings) => {
+                    Ok(settings)
+                }
+                Err(e) => {
+                    eprintln!("TOML Parse Error: {}", e);
+                    // Return an IO error so the unwrap_or_else catches it
+                    Err(std::io::Error::new(std::io::ErrorKind::InvalidData, e))
+                }
+            }
+        })
+        .unwrap_or_else(|err| {
+            eprintln!("Final Fallback: {}. Using defaults.", err);
+            HrmdbqSettings::empty()
+        })
     }
 
     pub fn save_settings(&self) -> Result<(), String> {

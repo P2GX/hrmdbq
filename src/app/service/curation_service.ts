@@ -1,6 +1,6 @@
 import { Injectable, signal, computed, inject, NgZone } from '@angular/core';
 import { invoke } from '@tauri-apps/api/core';
-import { GeneCuration, GeneCurationFile, GeneNote, HgncBundle, NcVariantAssessment, WebResource } from './models';
+import { GeneCuration, GeneCurationFile, GeneNote, HgncBundle, HrmdbqSettings, NcVariantAssessment, WebResource } from './models';
 import { NotificationService } from './notification.service';
 
 
@@ -46,10 +46,12 @@ export class CurationService {
   async initialize() {
     try {
       // Just fetch settings first to see if a file path already exists
-      const settings = await invoke<any>('get_settings');
-      if (settings.curation_file) {
-        this._curationDirectory.set(settings.curation_file);
+      const settings = await invoke<HrmdbqSettings>('get_settings');
+      if (settings.hrmdata_dir_path) {
+        this._curationDirectory.set(settings.hrmdata_dir_path);
         this.loadCurationFileList();
+      } else {
+        this.notificationService.showError("Initialize curaton directory before starting work");
       }
     } catch (err) {
       console.error('Auto-load failed:', err);

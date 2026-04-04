@@ -329,15 +329,11 @@ export function displaySv(sv: StructuralVariant, validated: boolean): VariantDto
 }
 
 
+// Not camel case because we are using toml package
 export interface HrmdbqSettings {
-    /** Directory where we store go-basic.json and annotation files */
-    go_dir: string | null;
-    
-    /** Research ID of curator */
     orcid_id: string | null;
-    
     /** Path to the file in which we keep our curations */
-    curation_json_path: string | null;
+    hrmdata_dir_path: string | null;
 }
 
 
