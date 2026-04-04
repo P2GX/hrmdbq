@@ -40,7 +40,8 @@
         [citations]="citations()"
         (add)="onAddCitation()"
         (edit)="onEditCitation($event)"
-        (delete)="onDeleteCitation($event)">
+        (delete)="onDeleteCitation($event)"
+        (citationsComplete)="finishCitationStep()">
     </app-citation-list>
 
     <!-- Citation form (conditionally shown) -->

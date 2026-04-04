@@ -1,6 +1,6 @@
 [package]
 name = "hrmdbq"
-version = "0.1.20"
+version = "0.1.21"
 description = "Curation non-coding variant pathomechanism"
 authors = ["you"]
 edition = "2021"

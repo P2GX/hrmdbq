@@ -1,9 +1,10 @@
-import { Component, computed, input, output, signal } from '@angular/core';
+import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 import { CitationEntry } from '../../service/models';
+import { NotificationService } from '../../service/notification.service';
 
 @Component({
   selector: 'app-citation-list',
@@ -17,12 +18,13 @@ import { CitationEntry } from '../../service/models';
   styleUrls: ['./citation.scss']
 })
 export class CitationListComponent {
-
+  notificationService = inject(NotificationService);
   citations = input<CitationEntry[]>([]);
   add = output<void>();
   edit = output<{ index: number; entry: CitationEntry }>();
   delete = output<number>();
   stepComplete = signal<boolean>(false);
+  citationsComplete = output<CitationEntry[]>();
 
   citationDisplay = computed(() => {
     const cites = this.citations();
@@ -67,7 +69,13 @@ export class CitationListComponent {
 
 
   onFinish(): void {
-    this.stepComplete.set(true);
+    const cites = this.citations();
+    if (cites) {
+      this.stepComplete.set(true);
+      this.citationsComplete.emit(cites);
+    } else {
+      this.notificationService.showError("Could not emit finished citations");
+    }
   }
 
   cancel() {

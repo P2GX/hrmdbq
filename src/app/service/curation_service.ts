@@ -212,12 +212,14 @@ export class CurationService {
 
   // update or insert assessment
   upsertVariant(assess: NcVariantAssessment): void {
+    console.log("upsertVariant:", assess);
     this._currentCuration.update(state => {
       if (!state) return null;
-
       const index = state.annotations.findIndex(ann => ann.id === assess.id);
       let newAnnotations = [...state.annotations];
-
+      console.log("upsert var index", index);
+      console.log("assess index", assess.id);
+      state.annotations.forEach(a => {console.log("id", a.id)});
       if (index !== -1) {
         // UPDATE: Replace the existing object at that index
         newAnnotations[index] = assess;

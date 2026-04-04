@@ -2,7 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NcVariant, NcVariantAssessment, Pathomechanism, VariantClass, VariantKind } from '../../service/models';
+import { NcVariantAssessment, Pathomechanism, VariantClass, VariantKind } from '../../service/models';
 import { AddVariantComponent, NcVariantBundle } from '../../addvariant/addvariant.component';
 import { NotificationService } from '../../service/notification.service';
 import { GeneStepResult, GeneCurationWidget } from '../../widgets/genecuration/genesymbolcuration';
@@ -42,6 +42,7 @@ export interface AddVariantDialogData {
   styleUrl: './curate.css'
 })
 export class CurationWidget implements OnInit {
+
   private curationService = inject(CurationService);
   private notificationService = inject(NotificationService);
   private configService = inject(ConfigService);
@@ -54,8 +55,6 @@ export class CurationWidget implements OnInit {
 
     // 2. Data collection from steps
   geneData = signal<GeneStepResult | null>(null);
-  //variantData = signal<NcVariant | null>(null);
-  //clinVarIdentifier = signal<number|null>(null);
   variantClass = signal<VariantClass | null>(null);
   pathomechanisms = signal<Pathomechanism[]>([]);
   citations = signal<CitationEntry[]>([]);
@@ -75,6 +74,7 @@ export class CurationWidget implements OnInit {
     } 
     const variantToEdit = this.curationService.editingVariant();
     if (variantToEdit) {
+      this.isEditMode.set(true);
       this.initializeEdit(variantToEdit);
     } else {
       this.isEditMode.set(false);
@@ -91,6 +91,7 @@ export class CurationWidget implements OnInit {
       this.notificationService.showError("Cannot edit because we could not retrieve currently active gene");
       return;
     }
+    this.editingId.set(assessment.id);
     this.geneData.set( activeCuration.geneData);
     this.ncVariantBundle.set({ncvariant: assessment.variantCoordinates, clinvarId: assessment.variationId});
     this.variantClass.set(assessment.variantCategory);
@@ -194,6 +195,12 @@ onAddCitation() {
     this.addingOrEditingCitation.set(null);
   }
 
+  finishCitationStep() {
+    // when we finish, we have the list of citations and need to increment the step
+    console.log("finishCitationStep")
+    this.currentStep.set(6);
+  }
+
 
   goToReview() {
     if (this.citations().length === 0) {
@@ -248,8 +255,15 @@ onAddCitation() {
     }
     const curation = this.configService.createCurationEvent(currentOrcid);
 
+    const editMode = this.isEditMode();
+    const editId = this.editingId();
+    let assessId = String(crypto.randomUUID());
+    if (editMode && editId) {
+      assessId = editId;
+    }
+
     const ncAssess: NcVariantAssessment = {
-      id: crypto.randomUUID(),
+      id: assessId,
       variantCoordinates: variantBundle.ncvariant,
       variantCategory: cat,
       pathomechanisms: pathomechanism,
