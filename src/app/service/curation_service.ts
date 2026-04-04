@@ -8,6 +8,7 @@ import { NotificationService } from './notification.service';
   providedIn: 'root'
 })
 export class CurationService {
+
   private ngZone = inject(NgZone);
   private notificationService = inject(NotificationService);
 
@@ -18,6 +19,9 @@ export class CurationService {
 
   private _currentCuration = signal<GeneCuration | null>(null);
   readonly currentCuration = this._currentCuration.asReadonly();
+  /* The following is used if the user chooses to edit an existing curation */
+  private _editingVariant = signal<NcVariantAssessment | null>(null);
+  readonly editingVariant = this._editingVariant.asReadonly();
 
   private _hasUnsavedChanges = signal<boolean>(false);
   readonly hasUnsavedChanges = this._hasUnsavedChanges.asReadonly();
@@ -99,22 +103,6 @@ export class CurationService {
       }
     }
 
-    async saveVariant(assess: NcVariantAssessment) {
-      try {
-        const newVariantList = await invoke<NcVariantAssessment[]>('add_nc_variant_assessment', { assess });
-        this._currentCuration.update(current => {
-          if (!current) return null;
-          return {
-            ...current,           
-            annotations: newVariantList 
-          };
-        });
-        return true;
-      } catch (err) {
-        console.error(err);
-        return false;
-      }
-    }
 
   async createGeneCuration(symbol: string, hgnc: HgncBundle): Promise<boolean> {
     try {
@@ -200,6 +188,47 @@ export class CurationService {
         notes: current.notes.filter(note => note.id !== id)
       };
     });
+    this._hasUnsavedChanges.set(true);
+  }
+
+  setEditingVariant(row: NcVariantAssessment | null) {
+     this._editingVariant.set(row);
+  }
+
+  deleteVariant(id: string): void {
+    this._currentCuration.update(state => {
+      if (!state) return null;
+
+      // Filter by the unique ID string
+      return {
+        ...state,
+        annotations: state.annotations.filter(ann => ann.id !== id)
+      };
+    });
+
+    this._hasUnsavedChanges.set(true);
+    this.notificationService.showSuccess("Curation removed.");
+  }
+
+  // update or insert assessment
+  upsertVariant(assess: NcVariantAssessment): void {
+    this._currentCuration.update(state => {
+      if (!state) return null;
+
+      const index = state.annotations.findIndex(ann => ann.id === assess.id);
+      let newAnnotations = [...state.annotations];
+
+      if (index !== -1) {
+        // UPDATE: Replace the existing object at that index
+        newAnnotations[index] = assess;
+      } else {
+        // INSERT: Add the new object
+        newAnnotations.push(assess);
+      }
+
+      return { ...state, annotations: newAnnotations };
+    });
+
     this._hasUnsavedChanges.set(true);
   }
 

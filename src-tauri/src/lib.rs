@@ -41,7 +41,6 @@ pub fn run() {
         .manage(app_state)
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
-            add_nc_variant_assessment,
             create_gene_curation,
             fetch_gene_data_from_hgnc,
             get_variant_assessments,
@@ -225,23 +224,7 @@ async fn retrieve_pmid_citation(
     util::pubmed_retriever::retrieve_citation(pmid).await
 }
 
-#[tauri::command]
-fn add_nc_variant_assessment(
-      state: tauri::State<'_, AppState>,
-      assess: NcVariantAssessment
-) -> Result<Vec<NcVariantAssessment>, String> {
-    let mut gene_curation_guard = state.current_gene_curation
-        .lock()
-        .map_err(|_| "Failed to lock mutex".to_string())?;
-    let gene_curation = gene_curation_guard.as_mut()
-        .ok_or("No active gene curation found in state")?;
-    let current_list = std::mem::take(&mut gene_curation.annotations);
-    println!("add_nc_variant_assesment current list size= {}", current_list.len());
-    let updated_list: Vec<NcVariantAssessment> = ncvar::ncvar_assessment::update_ncvar_list(current_list, assess)?;
-    println!("add_nc_variant_assesment updated list size= {}", updated_list.len());
-    gene_curation.annotations = updated_list.clone();
-    Ok(updated_list)
-}
+
 
 
 

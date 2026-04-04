@@ -1,4 +1,4 @@
-import { Component, output, signal } from '@angular/core';
+import { Component, effect, input, output, signal } from '@angular/core';
 import { VariantClass } from '../../service/models';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from "@angular/material/card";
@@ -15,15 +15,25 @@ export class VariantCategorySelectorComponent {
 
   stepComplete = output<VariantClass>();
   categories: VariantClass[] = Object.values(VariantClass);
-
+  initialCategory = input<VariantClass | null>(null);
 
   selectedCategory = signal<VariantClass | null>(null);
   categoryConfirmed = signal(false);
 
+  constructor() {
+    effect(() => {
+      const initial = this.initialCategory();
+      if (initial) {
+        this.selectedCategory.set(initial);
+        this.categoryConfirmed.set(true); // Auto-confirm if we are editing
+      }
+    });
+  }
+
   selectCategory(cat: VariantClass) {
     this.selectedCategory.set(cat);
     this.categoryConfirmed.set(true);
-      this.stepComplete.emit(cat);
+    this.stepComplete.emit(cat);
   }
 
   formatCategoryLabel(cat: VariantClass | null): string {

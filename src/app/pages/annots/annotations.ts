@@ -47,9 +47,10 @@ export class AnnotationTable implements OnInit {
     resName = signal('');
     resUrl = signal('');
 
-    displayedColumns: string[] = ['label', 'category', 'symbol', 'curator'];
+    displayedColumns: string[] = ['label', 'category', 'symbol', 'actions'];
+    editingVariant = signal<NcVariantAssessment | null>(null);
 
-
+   
 
     readonly activeGeneSymbol = computed(() => 
       this.curationService.currentCuration()?.geneData.symbol ?? 'No Gene Selected'
@@ -146,6 +147,18 @@ export class AnnotationTable implements OnInit {
     this.router.navigate(["/setup"]);
   }
 
+  editVariant(row: NcVariantAssessment) {
+    this.editingVariant.set(row);
+    this.curationService.setEditingVariant(row);
+    this.router.navigate(["curate"]);
+  } 
 
+  deleteVariant(row: NcVariantAssessment): void {
+    const label = this.getVariantLabel(row.variantCoordinates);
+    const confirmed = confirm(`Are you sure you want to delete the curation for ${label}? This action cannot be undone until you reload the file.`);
+    if (confirmed) {
+      this.curationService.deleteVariant(row.id);
+    }
+  }
 
 }

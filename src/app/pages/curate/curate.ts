@@ -3,7 +3,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NcVariant, NcVariantAssessment, Pathomechanism, VariantClass, VariantKind } from '../../service/models';
-import { AddVariantComponent } from '../../addvariant/addvariant.component';
+import { AddVariantComponent, NcVariantBundle } from '../../addvariant/addvariant.component';
 import { NotificationService } from '../../service/notification.service';
 import { GeneStepResult, GeneCurationWidget } from '../../widgets/genecuration/genesymbolcuration';
 import { VariantCategorySelectorComponent } from "../../widgets/variantcategory/variantcategory";
@@ -42,13 +42,20 @@ export interface AddVariantDialogData {
   styleUrl: './curate.css'
 })
 export class CurationWidget implements OnInit {
-
+  private curationService = inject(CurationService);
+  private notificationService = inject(NotificationService);
+  private configService = inject(ConfigService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  isEditMode = signal(false);
+  editingId = signal<string | null>(null);
   readonly VariantKind = VariantKind;
   currentStep = signal(1); 
 
     // 2. Data collection from steps
   geneData = signal<GeneStepResult | null>(null);
-  variantData = signal<NcVariant | null>(null);
+  //variantData = signal<NcVariant | null>(null);
+  //clinVarIdentifier = signal<number|null>(null);
   variantClass = signal<VariantClass | null>(null);
   pathomechanism = signal<Pathomechanism[]>([]);
   citations = signal<CitationEntry[]>([]);
@@ -56,7 +63,7 @@ export class CurationWidget implements OnInit {
   editIndex = signal<number | null>(null);
   addingOrEditingCitation = signal<{ index?: number; entry?: CitationEntry } | null>(null);
 
-
+  ncVariantBundle = signal<NcVariantBundle|null>(null);
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -64,10 +71,32 @@ export class CurationWidget implements OnInit {
       this.isEditMode.set(true);
       this.editingId.set(id);
       this.loadExistingCuration(id);
+      return;
+    } 
+    const variantToEdit = this.curationService.editingVariant();
+    if (variantToEdit) {
+      this.initializeEdit(variantToEdit);
     } else {
       this.isEditMode.set(false);
       this.handleNewCuration();
     }
+  }
+
+  /* This is used if we are editing an existing variant. Usually, we will be adding a Citation, so 
+    * let's add all of the data and open the corresponding step */
+  initializeEdit(assessment: NcVariantAssessment) {
+    this.curationService.activeSymbol();
+    const activeCuration = this.curationService.currentCuration();
+    if (!activeCuration) {
+      this.notificationService.showError("Cannot edit because we could not retrieve currently active gene");
+      return;
+    }
+    this.geneData.set( activeCuration.geneData);
+    this.ncVariantBundle.set({ncvariant: assessment.variantCoordinates, clinvarId: assessment.variationId});
+    this.variantClass.set(assessment.variantCategory);
+    this.pathomechanism.set(assessment.pathomechanisms);
+    this.citations.set(assessment.citation);
+    this.currentStep.set(5);
   }
 
   private handleNewCuration(): void {
@@ -90,13 +119,7 @@ export class CurationWidget implements OnInit {
     this.notificationService.showError(`IMPLEMENT ME- handle existing ${id}`)
   }
 
-  private notificationService = inject(NotificationService);
-  private configService = inject(ConfigService);
-  private curationService = inject(CurationService);
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
-  isEditMode = signal(false);
-  editingId = signal<string | null>(null);
+ 
 
   onGeneStepComplete(result: GeneStepResult) {
     this.geneData.set(result);
@@ -104,8 +127,8 @@ export class CurationWidget implements OnInit {
     this.notificationService.showSuccess(`Retrieved HGNC data for ${this.geneData()?.symbol}`)
   }
 
-  onVariantStepComplete(variant: NcVariant) {
-    this.variantData.set(variant);
+  onVariantStepComplete(variantAccepted: NcVariantBundle) {
+    this.ncVariantBundle.set(variantAccepted);
     this.currentStep.set(3); 
   }
 
@@ -166,7 +189,7 @@ onAddCitation() {
     this.currentStep.set(7);
   }
 
-  // Called when form cancels
+  // Called when PMID form cancels
   onCitationFormCancel() {
     this.addingOrEditingCitation.set(null);
   }
@@ -181,17 +204,16 @@ onAddCitation() {
   }
 
   resetToStep(step: number) {
-    //if (step <= 6) this.cite_packet.set(null);
-    //if (step <= 5) this.evidenceList.set([]);
+    if (step <= 5) this.citations.set([]);
     if (step <= 4) this.pathomechanism.set([]);
     if (step <= 3) this.variantClass.set(null);
-    if (step <= 2) this.variantData.set(null);
+    if (step <= 2) this.ncVariantBundle.set(null);
     if (step <= 1) this.geneData.set(null);
     this.currentStep.set(step);
   }
 
   resetForm() {
-    // Navigates to the "New" version of this page and clears signals
+    this.curationService.setEditingVariant(null);
     this.router.navigate(['/curate']); 
     this.resetToStep(1);
   }
@@ -202,8 +224,8 @@ onAddCitation() {
       this.notificationService.showError("Cannot save without variant category");
       return;
     }
-    const variant = this.variantData();
-    if (! variant) {
+    const variantBundle = this.ncVariantBundle();
+    if (! variantBundle) {
        this.notificationService.showError("Cannot save without variant data");
       return;
     }
@@ -228,21 +250,25 @@ onAddCitation() {
 
     const ncAssess: NcVariantAssessment = {
       id: crypto.randomUUID(),
-      variantCoordinates: variant,
+      variantCoordinates: variantBundle.ncvariant,
       variantCategory: cat,
       pathomechanisms: pathomechanism,
       citation: citations,
       biocuration: [curation],
     };
-    console.log("Adding ncAsses=", ncAssess);
+    console.log("final save=", ncAssess);
+    const clinVarId = variantBundle.clinvarId;
+    if (clinVarId) {
+      ncAssess.variationId = clinVarId;
+    }
+    this.curationService.setEditingVariant(null);
     try {
-        await this.curationService.saveVariant(ncAssess);
+        await this.curationService.upsertVariant(ncAssess);
         this.notificationService.showSuccess("Variant assessment saved.");
         this.router.navigate(["/annots"]);
     } catch (err) {
         this.notificationService.showError(`Save failed: ${err}`);
     }
-
   }
 
 

@@ -90,10 +90,6 @@ createCurationEvent(orcid: string): CurationEvent {
 }
 
 
-  addNcVariantAssessment( assess: NcVariantAssessment): Promise<NcVariantAssessment[]> {
-    return invoke<NcVariantAssessment[]>('add_nc_variant_assesment', {assess: assess});
-  }
-
 
   async serializeGeneCuration(curation: GeneCuration) : Promise<void> {
      return invoke<void>('serialize_gene_curation', {curation: curation});

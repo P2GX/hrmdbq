@@ -14,6 +14,7 @@
         <div class="variant-card hgvs-theme">
             <app-addvariant
                 [selected_gene]="gdata"
+                [initialNcVariantBundle]="ncVariantBundle()"
                 (stepComplete)="onVariantStepComplete($event)">
             </app-addvariant>
         </div>
@@ -21,6 +22,7 @@
     @if (currentStep() > 2) { <mat-divider/>  }
     @if(currentStep() >= 3 ) {
         <app-variant-category-selector
+            [initialCategory]="variantClass()"
             (stepComplete)="onCategoryStepComplete($event)">
         </app-variant-category-selector>
     }

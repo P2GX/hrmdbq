@@ -97,10 +97,17 @@
           </td>
         </ng-container>
 
-        <ng-container matColumnDef="curator">
-          <th mat-header-cell *matHeaderCellDef> Curator </th>
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef> Actions </th>
           <td mat-cell *matCellDef="let row"> 
-            {{ row.biocuration[0]?.orcid || 'System' }}
+            <div class="flex gap-1">
+              <button mat-icon-button color="primary" (click)="editVariant(row)" matTooltip="Edit Curation">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deleteVariant(row)" matTooltip="Remove">
+                <mat-icon>delete_outline</mat-icon>
+              </button>
+            </div>
           </td>
         </ng-container>
 

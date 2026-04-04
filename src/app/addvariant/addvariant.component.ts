@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, input, OnInit, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input, OnInit, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { openUrl } from '@tauri-apps/plugin-opener';
@@ -36,7 +36,12 @@ export interface AddVariantDialogData {
 
 export interface VariantAcceptedEvent {
   variant: string;
-  alleleCount: number; // mono or biallelic
+  alleleCount: number; 
+}
+
+export interface NcVariantBundle {
+  ncvariant: NcVariant;
+  clinvarId?: number; 
 }
 
 type ValidatorFn = () => Promise<void>;
@@ -62,18 +67,69 @@ type VariantMode = 'HGVS' | 'SV' | 'IG';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AddVariantComponent {
+
   
   // the following has symbol, transcript id, and HGNC id
   selected_gene = input.required<GeneStepResult>();
+  initialNcVariantBundle = input<NcVariantBundle|null>(null);
   currentMode: VariantMode = 'HGVS';
   rowId = input<string>();
   private configService = inject(ConfigService);
   private curationService = inject(CurationService);
   private notificationService = inject(NotificationService);
-  stepComplete = output<NcVariant>();
+  stepComplete = output<NcVariantBundle>();
   variantConfirmed = signal(false);
   variantValidated = false;
   isSubmitting = false;
+  clinvarId = signal<number|undefined>(undefined);
+  /* If the current variant was HGVS and was validated, this variant is non-null */
+  currentHgvsVariant: HgvsVariant | null = null;
+  /* If the current variant was structural and was validated, this variant is non-null */
+  currentStructuralVariant: StructuralVariant | null = null;
+  /* If the current variant was intergenic and was validated, this variant is non-null */
+  currentIntergenicVariant: IntergenicHgvsVariant |null = null;
+  variant_string = '';
+  errorMessage: string | null = null;
+  clinVarUrl = computed(() => {
+    const cvid = this.clinvarId();
+    if (cvid) {
+      return `https://www.ncbi.nlm.nih.gov/clinvar/variation/${cvid}/`;
+    } else {
+      return '';
+    }
+  })
+
+  constructor() {
+     effect(() => {
+      const initial = this.initialNcVariantBundle();
+      console.log("ctor, inti=", initial);
+      if (initial) {
+        const varId = initial.clinvarId;
+        if (varId) {
+          this.clinvarId.set(varId);
+        }
+        const v = initial.ncvariant;
+        if ('hgvs' in v && v.hgvs) {
+          this.currentHgvsVariant = v.hgvs;
+          this.currentMode = 'HGVS'; // Assuming you use a mode string for the UI
+          this.variant_string = v.hgvs.hgvs; // For your display badge
+        } else if ("structural" in v && v.structural) {
+          this.currentStructuralVariant = v.structural;
+          this.currentMode = 'SV';
+          this.variant_string = v.structural.label;
+        } else if ("intergenic" in v && v.intergenic) {
+          this.currentIntergenicVariant = v.intergenic;
+          this.currentMode = 'IG';
+          this.variant_string = v.intergenic.gHgvs;
+        } else {
+          this.notificationService.showError(`Could not parse initial variant ${v}`);
+          return;
+        }
+        this.variantValidated = true;
+        this.variantConfirmed.set(true);
+      }
+    })
+  }
 
   async handleAction() {
     if (!this.variantValidated) {
@@ -112,18 +168,18 @@ export class AddVariantComponent {
       this.notificationService.showError("Please enter a variant string.");
       return;
     }
-    console
+   
     if (this.currentMode === 'HGVS' && this.currentHgvsVariant) {
       this.variantConfirmed.set(true);
-      this.stepComplete.emit({hgvs: this.currentHgvsVariant});
+      this.emitEvent({hgvs: this.currentHgvsVariant});
       return;
     } else if (this.currentMode === 'SV' && this.currentStructuralVariant) {
       this.variantConfirmed.set(true);
-      this.stepComplete.emit({ structural: this.currentStructuralVariant});
+      this.emitEvent({ structural: this.currentStructuralVariant});
       return;
     } else if (this.currentMode === 'IG' && this.currentIntergenicVariant) {
       this.variantConfirmed.set(true);
-      this.stepComplete.emit({ intergenic: this.currentIntergenicVariant});
+      this.emitEvent({ intergenic: this.currentIntergenicVariant});
       return;
     } else {
       this.notificationService.showError("Could not retrieve non-coding variant");
@@ -131,18 +187,24 @@ export class AddVariantComponent {
     }
   }
 
+   emitEvent = (variant: NcVariant) => {
+    this.variantConfirmed.set(true);
+    const varid = this.clinvarId();
+    // Wrap the variant and the ClinVar ID in your new Event interface
+    const event: NcVariantBundle = {
+      ncvariant: variant,
+      clinvarId: varid
+    };
+    
+    this.stepComplete.emit(event);
+  };
+
   private validators: Record<VariantMode, ValidatorFn> = {
     ['HGVS']: () => this.validateHgvsDto(),
     ['SV']: () => this.validateStructuralVariant(),
     ['IG']: () => this.validateIntergenicVariant(),
   };
 
-  /* If the current variant was HGVS and was validated, this variant is non-null */
-  currentHgvsVariant: HgvsVariant | null = null;
-  /* If the current variant was structural and was validated, this variant is non-null */
-  currentStructuralVariant: StructuralVariant | null = null;
-  /* If the current variant was intergenic and was validated, this variant is non-null */
-  currentIntergenicVariant: IntergenicHgvsVariant |null = null;
 
   isHgvs(): boolean {
     return this.currentMode === 'HGVS';
@@ -160,14 +222,6 @@ export class AddVariantComponent {
     this.currentMode = newMode;
     this.resetVars(); // Clear inputs when switching types
   }
-
- 
-
-
-  variant_string = '';
-  errorMessage: string | null = null;
-
-
 
   structuralTypes: StructuralType[] = [
     {'label':'deletion', 'id':'DEL'},
@@ -325,6 +379,19 @@ export class AddVariantComponent {
     return `Validate ${this.currentMode}`;
   }
 
+  private assembleVariant(): NcVariant | null {
+    switch (this.currentMode) {
+      case 'HGVS':
+        return this.currentHgvsVariant ? { hgvs: this.currentHgvsVariant } : null;
+      case 'SV':
+        return this.currentStructuralVariant ? { structural: this.currentStructuralVariant } : null;
+      case 'IG':
+        return this.currentIntergenicVariant ? { intergenic: this.currentIntergenicVariant } : null;
+      default:
+        return null;
+    }
+  }
+
   /**
    * Emits the validated variant to the parent component so it can be added
    * to the current phenopacket row object.
@@ -332,34 +399,50 @@ export class AddVariantComponent {
    */
   confirmVariant(): void{
     if (! this.variantValidated) {
-      alert("Could not add variant");
+      this.notificationService.showError("Could not add variant");
       return;
     }
-    if (!this.variantValidated) {
-      alert("Please validate the variant first");
-      return;
+    if (!this.clinvarId()) {
+      if (!confirm("No ClinVar ID entered. Are you sure this variant is not in ClinVar?")) {
+        return;
+      }
     }
-
-    let result: NcVariant | null = null;
-
-    if (this.currentHgvsVariant) {
-      result = { hgvs: this.currentHgvsVariant };
-    } else if (this.currentStructuralVariant) {
-      result = { structural: this.currentStructuralVariant };
-    } else if (this.currentIntergenicVariant) {
-      result = { intergenic: this.currentIntergenicVariant };
-    }
-
-    if (result) {
-      // This now returns the object that matches the Rust enum structure
-      this.stepComplete.emit(result);
+    const variant = this.assembleVariant();
+    if (variant) {
+      const event: NcVariantBundle = {
+        ncvariant: variant,
+        clinvarId: this.clinvarId()
+      };
+      this.variantConfirmed.set(true);
+      this.stepComplete.emit(event);
     } else {
-      alert("Unable to package variant data");
+      this.notificationService.showError("Unable to package variant data for the selected mode.");
     }
   }
 
   async onSelectFile() {
     await this.curationService.selectCurationDirectory();
+  }
+
+  // Replace your button's (click) with this:
+  handleConfirmWithWarning() {
+    // If the string is validated and we are moving to the next step
+    if (this.variantValidated) {
+      if (!this.clinvarId) {
+        const proceedWithoutClinVar = confirm(
+          "No ClinVar ID entered. Are you sure this variant is not in ClinVar?"
+        );
+        
+        if (!proceedWithoutClinVar) {
+          return; // Stop here so they can enter the ID
+        }
+      }
+      // If they have the ID or said "Yes" to the warning, proceed
+      this.handleAction(); 
+    } else {
+      // If they haven't validated the HGVS string yet, just do that first
+      this.handleAction();
+    }
   }
 
 }

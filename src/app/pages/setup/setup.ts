@@ -59,7 +59,7 @@ export class Setup implements OnInit {
   public curationDirectoryDisplay = computed(() => {
     const fpath = this.curationService.curationDirectory();
     if (fpath) {
-      return `Curation directory: ${fpath}`;
+      return `${fpath}`;
     } else {
       return "Curation directory not loaded";
     }

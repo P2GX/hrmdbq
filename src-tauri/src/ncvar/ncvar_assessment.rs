@@ -34,40 +34,5 @@ impl NcVariantAssessment {
 }
 
 
-/// TODO develop better error message!
-pub fn update_ncvar_list(
-    mut list: Vec<NcVariantAssessment>, 
-    assess: NcVariantAssessment) 
-    -> Result<Vec<NcVariantAssessment>, String> {
-        assess.validate_mechanism()?; // Throw error is mechanism+variant class is improbable.
-       /* let existing_index = list.iter().position(|existing| 
-            {existing.variant_coordinates == assess.variant_coordinates});
-
-        if let Some(index) = existing_index {
-            let mut entry = list.remove(index);
-            if entry.variant_category != assess.variant_category {
-                return Err(format!("Disagreement with previous variant category: previous: {} and current {}",
-                    entry.variant_category, assess.variant_category));
-            }
-        for new_ann in assess.citation {
-            if !entry.citation == new_ann.citation) {
-                entry.annotations.push(new_ann);
-            }
-        }
-        
-        for bioc in assess.biocuration {
-            entry.biocuration.push(bioc);
-        };
-        list.push(entry);
-       
-       
-    } else {
-        // first curation for this variant
-        list.push(assess);
-    }
-    Ok(list)
-     */ 
-     return Err("NEED TO REFACTOR".to_ascii_lowercase());
-}
 
 
