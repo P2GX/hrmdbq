@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, output, signal } from "@angular/core";
+import { Component, computed, effect, inject, input, output, signal } from "@angular/core";
 import { Pathomechanism, PATHOMECHANISM_LABELS, VariantClass } from "../../service/models";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
@@ -39,6 +39,7 @@ export class PathomechanismCurationComponent {
     variantClass = input.required<VariantClass>();
     stepComplete = output<Pathomechanism[]>();
     private notificationService = inject(NotificationService);
+    initialPathomechanisms = input<Pathomechanism[]|null>(null);
 
     pathomechanisms = signal<Pathomechanism[]>([]);
     submitted = signal<boolean>(false);
@@ -70,6 +71,16 @@ export class PathomechanismCurationComponent {
         return this.allPathoGroups.filter(group => allowedLabels.includes(group.label));
     });
 
+    constructor() {
+        effect(() => {
+            const initPM = this.initialPathomechanisms();
+            if (! initPM || initPM.length == 0) {
+                return;
+            }
+            this.pathomechanisms.set(initPM);
+            this.submitted.set(true);
+        });
+    }
   
     togglePathomechanism(pm: Pathomechanism): void {
         const current = this.pathomechanisms();

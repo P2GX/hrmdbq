@@ -30,6 +30,7 @@
     @if(currentStep() >=4 && variantClass(); as vc) {
         <app-pathomechanism
             [variantClass]="vc"
+            [initialPathomechanisms]="pathomechanisms()"
             (stepComplete)="onPathomechanismStepComplete($event)">
         </app-pathomechanism>
     }

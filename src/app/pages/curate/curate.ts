@@ -57,7 +57,7 @@ export class CurationWidget implements OnInit {
   //variantData = signal<NcVariant | null>(null);
   //clinVarIdentifier = signal<number|null>(null);
   variantClass = signal<VariantClass | null>(null);
-  pathomechanism = signal<Pathomechanism[]>([]);
+  pathomechanisms = signal<Pathomechanism[]>([]);
   citations = signal<CitationEntry[]>([]);
   currentCitation = signal<CitationEntry | null>(null);
   editIndex = signal<number | null>(null);
@@ -94,7 +94,7 @@ export class CurationWidget implements OnInit {
     this.geneData.set( activeCuration.geneData);
     this.ncVariantBundle.set({ncvariant: assessment.variantCoordinates, clinvarId: assessment.variationId});
     this.variantClass.set(assessment.variantCategory);
-    this.pathomechanism.set(assessment.pathomechanisms);
+    this.pathomechanisms.set(assessment.pathomechanisms);
     this.citations.set(assessment.citation);
     this.currentStep.set(5);
   }
@@ -138,7 +138,7 @@ export class CurationWidget implements OnInit {
   }
 
   onPathomechanismStepComplete(pathomechanisms: Pathomechanism[]): void {
-    this.pathomechanism.update((lst) => [...lst, ...pathomechanisms]);
+    this.pathomechanisms.update((lst) => [...lst, ...pathomechanisms]);
     this.currentStep.set(5);
   }
 
@@ -205,7 +205,7 @@ onAddCitation() {
 
   resetToStep(step: number) {
     if (step <= 5) this.citations.set([]);
-    if (step <= 4) this.pathomechanism.set([]);
+    if (step <= 4) this.pathomechanisms.set([]);
     if (step <= 3) this.variantClass.set(null);
     if (step <= 2) this.ncVariantBundle.set(null);
     if (step <= 1) this.geneData.set(null);
@@ -229,7 +229,7 @@ onAddCitation() {
        this.notificationService.showError("Cannot save without variant data");
       return;
     }
-    const pathomechanism = this.pathomechanism();
+    const pathomechanism = this.pathomechanisms();
     if (! pathomechanism) {
       this.notificationService.showError("Cannot save without variant pathomechanism");
       return;
