@@ -122,12 +122,12 @@ export class PathomechanismCurationComponent {
         {
             label: 'General / Protein-level',
             icon: 'rebase_edit',
-            options: ['lossOfFunction', 'gainOfFunction', 'dominantNegative', 'unknown']
+            options: ['lossOfFunction', 'gainOfFunction', 'dominantNegative',  'reducedExpression', 'increasedExpression', 'unknown']
         },
         {
             label: 'Transcriptional Control (Promoters/Enhancers)',
             icon: 'settings_input_component',
-            options: ['reducedTranscription', 'increasedTranscription', 'reducedExpression', 'increasedExpression', 'enhancerHijacking', 'insulatorLoss']
+            options: ['reducedTranscription', 'increasedTranscription', 'enhancerHijacking', 'insulatorLoss', 'tfbsDisruption']
         },
         {
             label: 'Translational Control (5\' UTR)',

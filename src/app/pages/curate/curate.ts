@@ -275,6 +275,10 @@ onAddCitation() {
     if (clinVarId) {
       ncAssess.variationId = clinVarId;
     }
+    const comment = variantBundle.comment;
+    if (comment) {
+      ncAssess.comment = comment;
+    }
     this.curationService.setEditingVariant(null);
     try {
         await this.curationService.upsertVariant(ncAssess);

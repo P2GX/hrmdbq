@@ -81,12 +81,13 @@ pub enum Pathomechanism {
     LossOfFunction,
     GainOfFunction,
     DominantNegative,
+    ReducedExpression,
+    IncreasedExpression,
     
     // Transcriptional / Architecture
     ReducedTranscription,
     IncreasedTranscription,
-    ReducedExpression,
-    IncreasedExpression,
+    TfbsDisruption,
     EnhancerHijacking,
     InsulatorLoss,
     
@@ -119,6 +120,7 @@ impl std::fmt::Display for Pathomechanism {
             Self::LossOfFunction => "Loss of Function (LoF)",
             Self::GainOfFunction => "Gain of Function (GoF)",
             Self::DominantNegative => "Dominant Negative",
+            Self::TfbsDisruption => "Transcription factor binding site disruption",
             Self::ReducedTranscription => "Reduced transcription",
             Self::IncreasedTranscription => "Increased transcription",
             Self::ReducedExpression => "Reduced expression",
@@ -139,7 +141,8 @@ impl std::fmt::Display for Pathomechanism {
             Self::IREdisruption => "IRE disruption",
             Self::IRESdisruption => "IRES disruption",
             Self::RBPbindingSiteDisruption => "RBP site disruption",
-            Self::Unknown => "Unknown pathomechanism",
+            Self::Unknown => "Unknown"
+           
         };
         write!(f, "{}", label)
     }
@@ -205,16 +208,7 @@ impl std::fmt::Display for EvidenceSource {
     }
 }
 
-impl std::fmt::Display for EvidenceType {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let label = match self {
-            Self::Supports => "Supports",
-            Self::Contradicts => "Contradicts",
-            Self::Na => "Not available/Not applicable (N/A)",
-        };
-        write!(f, "{}", label)
-    }
-}
+
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]

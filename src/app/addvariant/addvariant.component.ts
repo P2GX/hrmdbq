@@ -42,6 +42,7 @@ export interface VariantAcceptedEvent {
 export interface NcVariantBundle {
   ncvariant: NcVariant;
   clinvarId?: number; 
+  comment?: string;
 }
 
 type ValidatorFn = () => Promise<void>;
@@ -82,6 +83,7 @@ export class AddVariantComponent {
   variantValidated = false;
   isSubmitting = false;
   clinvarId = signal<number|undefined>(undefined);
+  variantComment = signal<string|undefined>(undefined);
   /* If the current variant was HGVS and was validated, this variant is non-null */
   currentHgvsVariant: HgvsVariant | null = null;
   /* If the current variant was structural and was validated, this variant is non-null */
@@ -107,6 +109,10 @@ export class AddVariantComponent {
         const varId = initial.clinvarId;
         if (varId) {
           this.clinvarId.set(varId);
+        }
+        const comment = initial.comment;
+        if (comment) {
+          this.variantComment.set(comment);
         }
         const v = initial.ncvariant;
         if ('hgvs' in v && v.hgvs) {
@@ -190,10 +196,12 @@ export class AddVariantComponent {
    emitEvent = (variant: NcVariant) => {
     this.variantConfirmed.set(true);
     const varid = this.clinvarId();
+    const comment = this.variantComment();
     // Wrap the variant and the ClinVar ID in your new Event interface
     const event: NcVariantBundle = {
       ncvariant: variant,
-      clinvarId: varid
+      clinvarId: varid,
+      comment: comment
     };
     
     this.stepComplete.emit(event);

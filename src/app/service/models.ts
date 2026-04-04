@@ -74,7 +74,8 @@ export const PATHOMECHANISMS =
    'reducedExpression',
    'increasedExpression',
    'enhancerHijacking',
-    'insulatorLoss',   
+    'insulatorLoss', 
+    'tfbsDisruption',
   // RNA Processing & Stability (Introns/3' UTR)
    'spliceDefect',
    'mrnaStability',           // Changes in RNA half-life
@@ -109,6 +110,7 @@ export const PATHOMECHANISM_LABELS: Record<Pathomechanism, string> = {
     increasedExpression: "Increased expression",
     enhancerHijacking: "Enhancer hijacking",
     insulatorLoss: "Insulator/CTCF site loss",
+    tfbsDisruption: "TFBS Disruption",
     
     // RNA Processing & Stability
     spliceDefect: "Splice defect",
