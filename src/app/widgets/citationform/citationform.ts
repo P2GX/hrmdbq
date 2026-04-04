@@ -1,4 +1,4 @@
-import { Component, input, output, effect } from '@angular/core';
+import { Component, input, output, effect, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -36,7 +36,10 @@ export class CitationFormComponent {
     working: CitationEntry = this.createEmpty();
    
 
-   //EvidenceLevel = EvidenceLevel;
+    readyToSave = computed(() => {
+        return this.working !== null 
+    });
+   
     evidenceOptions = [
         { value: EvidenceLevel.yes, label: 'Yes ✅' },
         { value: EvidenceLevel.no, label: 'No ❌' },

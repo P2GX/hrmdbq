@@ -37,7 +37,15 @@ export interface PathoGroup {
 })
 export class PathomechanismCurationComponent {
     variantClass = input.required<VariantClass>();
-    stepComplete = output<Pathomechanism>();
+    stepComplete = output<Pathomechanism[]>();
+    private notificationService = inject(NotificationService);
+
+    pathomechanisms = signal<Pathomechanism[]>([]);
+    submitted = signal<boolean>(false);
+    stepFinished = computed(() => {
+        return this.submitted() && this.pathomechanisms().length > 0;
+    });
+
     activeGroupLabel = computed(() => {
         const vc = this.variantClass();
         if (!vc) return 'General / Protein-level';
@@ -47,113 +55,97 @@ export class PathomechanismCurationComponent {
         if (vc === 'promoter' || vc === 'enhancer' || vc === 'icr') 
             return "Transcriptional Control (Promoters/Enhancers)";
         return 'General / Protein-level';
-  });
+    });
+    pathomechanismOptions = Object.keys(PATHOMECHANISM_LABELS) as Pathomechanism[];
+    pathomechanismLabels = computed(() => {
+        return this.pathomechanisms()
+            .map(pm => PATHOMECHANISM_LABELS[pm] || pm)
+            .join(', ');
+    });
+    filteredGroups = computed(() => {
+        const vc = this.variantClass();
+        const allowedLabels = this.CLASS_MAPPING[vc] || ['General / Protein-level'];
+        
+        // Return only the groups that are in our allowed list
+        return this.allPathoGroups.filter(group => allowedLabels.includes(group.label));
+    });
 
-
-  private notificationService = inject(NotificationService);
-
-  readonly pathoLabels = PATHOMECHANISM_LABELS;
-  pathomechanismOptions = Object.keys(PATHOMECHANISM_LABELS) as Pathomechanism[];
-
-  pathomechanism = signal<Pathomechanism | undefined>(undefined);
-  submitted = signal<boolean>(false);
-
-  stepFinished = computed(() => {
-   return  !!this.pathomechanism() 
-  });
+  
+    togglePathomechanism(pm: Pathomechanism): void {
+        const current = this.pathomechanisms();
+        if (current.includes(pm)) {
+            this.pathomechanisms.set(current.filter(p => p !== pm));
+        } else {
+            // i.e., new
+            this.pathomechanisms.set([...current, pm]);
+        }
+        this.submitted.set(false);
+    }
  
 
-  setPathomechanism(pm: Pathomechanism): void {
-    this.pathomechanism.set(pm);
-    this.submitted.set(true);
-    this.stepComplete.emit(pm);
-  }
-
-    submit() {
-        const pathomechanism = this.pathomechanism();
-        if (!pathomechanism) {
-            this.notificationService.showError("Could not retrieve pathomechanism");
-            return;
-        }
-        this.submitted.set(true);
-        this.stepComplete.emit(pathomechanism);      
+    setPathomechanism(pm: Pathomechanism): void {
+        this.pathomechanisms.update((lst) => [...lst, pm]);
     }
 
 
+    confirmSelection() {
+        if (this.pathomechanisms().length > 0) {
+            this.submitted.set(true);
+            this.stepComplete.emit(this.pathomechanisms());
+        }
+    }
 
     getPathoLabel(pm: Pathomechanism | undefined) {
         if (! pm) { return 'Unknown Pathomechanism'; }
         return PATHOMECHANISM_LABELS[pm]; 
     }
 
+  
+
     cancel() {
-        this.pathomechanism.set(undefined);
+        this.pathomechanisms.set([]);
         this.submitted.set(false);
-       /* this.reporters.set([]);
-        this.cosegregation.set(false);
-        this.citation.set(undefined);
-        this.comment.set(undefined);*/
     }
 
-
- 
-  pathomechanismLabel(): string {
-    let pat = this.pathomechanism();
-    if (! pat) return "Unknown";
-    const labels: Record<Pathomechanism, string> = {
-        lossOfFunction: "Loss of function",
-        gainOfFunction: "Gain of function",
-        dominantNegative: "Dominant negative",
-        reducedTranscription: "Reduced transcription",
-        increasedTranscription: "Increased transcriptiom",
-        reducedExpression: "Reduced expression",
-        increasedExpression: "Increased expression",
-        enhancerHijacking: "Enhancer hijacking",
-        insulatorLoss: "Insulator loss",
-        spliceDefect: "Splice defect",
-        mrnaStability: "Altered mRNA stability",
-        secondaryStructure: "Altered RNA secondary structure",
-        impairedRnaProcessing: "Impaired RNA processing",
-        uORFCreation: "uORF creation",
-        uORFDisruption: "uORF disruption",
-        kozakDisruption: "Kozak sequence disruption",
-        reducedTranslation: "Reduced translation",
-        increasedTranslation: "Increased translation",
-        microRNAbindingSiteDisruption: "miRNA binding site disruption",
-        microRNAbindingSiteCreation: "miRNA binding site creation",
-        iREdisruption: "iron-responsive element disruption",
-        iRESdisruption: "internaql ribosome entry site disruption",
-        rBPbindingSiteDisruption: "RNA binding protein site disruption",
-        unknown: "Unknown"
-    };
-   
-    return labels[pat];
-   
-  }
-
-
-
-    pathoGroups: PathoGroup[] = [
-    {
-        label: 'General / Protein-level',
-        icon: 'rebase_edit',
-        options: ['lossOfFunction', 'gainOfFunction', 'dominantNegative', 'unknown']
-    },
-    {
-        label: 'Transcriptional Control (Promoters/Enhancers)',
-        icon: 'settings_input_component',
-        options: ['reducedTranscription', 'increasedTranscription', 'reducedExpression', 'increasedExpression', 'enhancerHijacking', 'insulatorLoss']
-    },
-    {
-        label: 'Translational Control (5\' UTR)',
-        icon: 'translate',
-        options: ['uORFCreation', 'uORFDisruption', 'kozakDisruption', 'reducedTranslation', 'increasedTranslation', 'iRESdisruption']
-    },
-    {
-        label: 'RNA Processing & Stability (3\' UTR/Introns)',
-        icon: 'Inventory_2',
-        options: ['spliceDefect', 'mrnaStability', 'secondaryStructure', 'impairedRnaProcessing', 'microRNAbindingSiteDisruption', 'microRNAbindingSiteCreation', 'iREdisruption', 'rBPbindingSiteDisruption']
-    }
+    allPathoGroups: PathoGroup[] = [
+        {
+            label: 'General / Protein-level',
+            icon: 'rebase_edit',
+            options: ['lossOfFunction', 'gainOfFunction', 'dominantNegative', 'unknown']
+        },
+        {
+            label: 'Transcriptional Control (Promoters/Enhancers)',
+            icon: 'settings_input_component',
+            options: ['reducedTranscription', 'increasedTranscription', 'reducedExpression', 'increasedExpression', 'enhancerHijacking', 'insulatorLoss']
+        },
+        {
+            label: 'Translational Control (5\' UTR)',
+            icon: 'translate',
+            options: ['uORFCreation', 'uORFDisruption', 'kozakDisruption', 'reducedTranslation', 'increasedTranslation', 'iRESdisruption']
+        },
+        {
+            label: 'RNA Processing & Stability (3\' UTR/Introns)',
+            icon: 'Inventory_2',
+            options: ['spliceDefect', 'mrnaStability', 'secondaryStructure', 'impairedRnaProcessing', 'microRNAbindingSiteDisruption', 'microRNAbindingSiteCreation', 'iREdisruption', 'rBPbindingSiteDisruption']
+        }
     ];
+
+    private readonly CLASS_MAPPING: Record<VariantClass, string[]> = {
+        'promoter': ['General / Protein-level', 'Transcriptional Control (Promoters/Enhancers)'],
+        'enhancer': ['General / Protein-level', 'Transcriptional Control (Promoters/Enhancers)'],
+        'icr':      ['General / Protein-level', 'Transcriptional Control (Promoters/Enhancers)'],
+        'utr5':     ['General / Protein-level', 'Translational Control (5\' UTR)','Transcriptional Control (Promoters/Enhancers)'],
+        'utr3':     ['General / Protein-level', 'RNA Processing & Stability (3\' UTR/Introns)'],
+        'snRna':    ['General / Protein-level', 'RNA Processing & Stability (3\' UTR/Introns)'],
+        'snoRna':   ['General / Protein-level', 'RNA Processing & Stability (3\' UTR/Introns)'],
+        'microRna': ['General / Protein-level', 'RNA Processing & Stability (3\' UTR/Introns)'],
+        // Add defaults for others
+        'lncRna':   ['General / Protein-level','RNA Processing & Stability (3\' UTR/Introns)'],
+        'tRna':     ['General / Protein-level','RNA Processing & Stability (3\' UTR/Introns)'],
+        'multiGene': ['General / Protein-level']
+    };
+
+
+
 
 }

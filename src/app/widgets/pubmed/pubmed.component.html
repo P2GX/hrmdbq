@@ -5,7 +5,7 @@
 
   @if (!isConfirmed()) {
    <div class="animate-in">
-  <div class="flex items-start gap-2">
+  <div class="flex items-center gap-2.5">
     
     <mat-form-field appearance="outline" class="flex-1 dense-field" subscriptSizing="dynamic">
       <mat-label>PMID</mat-label>
@@ -18,7 +18,7 @@
     
     <button mat-flat-button 
             color="primary" 
-            class="h-[56px] px-8 font-bold uppercase tracking-wide transition-all hover:brightness-110 active:scale-95 whitespace-nowrap"
+            class="ms-[10px] h-[40px] px-8 font-bold uppercase tracking-wide transition-all hover:brightness-110 active:scale-95 whitespace-nowrap"
             [disabled]="!pmidInput() || isLoading()" 
             (click)="retrieveCitation()">
       

@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, computed, input, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -17,10 +17,22 @@ import { CitationEntry } from '../../service/models';
   styleUrls: ['./citation.scss']
 })
 export class CitationListComponent {
+
   citations = input<CitationEntry[]>([]);
   add = output<void>();
   edit = output<{ index: number; entry: CitationEntry }>();
   delete = output<number>();
+  stepComplete = signal<boolean>(false);
+
+  citationDisplay = computed(() => {
+    const cites = this.citations();
+    if (cites.length === 0) {
+      return "no PMIDs found."
+    }
+    return cites.
+      map(c => c.citation.pmid)
+     .join(", ");
+  });
 
   onAdd() {
     this.add.emit();
@@ -51,5 +63,14 @@ export class CitationListComponent {
     if (entry.citation.pmid) return `PMID: ${entry.citation.pmid}`;
 
     return 'Unnamed citation';
+  }
+
+
+  onFinish(): void {
+    this.stepComplete.set(true);
+  }
+
+  cancel() {
+    this.stepComplete.set(false);  
   }
 }

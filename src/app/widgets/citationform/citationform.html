@@ -1,42 +1,51 @@
-<div class="citation-form-container compact">
-  <div class="top-row">
+<div class="citation-form-container compact p-2">
+  <div class="grid grid-cols-2 gap-3 mb-2">
     <app-pubmed (citationRetrieved)="onCitationReceived($event)"></app-pubmed>
     
-    <mat-form-field appearance="outline" class="note-field">
+    <mat-form-field appearance="outline" class="dense-field" subscriptSizing="dynamic">
       <mat-label>Note</mat-label>
       <input matInput [(ngModel)]="working.note" placeholder="Quick note...">
     </mat-form-field>
   </div>
 
   @if (working.citation.title) {
-    <div class="mini-preview">
-      <mat-icon>check_circle</mat-icon>
-      <span class="truncate">{{ working.citation.title }}</span>
+    <div class="flex items-center gap-1 text-xs text-green-600 mb-2 bg-green-50 p-1 rounded border border-green-100">
+      <mat-icon class="scale-75">check_circle</mat-icon>
+      <span class="truncate italic">{{ working.citation.title }}</span>
     </div>
   }
 
-  <div class="evidence-list">
+<div style="display: block; width: 100%; border-top: 1px solid #eee; padding-top: 12px; margin-top: 8px;">
+  
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px 15px; width: 100%;">
+    
     @for (field of evidenceFields; track field) {
-      <div class="evidence-row">
-        <span class="row-label">{{ field.replace('Evidence', '') | titlecase }}</span>
+      <div style="display: flex; align-items: center; gap: 8px; height: 32px;">
         
-        <div class="segmented-control">
+        <span style="width: 55px; flex-shrink: 0; font-size: 10px; font-weight: 800; color: #777; text-transform: uppercase; letter-spacing: -0.5px;">
+          {{ field.replace('Evidence', '') }}
+        </span>
+        
+        <div style="display: flex; flex: 1; height: 26px; border: 1px solid #ddd; border-radius: 4px; overflow: hidden; background: #fff;">
           @for (option of evidenceOptions; track option.value) {
             <button
               type="button"
-              class="segment-btn"
-              [class.active]="working[field] === option.value"
-              (click)="working[field] = option.value">
+              (click)="working[field] = option.value"
+              [style.background-color]="working[field] === option.value ? '#3f51b5' : 'transparent'"
+              [style.color]="working[field] === option.value ? 'white' : '#666'"
+              style="flex: 1; border: none; cursor: pointer; font-size: 9px; font-weight: 700; text-transform: uppercase; padding: 0;">
               {{ option.label }}
             </button>
           }
         </div>
+
       </div>
     }
   </div>
+</div>
 
-  <div class="compact-actions">
-    <button mat-button color="warn" (click)="onCancel()">Cancel</button>
-    <button mat-flat-button color="primary" (click)="onSave()">Save Entry</button>
+  <div class="flex justify-end gap-2 mt-3 pt-2 border-t">
+    <button mat-button class="h-8 text-xs" color="warn" (click)="onCancel()">Cancel</button>
+    <button mat-flat-button class="h-8 text-xs" color="primary" (click)="onSave()" [disabled]="!readyToSave()">Save Entry</button>
   </div>
 </div>

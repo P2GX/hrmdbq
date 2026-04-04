@@ -114,9 +114,8 @@ export class CurationWidget implements OnInit {
     this.currentStep.set(4);
   }
 
-  onPathomechanismStepComplete(pathomechanism: Pathomechanism): void {
-    this.pathomechanism.update((lst) => [...lst, pathomechanism]);
-    console.log("setting path", pathomechanism);
+  onPathomechanismStepComplete(pathomechanisms: Pathomechanism[]): void {
+    this.pathomechanism.update((lst) => [...lst, ...pathomechanisms]);
     this.currentStep.set(5);
   }
 

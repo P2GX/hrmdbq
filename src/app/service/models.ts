@@ -138,7 +138,7 @@ export const PATHOMECHANISM_LABELS: Record<Pathomechanism, string> = {
 
 export enum EvidenceLevel {
     yes = 'yes',
-    notAvailable = 'notAValable',
+    notAvailable = 'notAvailable',
     no = 'no',
 }
 
