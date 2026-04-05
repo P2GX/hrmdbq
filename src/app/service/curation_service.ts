@@ -142,9 +142,7 @@ export class CurationService {
         webResources: [...(current.webResources || []), newResource]
       };
     });
-    console.log("service addWebResource name=", name, "n=", this.currentCuration()?.webResources.length);
     const cc = this.currentCuration();
-    console.log(cc);
     this._hasUnsavedChanges.set(true);
   }
 
@@ -212,19 +210,13 @@ export class CurationService {
 
   // update or insert assessment
   upsertVariant(assess: NcVariantAssessment): void {
-    console.log("upsertVariant:", assess);
     this._currentCuration.update(state => {
       if (!state) return null;
       const index = state.annotations.findIndex(ann => ann.id === assess.id);
       let newAnnotations = [...state.annotations];
-      console.log("upsert var index", index);
-      console.log("assess index", assess.id);
-      state.annotations.forEach(a => {console.log("id", a.id)});
       if (index !== -1) {
-        // UPDATE: Replace the existing object at that index
         newAnnotations[index] = assess;
       } else {
-        // INSERT: Add the new object
         newAnnotations.push(assess);
       }
 
@@ -234,8 +226,7 @@ export class CurationService {
     this._hasUnsavedChanges.set(true);
   }
 
-
-  // Helper to clear state if needed
+ // do we need this?
   clear() {
      this.ngZone.run(() => {
         //this._variants.set([]);

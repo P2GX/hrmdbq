@@ -42,8 +42,9 @@ pub fn save_gene_curation(
     path: &PathBuf, 
     gene_curation: &GeneCuration
 ) -> Result<(), String> {
-    // 1. Serialize the Vec to a pretty-printed JSON string
-    let json_contents = serde_json::to_string_pretty(&gene_curation)
+    let mut gc = gene_curation.clone();
+    gc.annotations.sort();
+    let json_contents = serde_json::to_string_pretty(&gc)
         .map_err(|e| format!("Failed to serialize GeneCuration: {}", e))?;
     
     fs::write(path, json_contents)

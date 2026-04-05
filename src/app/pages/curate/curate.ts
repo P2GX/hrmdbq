@@ -93,7 +93,7 @@ export class CurationWidget implements OnInit {
     }
     this.editingId.set(assessment.id);
     this.geneData.set( activeCuration.geneData);
-    this.ncVariantBundle.set({ncvariant: assessment.variantCoordinates, clinvarId: assessment.variationId});
+    this.ncVariantBundle.set({ncvariant: assessment.variantCoordinates, clinvarId: assessment.variationId, comment: assessment.comment, alias: assessment.alias});
     this.variantClass.set(assessment.variantCategory);
     this.pathomechanisms.set(assessment.pathomechanisms);
     this.citations.set(assessment.citation);
@@ -120,27 +120,31 @@ export class CurationWidget implements OnInit {
     this.notificationService.showError(`IMPLEMENT ME- handle existing ${id}`)
   }
 
- 
+  private updateStep(step: number): void {
+    const isEditMode = this.isEditMode();
+    if (isEditMode) return;
+    this.currentStep.set(step);
+  }
 
   onGeneStepComplete(result: GeneStepResult) {
     this.geneData.set(result);
-    this.currentStep.set(2); 
+    this.updateStep(2); 
     this.notificationService.showSuccess(`Retrieved HGNC data for ${this.geneData()?.symbol}`)
   }
 
   onVariantStepComplete(variantAccepted: NcVariantBundle) {
     this.ncVariantBundle.set(variantAccepted);
-    this.currentStep.set(3); 
+    this.updateStep(3); 
   }
 
   onCategoryStepComplete(category: VariantClass) {
     this.variantClass.set(category);
-    this.currentStep.set(4);
+    this.updateStep(4);
   }
 
   onPathomechanismStepComplete(pathomechanisms: Pathomechanism[]): void {
     this.pathomechanisms.update((lst) => [...lst, ...pathomechanisms]);
-    this.currentStep.set(5);
+    this.updateStep(5);
   }
 
   onCitationSaved(entry: CitationEntry) {
@@ -196,8 +200,6 @@ onAddCitation() {
   }
 
   finishCitationStep() {
-    // when we finish, we have the list of citations and need to increment the step
-    console.log("finishCitationStep")
     this.currentStep.set(6);
   }
 
@@ -270,7 +272,6 @@ onAddCitation() {
       citation: citations,
       biocuration: [curation],
     };
-    console.log("final save=", ncAssess);
     const clinVarId = variantBundle.clinvarId;
     if (clinVarId) {
       ncAssess.variationId = clinVarId;
@@ -278,6 +279,10 @@ onAddCitation() {
     const comment = variantBundle.comment;
     if (comment) {
       ncAssess.comment = comment;
+    }
+    const alias = variantBundle.alias;
+    if (alias) {
+      ncAssess.alias = alias;
     }
     this.curationService.setEditingVariant(null);
     try {

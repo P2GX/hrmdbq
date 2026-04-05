@@ -7,6 +7,7 @@ export interface NcVariantAssessment {
   pathomechanisms: Pathomechanism[];
   variationId?: number;
   comment?: string;
+  alias?: string;
   citation: CitationEntry[];
   biocuration: CurationEvent[];
 }

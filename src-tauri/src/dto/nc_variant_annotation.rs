@@ -297,6 +297,8 @@ pub struct NcVariantAssessment {
     pub variation_id: Option<u64>,
     /// Anything else?
     pub comment: Option<String>,
+    /// Short name or alias used in literature
+    pub alias: Option<String>,
     /// List of PMIDs about the current variant
     pub citation: Vec<CitationEntry>,
     /// ORCID id of curation and time of curation(s)

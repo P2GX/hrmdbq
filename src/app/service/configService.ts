@@ -22,7 +22,6 @@ export class ConfigService {
   private async listen_status(): Promise<void> {
     await listen("settings-update", (event) => {
       const updatedSettings = event.payload as HrmdbqSettings;
-      console.log("listen_status ", updatedSettings)
       this.ngZone.run(() => {
         this._settings.set(updatedSettings);
       });

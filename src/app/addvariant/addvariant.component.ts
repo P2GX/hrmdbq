@@ -10,7 +10,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { displayHgvs, displayIntergenic, displaySv, GeneTranscriptData, HgvsVariant, IntergenicHgvsVariant, NcVariant, StructuralType, StructuralVariant, VariantDto } from '../service/models';
+import { GeneTranscriptData, HgvsVariant, IntergenicHgvsVariant, NcVariant, StructuralType, StructuralVariant, VariantDto } from '../service/models';
 import { ConfigService } from '../service/configService';
 import { CurationService } from '../service/curation_service';
 import { GeneStepResult } from '../widgets/genecuration/genesymbolcuration';
@@ -43,6 +43,7 @@ export interface NcVariantBundle {
   ncvariant: NcVariant;
   clinvarId?: number; 
   comment?: string;
+  alias?: string;
 }
 
 type ValidatorFn = () => Promise<void>;
@@ -84,6 +85,7 @@ export class AddVariantComponent {
   isSubmitting = false;
   clinvarId = signal<number|undefined>(undefined);
   variantComment = signal<string|undefined>(undefined);
+  variantAlias = signal<string|undefined>(undefined);
   /* If the current variant was HGVS and was validated, this variant is non-null */
   currentHgvsVariant: HgvsVariant | null = null;
   /* If the current variant was structural and was validated, this variant is non-null */
@@ -104,7 +106,6 @@ export class AddVariantComponent {
   constructor() {
      effect(() => {
       const initial = this.initialNcVariantBundle();
-      console.log("ctor, inti=", initial);
       if (initial) {
         const varId = initial.clinvarId;
         if (varId) {
@@ -131,6 +132,7 @@ export class AddVariantComponent {
           this.notificationService.showError(`Could not parse initial variant ${v}`);
           return;
         }
+        this.variantAlias.set(initial.alias);
         this.variantValidated = true;
         this.variantConfirmed.set(true);
       }
@@ -197,13 +199,13 @@ export class AddVariantComponent {
     this.variantConfirmed.set(true);
     const varid = this.clinvarId();
     const comment = this.variantComment();
-    // Wrap the variant and the ClinVar ID in your new Event interface
+    const alias = this.variantAlias();
     const event: NcVariantBundle = {
       ncvariant: variant,
       clinvarId: varid,
-      comment: comment
+      comment: comment,
+      alias: alias
     };
-    
     this.stepComplete.emit(event);
   };
 
@@ -325,7 +327,6 @@ export class AddVariantComponent {
     if (!this.variant_string || !this.selected_gene()) {
       return this.fail('Please enter a valid variant and select a gene.');
     }
-    console.log("submitIntergenicDto=", this.variant_string);
     this.configService.validateIntergenic(this.selected_gene().symbol, this.selected_gene().hgncId, this.variant_string).then((ig) => {
         this.currentIntergenicVariant = ig;
         this.variantValidated = true;
@@ -345,7 +346,6 @@ export class AddVariantComponent {
       return this.fail('Please enter a valid variant and select a gene.');
     }
     this.errorMessage = null;
-    console.log("add variant, ", this.selected_gene());
     this.configService.validateHgvsVariant(this.selected_gene().symbol, this.selected_gene().hgncId, this.selected_gene().maneId, this.variant_string)
       .then((hgvs) => {
         this.currentHgvsVariant = hgvs;

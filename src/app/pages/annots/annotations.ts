@@ -34,7 +34,7 @@ import { Router } from '@angular/router';
   templateUrl: './annotations.html',
   styleUrl: './annotations.css'
 })
-export class AnnotationTable implements OnInit {
+export class AnnotationTable {
 
 
 
@@ -47,7 +47,7 @@ export class AnnotationTable implements OnInit {
     resName = signal('');
     resUrl = signal('');
 
-    displayedColumns: string[] = ['label', 'category', 'symbol', 'actions'];
+    displayedColumns: string[] = ['label', 'category', 'alias', 'actions'];
     editingVariant = signal<NcVariantAssessment | null>(null);
 
    
@@ -68,9 +68,6 @@ export class AnnotationTable implements OnInit {
   }
   
 
-  ngOnInit(): void {
-  
-  }
   /**
    * Helper to extract a display label from the variant enum
    */
