@@ -1,0 +1,17 @@
+ .dialog-container {
+    min-width: 350px;
+    padding-top: 10px !important;
+}
+.description {
+    margin-bottom: 20px;
+    color: #555;
+    line-height: 1.4;
+}
+.form-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+mat-form-field {
+    width: 100%;
+}

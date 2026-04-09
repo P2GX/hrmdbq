@@ -1,6 +1,5 @@
-use crate::dto::nc_variant_annotation::{GeneCuration, NcVariantAssessment, Pathomechanism, VariantClass};
-use std::fs;
-use std::path::PathBuf;
+use crate::dto::nc_variant_annotation::{NcVariantAssessment, Pathomechanism, VariantClass};
+
 
 
 impl NcVariantAssessment {
@@ -12,14 +11,14 @@ impl NcVariantAssessment {
                 (VariantClass::Utr5, Pathomechanism::KozakDisruption | Pathomechanism::UORFCreation | Pathomechanism::UORFDisruption) => continue,
                 
                 // Promoter / Enhancer / ICR specific
-                (VariantClass::Promoter | VariantClass::Enhancer | VariantClass::Icr, 
+                (VariantClass::Promoter | VariantClass::Enhancer | VariantClass::ICR, 
                  Pathomechanism::ReducedTranscription | Pathomechanism::IncreasedTranscription | Pathomechanism::InsulatorLoss | Pathomechanism::EnhancerHijacking) => continue,
                 
                 // 3' UTR / RNA Stability specific
                 (VariantClass::Utr3, Pathomechanism::MicroRNAbindingSiteCreation | Pathomechanism::MicroRNAbindingSiteDisruption | Pathomechanism::MrnaStability) => continue,
                 
                 // Non-coding RNA specific
-                (VariantClass::SnRna | VariantClass::TRna | VariantClass::SnoRna | VariantClass::MicroRNA, 
+                (VariantClass::SnRNA | VariantClass::tRNA | VariantClass::SnoRNA | VariantClass::MicroRNA, 
                  Pathomechanism::ImpairedRnaProcessing | Pathomechanism::SecondaryStructure) => continue,
 
                 // Universal / Protein-level (can happen almost anywhere via splicing or general expression)

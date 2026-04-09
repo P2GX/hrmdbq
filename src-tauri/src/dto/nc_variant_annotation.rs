@@ -16,11 +16,16 @@ pub enum VariantClass {
     Utr5,
     Utr3,
     MicroRNA,
-    LncRna,
-    TRna,          // Added for tRNA (Mitochondrial/Nuclear)
-    SnRna,         // Added for Spliceosomal RNAs (e.g., RNU4ATAC)
-    SnoRna,        // Added for Small Nucleolar RNAs
-    Icr,           // Imprinting Control Region
+    LncRNA,
+    #[allow(non_camel_case_types)]
+    #[serde(rename = "tRNA")]
+    tRNA,  
+    #[serde(rename = "snRNA")]        
+    SnRNA,  
+    #[serde(rename = "snoRNA")]       
+    SnoRNA,  
+    #[serde(rename = "ICR")]            
+    ICR,           
     MultiGene,
 }
 
@@ -32,11 +37,11 @@ impl VariantClass {
             VariantClass::Utr5      => 3,
             VariantClass::Utr3      => 4,
             VariantClass::MicroRNA  => 5,
-            VariantClass::LncRna    => 6,
-            VariantClass::TRna      => 7,
-            VariantClass::SnRna     => 8,
-            VariantClass::SnoRna    => 9,
-            VariantClass::Icr       => 10,
+            VariantClass::LncRNA    => 6,
+            VariantClass::tRNA      => 7,
+            VariantClass::SnRNA     => 8,
+            VariantClass::SnoRNA    => 9,
+            VariantClass::ICR       => 10,
             VariantClass::MultiGene => 11,
         }
     }
@@ -63,11 +68,11 @@ impl std::fmt::Display for VariantClass {
             Self::Utr5 => "5' UTR",
             Self::Utr3 => "3' UTR",
             Self::MicroRNA => "microRNA",
-            Self::LncRna => "lncRNA",
-            Self::TRna => "tRNA",
-            Self::SnRna => "snRNA",
-            Self::SnoRna => "snoRNA",
-            Self::Icr => "ICR",
+            Self::LncRNA => "lncRNA",
+            Self::tRNA => "tRNA",
+            Self::SnRNA => "snRNA",
+            Self::SnoRNA => "snoRNA",
+            Self::ICR => "ICR",
             Self::MultiGene => "Multi-Gene",
         };
         write!(f, "{}", label)

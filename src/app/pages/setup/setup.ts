@@ -13,6 +13,8 @@ import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { invoke } from '@tauri-apps/api/core';
 import { Router } from '@angular/router';
+import { ManualHgncDialog } from '../../widgets/hgncwidget/hgncwidget';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-about',
@@ -111,17 +113,25 @@ export class Setup implements OnInit {
   async createNewGeneCuration(symbol: string): Promise<void> {
     if (!symbol) return;
     this.currentHgncBundle.set(null);
-    let hgncBundle: HgncBundle;
+    let hgncBundle: HgncBundle | undefined;
     try {
       hgncBundle = await invoke<HgncBundle>('fetch_gene_data_from_hgnc', { symbol });
       this.currentHgncBundle.set(hgncBundle);
     } catch (err) {
       this.notificationService.showError(`Could not retrieve HGNC data: ${err}.`);
-      return;
+      const dialogRef = this.dialog.open(ManualHgncDialog, {data: { symbol: symbol }, width: '300px', disableClose: true});
+      hgncBundle = await firstValueFrom(dialogRef.afterClosed()); 
     } 
-    const success =  await this.curationService.createGeneCuration(symbol, hgncBundle);
+    let success = false;
+    if (hgncBundle && hgncBundle.hgncId) {
+      this.currentHgncBundle.set(hgncBundle);
+      success = await this.curationService.createGeneCuration(symbol, hgncBundle);
+      console.log("success=", success, "gb=", this.currentHgncBundle);
+    } 
     if (success) {
-      this.router.navigate(["/annots"]);
+        this.router.navigate(["/annots"]);
+      } else {
+      this.notificationService.showError("New gene entry failed.");
     }
   }
 

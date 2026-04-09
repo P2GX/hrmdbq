@@ -1,0 +1,26 @@
+ <h2 mat-dialog-title>Gene information</h2>
+    
+<mat-dialog-content class="dialog-container">
+    <p class="description">
+    API failed. Please enter the HGNC details manually for <strong>{{ dialogData.symbol }}</strong>:
+    </p>
+
+    <div class="form-layout">
+    <mat-form-field appearance="outline">
+        <mat-label>HGNC ID</mat-label>
+        <input matInput [(ngModel)]="data.hgncId" placeholder="e.g. HGNC:123">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+        <mat-label>MANE Select</mat-label>
+        <input matInput [(ngModel)]="data.maneSelect" placeholder="e.g. NM_001.2">
+    </mat-form-field>
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button (click)="onNoClick()">Cancel</button>
+    <button mat-flat-button color="primary" [mat-dialog-close]="data" cdkFocusInitial>
+    Confirm
+    </button>
+</mat-dialog-actions>

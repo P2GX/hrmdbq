@@ -1,8 +1,8 @@
 [package]
 name = "hrmdbq"
-version = "0.1.21"
-description = "Curation non-coding variant pathomechanism"
-authors = ["you"]
+version = "0.1.22"
+description = "Curation of non-coding variant pathomechanism"
+authors = ["Peter Robinson"]
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

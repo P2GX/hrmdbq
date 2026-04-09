@@ -36,6 +36,7 @@ fn parse_hgnc_json(json_str: &str) -> Result<HgncBundle, Box<dyn std::error::Err
     if doc.is_null() {
         return Err("Response docs array is empty".into());
     }
+    
     let hgnc_id = doc["hgnc_id"]
         .as_str()
         .ok_or("hgnc_id missing or not a string")?
@@ -71,6 +72,19 @@ mod tests {
         assert_eq!(expected_hgnc, bundle.hgnc_id);
         assert_eq!(expected_mane, bundle.mane_select);
     }
+
+      #[tokio::test]
+   // #[ignore = "API call"]
+    async fn test_fetch_mirna_data() {
+        let symbol = "MIR96";
+        let expected_hgnc = "HGNC:31648";
+        let expected_mane = "NR_029512.1"; // NO MANE sequence at present
+        let bundle = fetch_gene_data(symbol).await.expect("API call failed");
+        assert_eq!(expected_hgnc, bundle.hgnc_id);
+        assert_eq!(expected_mane, bundle.mane_select);
+    }
+
+
 
     #[test]
     fn test_parsing_logic() {

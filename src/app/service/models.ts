@@ -16,17 +16,18 @@ export interface NcVariantAssessment {
 
 
 
+
 export enum VariantClass {
-  Utr5 = 'utr5',
   Promoter = 'promoter',
   Enhancer = 'enhancer',
+  Utr5 = 'utr5',
   Utr3 = 'utr3',
-  MicroRna = 'microRna',
-  LncRna = 'lncRna',
-  TRna = 'tRna',       
-  SnRna = 'snRna',      
-  SnoRna = 'snoRna',    
-  Icr = 'icr', 
+  MicroRNA = 'microRNA',
+  LncRNA = 'lncRNA',
+  tRNA = 'tRNA',       // Exact match
+  SnRNA = 'snRNA',     // Exact match
+  SnoRNA = 'snoRNA',   // Exact match
+  ICR = 'ICR', 
   MultiGene = 'multiGene'
 }
 

@@ -43,13 +43,13 @@ export class VariantCategorySelectorComponent {
       promoter: "Promoter",
       enhancer: "Enhancer",
       utr3: "3' UTR",
-      microRna: "microRNA",
-      lncRna: "lncRNA",
-      icr: "ICR",
+      microRNA: "microRNA",
+      lncRNA: "lncRNA",
+      ICR: "ICR",
       multiGene: "Multi-Gene",
-      tRna: 'tRNA',
-      snRna: 'snRNA',
-      snoRna: 'snoRNA'
+      tRNA: 'tRNA',
+      snRNA: 'snRNA',
+      snoRNA: 'snoRNA'
     };
     if (cat) {
       return labels[cat];

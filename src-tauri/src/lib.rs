@@ -293,8 +293,7 @@ fn create_gene_curation(
     let file_path = curation_dir.join(format!("{}.json", symbol));
     let already_exists = guard
         .iter()
-        .find_map(|gc| Some(gc.gene_symbol == symbol))
-        .is_some();
+         .any(|gc| gc.gene_symbol == symbol);
     if already_exists {
         return Err(format!("Curation file for {} exists already!", symbol));
     }

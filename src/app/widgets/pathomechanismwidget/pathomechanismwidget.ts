@@ -51,9 +51,9 @@ export class PathomechanismCurationComponent {
         const vc = this.variantClass();
         if (!vc) return 'General / Protein-level';
         if (vc === 'utr5') return "Translational Control (5' UTR)";
-        if (vc === 'utr3' || vc === 'snRna' || vc === 'snoRna') 
+        if (vc === 'utr3' || vc === 'snRNA' || vc === 'snoRNA') 
             return "RNA Processing & Stability (3' UTR/Introns)";
-        if (vc === 'promoter' || vc === 'enhancer' || vc === 'icr') 
+        if (vc === 'promoter' || vc === 'enhancer' || vc === 'ICR') 
             return "Transcriptional Control (Promoters/Enhancers)";
         return 'General / Protein-level';
     });
@@ -144,15 +144,15 @@ export class PathomechanismCurationComponent {
     private readonly CLASS_MAPPING: Record<VariantClass, string[]> = {
         'promoter': ['General / Protein-level', 'Transcriptional Control (Promoters/Enhancers)'],
         'enhancer': ['General / Protein-level', 'Transcriptional Control (Promoters/Enhancers)'],
-        'icr':      ['General / Protein-level', 'Transcriptional Control (Promoters/Enhancers)'],
+        'ICR':      ['General / Protein-level', 'Transcriptional Control (Promoters/Enhancers)'],
         'utr5':     ['General / Protein-level', 'Translational Control (5\' UTR)','Transcriptional Control (Promoters/Enhancers)'],
         'utr3':     ['General / Protein-level', 'RNA Processing & Stability (3\' UTR/Introns)'],
-        'snRna':    ['General / Protein-level', 'RNA Processing & Stability (3\' UTR/Introns)'],
-        'snoRna':   ['General / Protein-level', 'RNA Processing & Stability (3\' UTR/Introns)'],
-        'microRna': ['General / Protein-level', 'RNA Processing & Stability (3\' UTR/Introns)'],
+        'snRNA':    ['General / Protein-level', 'RNA Processing & Stability (3\' UTR/Introns)'],
+        'snoRNA':   ['General / Protein-level', 'RNA Processing & Stability (3\' UTR/Introns)'],
+        'microRNA': ['General / Protein-level', 'RNA Processing & Stability (3\' UTR/Introns)'],
         // Add defaults for others
-        'lncRna':   ['General / Protein-level','RNA Processing & Stability (3\' UTR/Introns)'],
-        'tRna':     ['General / Protein-level','RNA Processing & Stability (3\' UTR/Introns)'],
+        'lncRNA':   ['General / Protein-level','RNA Processing & Stability (3\' UTR/Introns)'],
+        'tRNA':     ['General / Protein-level','RNA Processing & Stability (3\' UTR/Introns)'],
         'multiGene': ['General / Protein-level']
     };
 

@@ -1,6 +1,6 @@
 # Promoter variants
 
-todo definition, citations
+Classically, **promoters** are  proximal regulatory elements that are located immediately upstream (in front) of the gene they regulate, typically within 100 to 1,000 base pairs of the transcription start site.  Each promoter usually only controls one specific gene.
 
 ![The 5' UTR Structure](../../img/F9-promoter-5utr.png "Figure 1: Promoter and 5' Untranslated Region of the F9 gene")
 
@@ -17,7 +17,7 @@ In this publication, the variant is indicated with an asterisk (it is a T to A c
 annotated transcription start site is located between the first two arrows: CACTTTCACA... We can compare the sequences and locate the position of the affected nucleotide (139,530,716). In this case, there is also a link to
 an OMIM Allelic Variant ([300756.0001](https://www.omim.org/entry/300746#0001)), and we can follow the link to ClinVar: [RCV](https://www.ncbi.nlm.nih.gov/clinvar/RCV000011304/) from the OMIM page to find the correct variant nomenclature for HRMDBQ: NC_000023.11:g.139530716T>A. Here, we use the accession number for chromosome X for hg38, followed by "g." position REF > ALT.
 
-## Example
+### Example: F9
 
 The variant described in 
 [PMID: 3416069](https://pubmed.ncbi.nlm.nih.gov/3416069/)
