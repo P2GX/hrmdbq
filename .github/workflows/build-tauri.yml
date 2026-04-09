@@ -55,7 +55,7 @@ jobs:
       # 3. Build Frontend (Angular / React / etc.)
       # ------------------------------------
       - name: Build Frontend
-        run: npx nx build --configuration=production --skip-nx-cache
+        run: npm run build
 
       # ------------------------------------
       # 4. Install platform-specific deps
