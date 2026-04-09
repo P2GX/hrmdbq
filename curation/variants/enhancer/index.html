@@ -673,6 +673,24 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Enhancer
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -689,6 +707,36 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#example-1-pax6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 1: PAX6
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -873,32 +921,42 @@
 
 
 <h1 id="enhancer">Enhancer</h1>
-<h1 id="example">Example</h1>
+<p>Classical definitions of activating regulatory elements are focused on two classes: promoters and enhancers, where the first category defines where transcription is initiated, and the other, elements that amplify such transcription initiation.</p>
+<p>Classically, <strong>promoters</strong> are: 
+- proximal regulatory elements. 
+- located immediately upstream (in front) of the gene they regulate, typically within 100 to 1,000 base pairs of the transcription start site. 
+- Each promoter usually only controls one specific gene.</p>
+<p>Classically <strong>enhancers</strong> are:
+- distal regulatory elements.
+- located thousands (or even millions) of base pairs away from the gene.
+- Upstream or downstream of the gene or even inside an intron of the same or a different different gene.
+- Multiple enhancers may influence one gene, and a given enhancer may influence multiple genes.</p>
+<p>See <a href="https://pubmed.ncbi.nlm.nih.gov/31605096/">Andersson R, Sandelin A. Determinants of enhancer and promoter activities of regulatory elements. Nat Rev Genet. 2020</a></p>
+<h3 id="example-1-pax6">Example 1: <em>PAX6</em></h3>
 <p><a href="https://pubmed.ncbi.nlm.nih.gov/24290376/">Bhatia S, et al. (2013)</a> discovered a mutation in a remote, ultraconserved PAX6 enhancer that causes aniridia. 
 They discovered a de novo point mutation in an ultraconserved cis-element located 150 kb downstream from PAX6 in an affected individual with intact coding region and chromosomal locus. The element SIMO acts as a strong enhancer in developing ocular structures. The mutation disrupts an autoregulatory PAX6 binding site, causing loss of enhancer activity, resulting in defective maintenance of PAX6 expression.</p>
 <p>They write:
 <code>We identified one individual with a single de novo nucleotide variant (chr11: 31,685,945G&gt;T [UCSC Genome Browser human reference sequence hg19]) in an ultraconserved sequence, SIMO (uc.325), located 150 kb downstream of PAX6</code>.</p>
 <p>We need to identify the HG38 coordinates to curate this publication. To do so, we can enter the following
-<code>``text
-chr11:31,685,945-31,685,945
-````
-in the [liftover](liftover.md) tool. We obtain</code>chr11:31821757-31821757`. We enter this in the HG38 UCSC browser and then zoom out 3x and 10x to see the surrounding sequence.  We can compare this with the sequence reported in the publication (see Suppleemtnal FIgure S5) AGCGTAT<strong>C/A</strong>ACTTCAG</p>
-<p>This variant happens to be located in an intron of another gene, ELP4. Therefore, we can represent the variant as <code>NM_019040.5:c.1143+14176C&gt;A</code>in HGVS (See <a href="https://www.ncbi.nlm.nih.gov/clinvar/RCV000106409">ClinVar</a>). We can use VariantValidator 
+<div class="highlight"><pre><span></span><code>chr11:31,685,945-31,685,945
+</code></pre></div>
+in the <a href="liftover.md">liftover</a> tool. We obtain <code>chr11:31821757-31821757</code>. We enter this in the HG38 UCSC browser and then zoom out 3x and 10x to see the surrounding sequence.  We can compare this with the sequence reported in the publication (see Supplemental Figure S5) AGCGTAT[<strong>C/A</strong>]ACTTCAG</p>
+<p>This variant happens to be located in an intron of another gene, ELP4. Therefore, we can represent the variant as <code>NM_019040.5:c.1143+14176C&gt;A</code>in HGVS (See <a href="https://www.ncbi.nlm.nih.gov/clinvar/variation/120328/">ClinVar</a>). We can use VariantValidator 
 to identifify the chromosomal location <code>NC_000011.10:g.31664397C&gt;A</code>.
 However, in HRMDBQ, we use the gene symbol of the gene with the presumed etiological role (PAX6). Therefore, we enter the following</p>
 <ul>
 <li>Gene: <code>PAX6</code> </li>
 <li>Variant: <code>NC_000011.10:g.31664397C&gt;A</code> (using the IG option)</li>
+<li>ClinVar - Variation ID: 120328</li>
+<li>Alias -3063C&gt;A (from manuscript)</li>
+<li>Comment: homozygous mutation (-3063C&gt;A), affecting a highly conserved nucleotide within the Hepatic Nuclear Factor 1 (HNF-1) binding site</li>
 <li>Variant category: <code>Enhancer</code> </li>
-<li>TODO-how to code the above stuff</li>
-<li>Citation: PMID:24290376</li>
+<li>Individual ID 1230P was diagnosed with bilateral iris hypoplasia at the age of two. Aniridia was confirmed at age 17. The individual has a de novo heterozygous variant (chr11: 31,685,945G&gt;T [UCSC Genome Browser human reference sequence hg19]) in an ultraconserved sequence, SIMO (uc.325), located 150 kb downstream of PAX6. </li>
+<li>The variant was shown to reduce enhancer activity, we tested two mutant versions of SIMO in mouse and zebrafish transgenic assays (Figure 2): <strong>Reduced transcription</strong></li>
+<li>The efficiency of the Pax6 pulldown was strongly reduced with the SIMO-T mutant version of the probe (Figure 3 and also EMSA competition experiment where the G&gt;T change strongly reduced the ability to compete for binding of purified PAX6 paired domain): <strong>TFBS disruption</strong></li>
+<li>We also have cosegregation (parents unaffected, Figure 1), computational evidence (e.g., sequence conservation), and phenotypic evidence (the individual has aniridia and other manifestations)</li>
+<li>PMID: 24290376</li>
 </ul>
-<p>The authors showed:
-- first performed a detailed characterization of the 800 bp SIMO cis-element in mouse and zebrafish reporter transgenics. In  zebrafish transgenic they show the variant abolishes activity ( LacZ expression on the lens)
-- DNA affinity-capture assay via biotinylated double-stranded oligonucleotides as probe also efficiently pulled down Pax6 protein from a nuclear extract of E14.5 eyes when the wild-type SIMO-G PAX6 binding sequence was used, but the efficiency of the Pax6 pulldown was strongly reduced with the SIMO-T mutant version of the probe 
-- confirmed by an EMSA competition experiment where the G&gt;T change strongly reduced the ability to compete for binding of purified PAX6 paired domain 
-- modified BAC constructs</p>
-<p>These results show that SIMO is an active enhancer in E14.5 eyes and that Pax6 efficiently binds to a wild-type SIMO-G but not a mutant SIMO-T fragment, albeit with lower affinity than the optimal PAX6 consensus site.1</p>
 
 
 
