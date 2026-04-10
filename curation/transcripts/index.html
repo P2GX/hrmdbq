@@ -9,10 +9,10 @@
       
       
       
-        <link rel="prev" href="../variants/mirna/">
+        <link rel="prev" href="../liftover/">
       
       
-        <link rel="next" href="../functional/">
+        <link rel="next" href="../variants/overview/">
       
       
         
@@ -23,7 +23,7 @@
     
     
       
-        <title>HGVS - HRMDBQ</title>
+        <title>Transcripts - HRMDBQ</title>
       
     
     
@@ -139,7 +139,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#human-genome-variation-society-hgvs-nomenclature" class="md-skip">
+        <a href="#transcripts" class="md-skip">
           Skip to content
         </a>
       
@@ -173,7 +173,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              HGVS
+              Transcripts
             
           </span>
         </div>
@@ -508,10 +508,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../transcripts/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transcripts
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -527,6 +554,37 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#understanding-mane" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding MANE
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -789,37 +847,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    HGVS
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../hgvs/" class="md-nav__link">
         
   
   
@@ -835,70 +866,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#transcript" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Transcript
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#variant-validator" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Variant Validator
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#arrows" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Arrows
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#odd-characters" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Odd characters
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -983,20 +950,53 @@
 
 
 
-<h1 id="human-genome-variation-society-hgvs-nomenclature">Human Genome Variation Society (HGVS) Nomenclature</h1>
-<p>The HGVS Nomenclature is an internationally-recognized standard for the description of DNA, RNA, and protein sequence variants.
-In brief, HGVS defines a way of representing variants as compared to a reference sequence. For instance, <code>c.435A&gt;GA</code> represents
-a substitution at position 435 of the sDNA (Adenine changed to Guanine). See the <a href="https://hgvs-nomenclature.org/stable/">HGVS website</a> for details.</p>
-<p>This page provides advice about how to correct and check possibly incorrect variant nomenclature found in the literature.</p>
-<h2 id="transcript">Transcript</h2>
-<p>It is essential to indicate the sequence (usually a transcript) of reference. For mRNAs, the <a href="https://www.ncbi.nlm.nih.gov/refseq/MANE/">MANE Select</a> sequence should be used if possible. 
-We tend to obtain this sequence from the <a href="https://www.genenames.org/">HGNC</a> page for a gene.</p>
-<h2 id="variant-validator">Variant Validator</h2>
-<p>The <a href="https://variantvalidator.org/">VariantValidator</a> API is used by HRMDBQ. While a difficult variant is being investigated, we highly recommend using the website (under Tools/Validator).</p>
-<h2 id="arrows">Arrows</h2>
-<p>Variants such as <code>c.-113A → C</code> are now written as <code>c.-113A&gt;C</code>.</p>
-<h2 id="odd-characters">Odd characters</h2>
-<p>Many publications put (nearly) invisible whitespace between the numerical part and the nucleotide symbols. All white space should be removed.</p>
+<h1 id="transcripts">Transcripts</h1>
+<p>The <strong>HRMDBQ</strong> prioritizes the <strong>MANE Select</strong> transcript by default. While this is the standard for variant curation, it is important to evaluate if the specific biology of a variant requires an alternative model.</p>
+<hr />
+<h2 id="understanding-mane">Understanding MANE</h2>
+<p><a href="https://www.ncbi.nlm.nih.gov/refseq/MANE/">Matched Annotation from NCBI and EMBL-EBI</a> (MANE) transcripts represent exact matches between NCBI and Ensembl transcript models.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Transcript Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>MANE Select</strong></td>
+<td style="text-align: left;">A single transcript per locus, representative of the relevant biology.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>MANE Plus Clinical</strong></td>
+<td style="text-align: left;">Additional transcripts for genes where "Pathogenic" (P) or "Likely Pathogenic" (LP) variants cannot be reported via the Select transcript alone.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1 id="example-pcsk9">Example: <em>PCSK9</em></h1>
+<p>In <a href="https://pubmed.ncbi.nlm.nih.gov/18559913/">Blesa et al. (2009)</a>, researchers identified a variant affecting gene expression. Depending on the transcript model, the variant's location can be interpreted in multiple ways:</p>
+<ul>
+<li><strong>Coding sequence</strong></li>
+<li><strong>5' UTR sequence</strong></li>
+<li><strong>Upstream promoter sequence</strong></li>
+</ul>
+<p><img alt="PCSK9 and " src="../../img/PCSK9.png" width="100%" /></p>
+<blockquote>
+<p><strong>Figure 1:</strong> Promoter and 5' Untranslated Region of the F9 gene.</p>
+</blockquote>
+<h3 id="variant-specification">Variant Specification</h3>
+<p>The variant is located on <strong>Chromosome 1</strong>: <code>NC_000001.11:g.55039507C&gt;A</code>. If we wanted to represent the variant as a 5' UTR sequence we would need to choose the corresponding transcript: <code>NM_174936.3:c.-331C&gt;A</code>. However, the authors interpret the major effect as a <strong>promoter variant</strong>.</p>
+<div class="admonition quote">
+<p class="admonition-title">Evidence Summary</p>
+<p>Luciferase reporter analysis indicated that the <code>c.-332C&gt;A</code> variant caused a <strong>2.5-fold increase</strong> in <em>PCSK9</em> promoter activity relative to wild-type. Both patients with the mutation showed higher expression compared to samples with similar LDL-C levels.</p>
+</div>
+<p><strong>Decision:</strong> We curate this as a <strong>Promoter</strong> variant because the preponderance of evidence suggests its effect is exerted via an alteration of promoter activity.</p>
+<hr />
+<h3 id="see-also">See also</h3>
+<ul>
+<li><a href="https://pubmed.ncbi.nlm.nih.gov/35388217/">:material-microscope: Morales et al. (2022)</a> – A joint NCBI and EMBL-EBI transcript set for clinical genomics and research. <em>Nature</em>.</li>
+</ul>
 
 
 
