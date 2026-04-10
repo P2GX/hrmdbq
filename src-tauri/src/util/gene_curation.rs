@@ -1,6 +1,6 @@
 use std::{fs, path::{Path, PathBuf}};
 
-use crate::{dto::nc_variant_annotation::{GeneCuration, GeneCurationFile}, util::hgnc_rest::HgncBundle};
+use crate::{dto::nc_variant_annotation::{GeneCuration, GeneCurationFile}};
 
 
 
