@@ -49,6 +49,7 @@ pub fn run() {
             get_settings,
             load_gene_curation_file,
             retrieve_pmid_citation,
+            save_new_curation,
             select_curation_directory,
             serialize_gene_curation,
             set_biocuration_orcid,
@@ -242,6 +243,38 @@ fn serialize_gene_curation(
         None => { return Err(format!("Could not retrieve path for {}", gene_symbol)); },
     };
     crate::util::gene_curation::save_gene_curation(&path_buf, &curation)?;
+    Ok(())
+}
+
+#[tauri::command]
+fn save_new_curation(
+    state: tauri::State<'_, AppState>,
+    curation: GeneCuration,
+    directory: String
+) -> Result<(), String> {
+    let symbol = curation.get_symbol();
+    let file_name = format!("{}.json", symbol);
+    let mut path_buf = PathBuf::from(directory);
+    path_buf.push(file_name);
+
+    // 1. Save the file to disk
+    crate::util::gene_curation::save_gene_curation(&path_buf, &curation)?;
+
+    // 2. Update the internal state so `serialize_gene_curation` 
+    // works immediately after this call
+    let mut guard = state.gene_list
+        .lock()
+        .map_err(|_| "Failed to lock mutex")?;
+    
+    // Add to the list if it's not already there
+    if !guard.iter().any(|gc| gc.gene_symbol == symbol) {
+        guard.push(GeneCurationFile {
+            gene_symbol: symbol.to_string(),
+            file: path_buf.clone(),
+            // ... other fields like last_modified
+        });
+    }
+
     Ok(())
 }
 

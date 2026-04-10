@@ -86,6 +86,7 @@ export const PATHOMECHANISMS =
   // Translational Control (5' UTR)
   'uORFCreation',
    'uORFDisruption',
+   'kozakCreation',
   'kozakDisruption',
   'reducedTranslation',
   'increasedTranslation',
@@ -123,6 +124,7 @@ export const PATHOMECHANISM_LABELS: Record<Pathomechanism, string> = {
     // Translational Control (5' UTR)
     uORFCreation: "uORF creation",
     uORFDisruption: "uORF disruption",
+    kozakCreation: "Novel Kozak sequence",
     kozakDisruption: "Kozak sequence disruption",
     reducedTranslation: "Reduced translation",
     increasedTranslation: "Increased translation",

@@ -105,6 +105,7 @@ pub enum Pathomechanism {
     // Translational Control (5' UTR)
     UORFCreation,
     UORFDisruption,
+    KozakCreation,
     KozakDisruption,
     ReducedTranslation,
     IncreasedTranslation,
@@ -138,6 +139,7 @@ impl std::fmt::Display for Pathomechanism {
             Self::ImpairedRnaProcessing => "Impaired ncRNA processing",
             Self::UORFCreation => "uORF creation",
             Self::UORFDisruption => "uORF disruption",
+            Self::KozakCreation => "Novel Kozak sequence",
             Self::KozakDisruption => "Kozak sequence disruption",
             Self::ReducedTranslation => "Reduced translation",
             Self::IncreasedTranslation => "Increased translation",

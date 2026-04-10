@@ -52,6 +52,7 @@ nav:
 - Curation:
   - Overview: 'curation/index.md'
   - Liftover: 'curation/liftover.md'
+  - Transcripts: 'curation/transcripts.md'
   - Variant types:
     - Overview: 'curation/variants/overview.md'
     - UTR5: 'curation/variants/utr5.md'

@@ -132,7 +132,7 @@ export class PathomechanismCurationComponent {
         {
             label: 'Translational Control (5\' UTR)',
             icon: 'translate',
-            options: ['uORFCreation', 'uORFDisruption', 'kozakDisruption', 'reducedTranslation', 'increasedTranslation', 'iRESdisruption']
+            options: ['uORFCreation', 'uORFDisruption', 'kozakCreation', 'kozakDisruption', 'reducedTranslation', 'increasedTranslation', 'iRESdisruption']
         },
         {
             label: 'RNA Processing & Stability (3\' UTR/Introns)',

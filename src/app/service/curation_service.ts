@@ -118,7 +118,7 @@ export class CurationService {
   /**
    * Persists the entire current state to the file system.
    */
-  async saveActiveCurationToDisk() {
+  async saveActiveCurationToDiskOLD() {
     const data = this._currentCuration();
     if (!data) return;
 
@@ -128,6 +128,30 @@ export class CurationService {
       
       this._hasUnsavedChanges.set(false); // Reset dirty flag
       this.notificationService.showSuccess(`Saved ${data.geneData.symbol} to disk.`);
+    } catch (err) {
+      this.notificationService.showError(`Save failed: ${err}`);
+    }
+  }
+
+  async saveActiveCurationToDisk() {
+    const curation = this._currentCuration();
+    const directory = this._curationDirectory();
+    if (!curation) return;
+    const exists = this._curationFileList().some(f => f.geneSymbol === curation.geneData.symbol);
+    try {
+      if (exists) {
+        await invoke('serialize_gene_curation', { curation });
+      } else {
+        await invoke('save_new_curation', { 
+          curation, 
+          directory 
+        });
+        // Refresh the file list so the UI knows the file exists now
+        await this.loadCurationFileList();
+      }
+      
+      this._hasUnsavedChanges.set(false);
+      this.notificationService.showSuccess("Saved successfully.");
     } catch (err) {
       this.notificationService.showError(`Save failed: ${err}`);
     }
