@@ -47,6 +47,26 @@ export class PathomechanismCurationComponent {
         return this.submitted() && this.pathomechanisms().length > 0;
     });
 
+    constructor() {
+        effect(() => {
+            const initPM = this.initialPathomechanisms();
+            // Only set if we haven't touched the local state yet
+            if (initPM && initPM.length > 0 && this.pathomechanisms().length === 0 && !this.submitted()) {
+                this.pathomechanisms.set(initPM);
+                this.submitted.set(true);;
+            }
+        });
+    }
+
+     togglePathomechanism(pm: Pathomechanism): void {
+        this.pathomechanisms.update(current => {
+                const exists = current.includes(pm);
+                return exists ? current.filter(p => p !==pm) : [...current, pm];
+        });
+        // since we are toggling, stay in edit mode
+        this.submitted.set(false);
+    }
+
     activeGroupLabel = computed(() => {
         const vc = this.variantClass();
         if (!vc) return 'General / Protein-level';
@@ -71,27 +91,9 @@ export class PathomechanismCurationComponent {
         return this.allPathoGroups.filter(group => allowedLabels.includes(group.label));
     });
 
-    constructor() {
-        effect(() => {
-            const initPM = this.initialPathomechanisms();
-            if (! initPM || initPM.length == 0) {
-                return;
-            }
-            this.pathomechanisms.set(initPM);
-            this.submitted.set(true);
-        });
-    }
   
-    togglePathomechanism(pm: Pathomechanism): void {
-        const current = this.pathomechanisms();
-        if (current.includes(pm)) {
-            this.pathomechanisms.set(current.filter(p => p !== pm));
-        } else {
-            // i.e., new
-            this.pathomechanisms.set([...current, pm]);
-        }
-        this.submitted.set(false);
-    }
+  
+   
  
 
     setPathomechanism(pm: Pathomechanism): void {
@@ -111,7 +113,14 @@ export class PathomechanismCurationComponent {
         return PATHOMECHANISM_LABELS[pm]; 
     }
 
-  
+    edit(): void {
+        this.submitted.set(false);
+    }
+
+    clearAll() {
+        this.pathomechanisms.set([]);
+        this.submitted.set(false);
+    }
 
     cancel() {
         this.pathomechanisms.set([]);
