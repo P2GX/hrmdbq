@@ -1,6 +1,5 @@
-# Tauri + Angular
-
-This template should help get you started developing with Tauri and Angular.
+# Human Regulator Mutation Database Curation Tool: HRMDBQ
+This application intends to streamline curation of non-coding variants.
 
 
 ## Installation
