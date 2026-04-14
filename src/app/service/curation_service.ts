@@ -57,6 +57,7 @@ export class CurationService {
       } else {
         this.notificationService.showError("Initialize curaton directory before starting work");
       }
+      this._currentCuration.set(null);
     } catch (err) {
       console.error('Auto-load failed:', err);
     }

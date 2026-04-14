@@ -2,7 +2,7 @@
 <div class="curation-container">
   @if (curationService.currentCuration(); as curation) {
     <div class="table-header">
-      <h2><mat-icon>dna</mat-icon> Curation: {{ activeGeneSymbol() }}</h2>
+      <h2><mat-icon>dna</mat-icon> Curation: {{ activeGeneSymbol() }} (n={{variantCount()}})</h2>
       <div class="actions">
         @if (curationService.hasUnsavedChanges()) {
            <span class="unsaved-indicator"> Unsaved Changes *  </span>
@@ -42,31 +42,36 @@
     </button>
   </div>
 
-  <div class="notes-grid">
+  <mat-accordion class="notes-grid">
     @for (note of curationService.currentCuration()?.notes; track note.id) {
-      <mat-card class="note-card">
-        <mat-card-header>
-          <mat-card-title>{{ note.title }}</mat-card-title>
-          <mat-card-subtitle>{{ note.dateModified | date:'medium' }}</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-          <p class="note-body">{{ note.content }}</p>
-        </mat-card-content>
-        <mat-card-actions align="end">
-            <button mat-icon-button color="warn" (click)="deleteNote(note.id)">
-                <mat-icon>delete</mat-icon>
-            </button>
-        </mat-card-actions>
-      </mat-card>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            **{{ note.title }}**
+          </mat-panel-title>
+          <mat-panel-description>
+            {{ note.dateModified | date:'short' }}
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <p class="note-body">{{ note.content }}</p>
+
+        <mat-action-row>
+          <button mat-icon-button color="warn" (click)="deleteNote(note.id)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-action-row>
+      </mat-expansion-panel>
     } @empty {
       <p class="text-muted">No notes recorded for this curation session.</p>
     }
-  </div>
-   <div class="notes-section mat-elevation-z1">
-      <button mat-icon-button color="warn" (click)="addNewVariantCuration()"><mat-icon>add</mat-icon>New curation
-            </button>
+  </mat-accordion>
+</div>
 
-   </div>
+<div class="notes-section mat-elevation-z1">
+  <button mat-icon-button color="warn" (click)="addNewVariantCuration()">
+    <mat-icon>add</mat-icon>New curation
+  </button>
 </div>
 
   <div class="table-wrapper mat-elevation-z2">

@@ -15,7 +15,7 @@ import { ResourceDialogComponent } from '../../widgets/resourcedialog';
 import { MatCardModule } from "@angular/material/card";
 import { NoteDialogComponent } from '../../widgets/notedialog';
 import { Router } from '@angular/router';
-
+import { MatExpansionModule } from '@angular/material/expansion';
 
 
 
@@ -25,6 +25,7 @@ import { Router } from '@angular/router';
     CommonModule,
     FormsModule,
     MatDividerModule,
+    MatExpansionModule,
     MatInputModule,
     MatTableModule,
     MatIconModule,
@@ -35,8 +36,6 @@ import { Router } from '@angular/router';
   styleUrl: './annotations.css'
 })
 export class AnnotationTable {
-
-
 
     public curationService = inject(CurationService);
     private configService = inject(ConfigService);
@@ -58,6 +57,10 @@ export class AnnotationTable {
     readonly dataSource = computed(() => 
       new MatTableDataSource<NcVariantAssessment>(this.curationService.variants())
     );
+
+    readonly variantCount = computed(() => {
+      return this.curationService.variants().length
+    });
 
  
 

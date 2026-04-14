@@ -90,6 +90,7 @@ export const PATHOMECHANISMS =
   'kozakDisruption',
   'reducedTranslation',
   'increasedTranslation',
+  'polyadenlyation',
   // Regulatory Site Interaction (UTRs)
    'microRNAbindingSiteDisruption',
   'microRNAbindingSiteCreation',
@@ -135,6 +136,7 @@ export const PATHOMECHANISM_LABELS: Record<Pathomechanism, string> = {
     iREdisruption: "Iron Responsive Element (IRE) disruption",
     iRESdisruption: "Internal Ribosome Entry Site (IRES) disruption",
     rBPbindingSiteDisruption: "RNA-binding protein (RBP) site disruption",
+    polyadenlyation: "Polyadenylation site disruption",
     
     unknown: 'Unknown pathomechanism',
 };

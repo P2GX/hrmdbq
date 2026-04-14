@@ -116,6 +116,7 @@ pub enum Pathomechanism {
     IREdisruption,      // Iron Responsive Element
     IRESdisruption,     // Internal Ribosome Entry Site
     RBPbindingSiteDisruption,
+    Polyadenlyation, // polyA site disruption
     
     Unknown,
 }
@@ -148,6 +149,7 @@ impl std::fmt::Display for Pathomechanism {
             Self::IREdisruption => "IRE disruption",
             Self::IRESdisruption => "IRES disruption",
             Self::RBPbindingSiteDisruption => "RBP site disruption",
+            Self::Polyadenlyation => "Polyadenylation site disruption",
             Self::Unknown => "Unknown"
            
         };

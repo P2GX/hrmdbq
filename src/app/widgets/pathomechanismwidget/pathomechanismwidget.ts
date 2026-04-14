@@ -74,7 +74,7 @@ export class PathomechanismCurationComponent {
         if (vc === 'utr3' || vc === 'snRNA' || vc === 'snoRNA') 
             return "RNA Processing & Stability (3' UTR/Introns)";
         if (vc === 'promoter' || vc === 'enhancer' || vc === 'ICR') 
-            return "Transcriptional Control (Promoters/Enhancers)";
+            return "Transcriptional Control";
         return 'General / Protein-level';
     });
     pathomechanismOptions = Object.keys(PATHOMECHANISM_LABELS) as Pathomechanism[];
@@ -134,34 +134,34 @@ export class PathomechanismCurationComponent {
             options: ['lossOfFunction', 'gainOfFunction', 'dominantNegative',  'reducedExpression', 'increasedExpression', 'unknown']
         },
         {
-            label: 'Transcriptional Control (Promoters/Enhancers)',
+            label: 'Transcriptional Control',
             icon: 'settings_input_component',
-            options: ['reducedTranscription', 'increasedTranscription', 'enhancerHijacking', 'insulatorLoss', 'tfbsDisruption']
+            options: ['reducedTranscription', 'increasedTranscription', 'enhancerHijacking', 'insulatorLoss', 'tfbsDisruption', 'polyadenlyation']
         },
         {
-            label: 'Translational Control (5\' UTR)',
+            label: 'Translational Control',
             icon: 'translate',
             options: ['uORFCreation', 'uORFDisruption', 'kozakCreation', 'kozakDisruption', 'reducedTranslation', 'increasedTranslation', 'iRESdisruption']
         },
         {
-            label: 'RNA Processing & Stability (3\' UTR/Introns)',
+            label: 'RNA Processing & Stability',
             icon: 'Inventory_2',
             options: ['spliceDefect', 'mrnaStability', 'secondaryStructure', 'impairedRnaProcessing', 'microRNAbindingSiteDisruption', 'microRNAbindingSiteCreation', 'iREdisruption', 'rBPbindingSiteDisruption']
         }
     ];
 
     private readonly CLASS_MAPPING: Record<VariantClass, string[]> = {
-        'promoter': ['General / Protein-level', 'Transcriptional Control (Promoters/Enhancers)'],
-        'enhancer': ['General / Protein-level', 'Transcriptional Control (Promoters/Enhancers)'],
-        'ICR':      ['General / Protein-level', 'Transcriptional Control (Promoters/Enhancers)'],
-        'utr5':     ['General / Protein-level', 'Translational Control (5\' UTR)','Transcriptional Control (Promoters/Enhancers)'],
-        'utr3':     ['General / Protein-level', 'RNA Processing & Stability (3\' UTR/Introns)'],
-        'snRNA':    ['General / Protein-level', 'RNA Processing & Stability (3\' UTR/Introns)'],
-        'snoRNA':   ['General / Protein-level', 'RNA Processing & Stability (3\' UTR/Introns)'],
-        'microRNA': ['General / Protein-level', 'RNA Processing & Stability (3\' UTR/Introns)'],
+        'promoter': ['General / Protein-level', 'Transcriptional Control'],
+        'enhancer': ['General / Protein-level', 'Transcriptional Control'],
+        'ICR':      ['General / Protein-level', 'Transcriptional Control'],
+        'utr5':     ['General / Protein-level', 'Translational Control','Transcriptional Control', 'RNA Processing & Stability'],
+        'utr3':     ['General / Protein-level', 'Transcriptional Control', 'RNA Processing & Stability'],
+        'snRNA':    ['General / Protein-level', 'RNA Processing & Stability'],
+        'snoRNA':   ['General / Protein-level', 'RNA Processing & Stability'],
+        'microRNA': ['General / Protein-level', 'RNA Processing & Stability'],
         // Add defaults for others
-        'lncRNA':   ['General / Protein-level','RNA Processing & Stability (3\' UTR/Introns)'],
-        'tRNA':     ['General / Protein-level','RNA Processing & Stability (3\' UTR/Introns)'],
+        'lncRNA':   ['General / Protein-level','RNA Processing & Stability'],
+        'tRNA':     ['General / Protein-level','RNA Processing & Stability'],
         'multiGene': ['General / Protein-level']
     };
 

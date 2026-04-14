@@ -18,6 +18,7 @@ import { firstValueFrom } from 'rxjs';
 import { MatSelectModule } from "@angular/material/select";
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { getVersion, getName } from '@tauri-apps/api/app';
 
 @Component({
   selector: 'app-about',
@@ -45,6 +46,7 @@ export class Setup implements OnInit {
   private dialog = inject(MatDialog);
   selectedTab = 'introduction';
   dataSource = new MatTableDataSource<any>([]);
+  version = signal<string|null>(null);
  
 
   constructor() {
@@ -57,6 +59,12 @@ export class Setup implements OnInit {
     });
   }
 
+   async ngOnInit(): Promise<void> {
+    this.curationService.initialize();
+    const v  = await getVersion();
+    this.version.set(v);
+  }
+
 applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -64,9 +72,7 @@ applyFilter(event: Event) {
 
   currentHgncBundle = signal<HgncBundle|null>(null);
 
-  ngOnInit(): void {
-    this.curationService.initialize();
-  }
+ 
   
   public orcidDisplay = computed(() => {
     const orcid = this.configService.settings()?.orcid_id;

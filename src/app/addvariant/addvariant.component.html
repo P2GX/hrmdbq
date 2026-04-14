@@ -45,8 +45,7 @@
           <input matInput 
                  type="number" 
                  [(ngModel)]="clinvarId" 
-                 placeholder="Integer ID"
-                 (wheel)="$event.preventDefault()">
+                 placeholder="Integer ID">
         </mat-form-field>
       </div>
       <div class="w-full mt-4">
@@ -63,7 +62,7 @@
         <mat-form-field appearance="outline" class="w-full" subscriptSizing="dynamic">
           <mat-label>Variant alias</mat-label>
           <textarea matInput
-                    rows="2"
+                    rows="1"
                     [(ngModel)]="variantAlias"
                     placeholder="alias (legacy name, short name)...">
           </textarea>
@@ -86,7 +85,7 @@
 
           @if (variantValidated) {
             <button mat-button (click)="variantValidated = false">
-              <mat-icon>edit</mat-icon> Change String
+              <mat-icon>edit</mat-icon>Reset
             </button>
           }
 
