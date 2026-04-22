@@ -8,14 +8,15 @@ impl NcVariantAssessment {
         for anno in &self.pathomechanisms {
             match (&self.variant_category, &anno) {
                 // 5' UTR specific
-                (VariantClass::Utr5, Pathomechanism::KozakDisruption | Pathomechanism::UORFCreation | Pathomechanism::UORFDisruption) => continue,
+                (VariantClass::Utr5, Pathomechanism::KozakDisruption | Pathomechanism::UORFCreation | Pathomechanism::UORFDisruption |
+                Pathomechanism::NovelUpstreamStart) => continue,
                 
                 // Promoter / Enhancer / ICR specific
                 (VariantClass::Promoter | VariantClass::Enhancer | VariantClass::ICR, 
                  Pathomechanism::ReducedTranscription | Pathomechanism::IncreasedTranscription | Pathomechanism::InsulatorLoss | Pathomechanism::EnhancerHijacking) => continue,
                 
                 // 3' UTR / RNA Stability specific
-                (VariantClass::Utr3, Pathomechanism::MicroRNAbindingSiteCreation | Pathomechanism::MicroRNAbindingSiteDisruption | Pathomechanism::MrnaStability) => continue,
+                (VariantClass::Utr3, Pathomechanism::MicroRNAbindingSiteCreation | Pathomechanism::MicroRNAbindingSiteDisruption | Pathomechanism::Polyadenlyation | Pathomechanism::MrnaStability) => continue,
                 
                 // Non-coding RNA specific
                 (VariantClass::SnRNA | VariantClass::tRNA | VariantClass::SnoRNA | VariantClass::MicroRNA, 

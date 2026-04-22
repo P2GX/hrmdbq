@@ -35,7 +35,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
   templateUrl: './annotations.html',
   styleUrl: './annotations.css'
 })
-export class AnnotationTable {
+export class AnnotationTable implements OnInit {
+
 
     public curationService = inject(CurationService);
     private configService = inject(ConfigService);
@@ -69,6 +70,9 @@ export class AnnotationTable {
       this.notificationService.showError("No active curation found. Return to setup to initialize gene.");
     }
   }
+  ngOnInit(): void {
+    this.curationService.setEditingVariant(null);
+  }
   
 
   /**
@@ -98,7 +102,7 @@ export class AnnotationTable {
       this.notificationService.showError("Could not save curation because GeneCuration object was null");
       return;
     }
-    this.configService.serializeGeneCuration(curation)
+    this.curationService.saveActiveCurationToDisk()
       .then(() => {
         this.notificationService.showSuccess(`Saved Curation for ${curation.geneData.symbol}.`);
         this.curationService.clearChanges();
@@ -152,6 +156,13 @@ export class AnnotationTable {
     this.curationService.setEditingVariant(row);
     this.router.navigate(["curate"]);
   } 
+
+  viewVariant(row: NcVariantAssessment) {
+    this.editingVariant.set(row);
+    this.curationService.setEditingVariant(row);
+    this.router.navigate(["view"]);
+  } 
+
 
   deleteVariant(row: NcVariantAssessment): void {
     const label = this.getVariantLabel(row.variantCoordinates);

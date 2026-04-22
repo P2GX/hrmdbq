@@ -116,24 +116,6 @@ export class CurationService {
     return false;
   }
 
-  /**
-   * Persists the entire current state to the file system.
-   */
-  async saveActiveCurationToDiskOLD() {
-    const data = this._currentCuration();
-    if (!data) return;
-
-    try {
-      // Assuming your Rust command takes the whole object
-      await invoke('save_gene_curation_file', { curation: data });
-      
-      this._hasUnsavedChanges.set(false); // Reset dirty flag
-      this.notificationService.showSuccess(`Saved ${data.geneData.symbol} to disk.`);
-    } catch (err) {
-      this.notificationService.showError(`Save failed: ${err}`);
-    }
-  }
-
   async saveActiveCurationToDisk() {
     const curation = this._currentCuration();
     const directory = this._curationDirectory();
@@ -169,6 +151,10 @@ export class CurationService {
     });
     const cc = this.currentCuration();
     this._hasUnsavedChanges.set(true);
+  }
+
+  resetCurrentCuration(): void {
+    this._currentCuration.set(null);
   }
 
   addGeneNote(title: string, content: string) {

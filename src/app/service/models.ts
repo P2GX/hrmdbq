@@ -88,6 +88,7 @@ export const PATHOMECHANISMS =
    'uORFDisruption',
    'kozakCreation',
   'kozakDisruption',
+  'novelUpstreamStart',
   'reducedTranslation',
   'increasedTranslation',
   'polyadenlyation',
@@ -121,12 +122,14 @@ export const PATHOMECHANISM_LABELS: Record<Pathomechanism, string> = {
     mrnaStability: "mRNA stability alteration",
     secondaryStructure: "Secondary structure alteration",
     impairedRnaProcessing: "Impaired ncRNA processing",
+    TssMutation: "TSS Mutation",
     
     // Translational Control (5' UTR)
     uORFCreation: "uORF creation",
     uORFDisruption: "uORF disruption",
     kozakCreation: "Novel Kozak sequence",
     kozakDisruption: "Kozak sequence disruption",
+    novelUpstreamStart: "Novel upstream start codon (uORF)",
     reducedTranslation: "Reduced translation",
     increasedTranslation: "Increased translation",
     

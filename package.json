@@ -1,6 +1,6 @@
 {
   "name": "hrmdbq",
-  "version": "0.1.29",
+  "version": "0.1.32",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",

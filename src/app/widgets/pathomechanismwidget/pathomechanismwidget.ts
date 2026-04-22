@@ -141,12 +141,12 @@ export class PathomechanismCurationComponent {
         {
             label: 'Translational Control',
             icon: 'translate',
-            options: ['uORFCreation', 'uORFDisruption', 'kozakCreation', 'kozakDisruption', 'reducedTranslation', 'increasedTranslation', 'iRESdisruption']
+            options: ['uORFCreation', 'uORFDisruption', 'kozakCreation', 'kozakDisruption', 'reducedTranslation', 'novelUpstreamStart', 'increasedTranslation', 'iRESdisruption']
         },
         {
             label: 'RNA Processing & Stability',
             icon: 'Inventory_2',
-            options: ['spliceDefect', 'mrnaStability', 'secondaryStructure', 'impairedRnaProcessing', 'microRNAbindingSiteDisruption', 'microRNAbindingSiteCreation', 'iREdisruption', 'rBPbindingSiteDisruption']
+            options: ['spliceDefect', 'mrnaStability', 'secondaryStructure', 'impairedRnaProcessing', 'TssMutation','microRNAbindingSiteDisruption', 'microRNAbindingSiteCreation', 'iREdisruption', 'rBPbindingSiteDisruption']
         }
     ];
 

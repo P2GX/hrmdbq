@@ -1,0 +1,91 @@
+<div class="curation-container">
+  <h1>Visualization</h1>
+
+   
+@if (display(); as d) {
+   <h1>{{d.symbol}}: {{ d.category }}</h1>
+   <h3>{{d.label}}</h3>
+   @if (d.alias) {
+    <h3>{{d.alias}}</h3>
+   }
+    <ul>
+      <li><a href="{{d.hgncUrl}}">{{d.hgnc}}</a></li>
+      <li>{{d.transcript}}</li>
+    </ul>
+   <ul>
+      <li>Variant id {{d.id}}</li>
+      <li>{{d.transcript}}</li>
+      
+    </ul>
+    <div class="variant-card">
+
+      <ul>
+  @for (attr of d.attributes | keyvalue; track attr.key) {
+    <li>
+      <strong>{{ attr.key }}:</strong> {{ attr.value }} (Variant: {{ d.id }})
+    </li>
+  }
+  <h2>pathomechanisms</h2>
+  @for (p of d.pathomechanisms; track p) {
+    <li>
+      <strong>{{ p }}</strong> 
+    </li>
+  }
+</ul>
+ 
+<div class="citation-container">
+  @for (entry of d.citations; track entry.citation.pmid) {
+    <mat-card class="mb-3">
+      <mat-card-content>
+        <div class="citation-header">
+          <strong>{{ entry.citation.authorList }}</strong> ({{ entry.citation.year }})
+          <a [href]="'https://pubmed.ncbi.nlm.nih.gov/' + entry.citation.pmid" target="_blank">
+            PMID: {{ entry.citation.pmid }}
+          </a>
+        </div>
+
+        <div class="evidence-grid">
+          <div class="evidence-item">
+            <span class="label">Cosegregation:</span>
+            <span [class]="'level-' + entry.cosegregationEvidence">
+               {{ entry.cosegregationEvidence }}
+            </span>
+          </div>
+          <div class="evidence-item">
+            <span class="label">Phenotypic:</span>
+            <span [class]="'level-' + entry.phenotypicEvidence">
+               {{ entry.phenotypicEvidence }}
+            </span>
+          </div>
+          <div class="evidence-item">
+            <span class="label">Experimental:</span>
+            <span [class]="'level-' + entry.experimentalEvidence">
+               {{ entry.experimentalEvidence }}
+            </span>
+          </div>
+        </div>
+
+        @if (entry.note) {
+          <div class="curation-note">
+            <mat-icon>sticky_note_2</mat-icon>
+            <small>{{ entry.note }}</small>
+          </div>
+        }
+      </mat-card-content>
+
+    </mat-card>
+  }
+</div>
+
+      <hr />
+
+    
+    </div>
+} @else {
+    <p>No variant loaded</p>
+}
+
+
+
+
+</div>

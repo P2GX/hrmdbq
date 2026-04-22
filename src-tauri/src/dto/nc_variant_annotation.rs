@@ -101,12 +101,14 @@ pub enum Pathomechanism {
     MrnaStability,
     SecondaryStructure,
     ImpairedRnaProcessing,
+    TssMutation,
     
     // Translational Control (5' UTR)
     UORFCreation,
     UORFDisruption,
     KozakCreation,
     KozakDisruption,
+    NovelUpstreamStart,
     ReducedTranslation,
     IncreasedTranslation,
     
@@ -138,10 +140,12 @@ impl std::fmt::Display for Pathomechanism {
             Self::MrnaStability => "mRNA stability alteration",
             Self::SecondaryStructure => "Secondary structure alteration",
             Self::ImpairedRnaProcessing => "Impaired ncRNA processing",
+            Self::TssMutation => "TSS Mutation",
             Self::UORFCreation => "uORF creation",
             Self::UORFDisruption => "uORF disruption",
             Self::KozakCreation => "Novel Kozak sequence",
             Self::KozakDisruption => "Kozak sequence disruption",
+            Self::NovelUpstreamStart => "Novel upstream start codon (uORF)",
             Self::ReducedTranslation => "Reduced translation",
             Self::IncreasedTranslation => "Increased translation",
             Self::MicroRNAbindingSiteDisruption => "microRNA binding site disruption",
@@ -158,27 +162,7 @@ impl std::fmt::Display for Pathomechanism {
 }
 
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub enum EvidenceSource {
-    Qpcr,
-    Luciferase,   // CAT or Luciferase
-    Emsa,
-    WesternBlot,
-    Splicing,
-    ClinicalRna,
-    ClinicalProtein,
-    ClinicalEnzymeActivity,
-    // --- Computational (In Silico) ---
-    InSilicoSplicePredictor, // e.g., SpliceAI, MaxEntScan
-    InSilicoMissensePredictor, // e.g., REVEL, CADD, PolyPhen
-    TfbsChangePrediction,     // Transcription Factor Binding Site
-    ConservationScore,        // e.g., PhyloP, GERP++, PhastCons
-    // --- Regulatory/Other ---
-    ChromatinAccessibilityAssay,   // e.g., ATAC-seq data
-    OtherExperimental,
-    OtherComputational
-}
+
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -194,37 +178,6 @@ impl Default for EvidenceType {
     }
 }
 
-impl std::fmt::Display for EvidenceSource {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let label = match self {
-            Self::Qpcr => "qPCR",
-            Self::Luciferase => "Luciferase",
-            Self::Emsa => "EMSA",
-            Self::WesternBlot => "Western Blot",
-            Self::Splicing => "Splicing Assay",
-            Self::ClinicalRna => "Patient-derived RNA Study",
-            Self::ClinicalProtein => "Patient-derived Protein Study",
-            Self::ClinicalEnzymeActivity => "Patient-derived Enzyme Activity",
-            Self::InSilicoSplicePredictor => "In silico splicing predictor",
-            Self::InSilicoMissensePredictor => "In silico missense predictor",
-            Self::TfbsChangePrediction => "TFBS Change prediction",
-            Self::ConservationScore => "Conservation score",
-            Self::ChromatinAccessibilityAssay => "Chromatic accessibility",
-            Self::OtherExperimental => "Other experimental",
-            Self::OtherComputational => "Other computational",
-        };
-        write!(f, "{}", label)
-    }
-}
-
-
-
-#[derive(Clone, Debug, Deserialize, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct EvidenceRecord {
-    source: EvidenceSource,
-    assessment: EvidenceType,
-}
 
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
