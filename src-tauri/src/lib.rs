@@ -7,7 +7,7 @@ use ga4ghphetools::dto::{
 
 
 use crate::{
-    dto::{citation::Citation, nc_variant_annotation::{GeneCuration, GeneCurationFile, NcVariantAssessment}},
+    dto::{citation::Citation, curation_stats::CurationStats, nc_variant_annotation::{GeneCuration, GeneCurationFile, NcVariantAssessment}},
     util::{gene_curation::get_path, hgnc_rest::HgncBundle, settings::HrmdbqSettings},
 };
 
@@ -43,6 +43,7 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             create_gene_curation,
             fetch_gene_data_from_hgnc,
+            generate_curation_stats,
             get_variant_assessments,
             get_biocuration_orcid,
             get_gene_curation_list,
@@ -333,4 +334,14 @@ fn create_gene_curation(
     let gene_curation =  GeneCuration::from_hgnc_bundle(symbol, hgnc);
     crate::util::gene_curation::save_gene_curation(&file_path, &gene_curation)?;
     Ok(gene_curation)
+}
+
+#[tauri::command]
+fn generate_curation_stats(
+    state: tauri::State<'_, AppState>,
+) -> Result<CurationStats, String> {
+    let curation_files = state.gene_list
+        .lock()
+        .map_err(|_| "Failed to lock mutex".to_string())?;
+    util::generate_stats::get_stats(&curation_files)
 }

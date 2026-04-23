@@ -79,6 +79,12 @@ impl std::fmt::Display for VariantClass {
     }
 }
 
+impl From<VariantClass> for String {
+    fn from(vclass: VariantClass) -> Self {
+        vclass.to_string()
+    }
+}
+
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub enum Pathomechanism {
@@ -305,6 +311,12 @@ impl Ord for NcVariantAssessment {
     }
 }
 
+impl NcVariantAssessment {
+    pub fn category(&self) -> String {
+        self.variant_category.clone().into()
+    }
+}
+
 /// Information about the current gene being curated
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "camelCase")]
@@ -359,6 +371,10 @@ impl GeneCuration {
             mane_id: hgnc.mane_select
         };
         GeneCuration::new(gene_data)
+    }
+
+    pub fn n_curations(&self) -> usize {
+        self.annotations.len()
     }
 }
 

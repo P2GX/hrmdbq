@@ -30,7 +30,7 @@ We need to identify the HG38 coordinates to curate this publication. To do so, w
 ```text
 chr11:31,685,945-31,685,945
 ```
-in the [liftover](liftover.md) tool. We obtain `chr11:31821757-31821757`. We enter this in the HG38 UCSC browser and then zoom out 3x and 10x to see the surrounding sequence.  We can compare this with the sequence reported in the publication (see Supplemental Figure S5) AGCGTAT[**C/A**]ACTTCAG
+in the [liftover](../liftover.md) tool. We obtain `chr11:31821757-31821757`. We enter this in the HG38 UCSC browser and then zoom out 3x and 10x to see the surrounding sequence.  We can compare this with the sequence reported in the publication (see Supplemental Figure S5) AGCGTAT[**C/A**]ACTTCAG
 
 
 This variant happens to be located in an intron of another gene, ELP4. Therefore, we can represent the variant as `NM_019040.5:c.1143+14176C>A`in HGVS (See [ClinVar](https://www.ncbi.nlm.nih.gov/clinvar/variation/120328/)). We can use VariantValidator 

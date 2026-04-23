@@ -422,3 +422,14 @@ export interface GeneCurationFile {
   geneSymbol: string;
   file: string; // PathBuf serializes to a string in JSON
 }
+
+
+export interface CurationStats {
+  // Maps Gene Symbol (e.g., "BRCA1") to its occurrence count
+  geneSymbolCounts: Record<string, number>;
+  
+  // Maps Variant Category (e.g., "Splicing") to its occurrence count
+  variantCategoryCounts: Record<string, number>;
+  // Number of variants
+  total: number;
+}

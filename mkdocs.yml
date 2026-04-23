@@ -62,8 +62,10 @@ nav:
       - Overview: 'curation/variants/rna.md'
       - lincRNA: 'curation/variants/lincRNA.md'
       - microRNA: 'curation/variants/mirna.md'
+    - nc splicing: 'curation/variants/splicing.md'
   - HGVS: 'curation/hgvs.md'
   - Functional evidence: 'curation/functional.md'
+- Finding variants: 'finding.md'
 - Developers: 'developers.md'
 
 

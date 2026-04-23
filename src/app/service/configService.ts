@@ -1,5 +1,5 @@
 import { inject, Injectable, NgZone, signal } from '@angular/core';
-import { CurationEvent, GeneCuration, HgvsVariant, HrmdbqSettings, IntergenicHgvsVariant, NcVariantAssessment, StructuralVariant } from './models';
+import { CurationEvent, CurationStats, GeneCuration, HgvsVariant, HrmdbqSettings, IntergenicHgvsVariant, StructuralVariant } from './models';
 import { invoke } from '@tauri-apps/api/core';
 import { Citation, VariantDto } from './models';
 import { listen } from '@tauri-apps/api/event';
@@ -92,6 +92,10 @@ createCurationEvent(orcid: string): CurationEvent {
 
   async serializeGeneCuration(curation: GeneCuration) : Promise<void> {
      return invoke<void>('serialize_gene_curation', {curation: curation});
+  }
+
+  async fetchVariantStats(): Promise<CurationStats> {
+    return await invoke<CurationStats>('generate_curation_stats');
   }
 
 
