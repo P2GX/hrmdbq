@@ -1,0 +1,46 @@
+<div class="widget-card">
+  <div class="header">
+    <h2>Variant Statistics</h2>
+    <button mat-flat-button color="primary" (click)="fetchData()" [disabled]="isLoading()">
+      <mat-icon>refresh</mat-icon>
+      {{ stats() ? 'Update Data' : 'Get Stats' }}
+    </button>
+  </div>
+
+ 
+  
+  <mat-divider></mat-divider>
+
+  @if (stats()) {
+     <div class="summary-badge">
+    <strong>Total Variants Tracked:</strong> {{ stats()?.total }}
+  </div>
+    <div class="controls">
+      <mat-button-toggle-group [value]="viewMode()" (change)="viewMode.set($event.value)">
+        <mat-button-toggle value="gene">By Gene</mat-button-toggle>
+        <mat-button-toggle value="category">By Category</mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+
+    <div class="stats-list">
+      @for (item of displayData(); track item.label) {
+        <div class="stats-row">
+          <span class="label">{{ item.label }}</span>
+          <span class="spacer"></span>
+          <span class="count"><b>{{ item.count }}</b></span>
+        </div>
+      } @empty {
+        <p>No data found.</p>
+      }
+    </div>
+  } @else if (isLoading()) {
+    <div class="loading-state">
+      <p>Loading genomic data...</p>
+    </div>
+  } @else {
+    <div class="empty-state">
+      <mat-icon>analytics</mat-icon>
+      <p>Click the button to retrieve variant distribution.</p>
+    </div>
+  }
+</div>
