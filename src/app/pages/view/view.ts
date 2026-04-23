@@ -2,11 +2,11 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Citation, CitationEntry, CurationEvent, HgvsVariant, IntergenicHgvsVariant, NcVariantAssessment, Pathomechanism, StructuralVariant, VariantClass, VariantKind } from '../../service/models';
+import { CitationEntry, CurationEvent, HgvsVariant, IntergenicHgvsVariant, NcVariantAssessment, StructuralVariant, VariantKind } from '../../service/models';
 import { NotificationService } from '../../service/notification.service';
 import { ConfigService } from '../../service/configService';
 import { CurationService } from '../../service/curation_service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatIconModule } from "@angular/material/icon";
 import { MatCardModule } from "@angular/material/card"; 
 
@@ -71,8 +71,7 @@ function defaultVariantDisplay(): VariantDisplay {
 export class ViewWidget implements OnInit {
 
   private curationService = inject(CurationService);
-  private notificationService = inject(NotificationService);
-  private configService = inject(ConfigService);
+  private router = inject(Router);
   private route = inject(ActivatedRoute);
   isEditMode = signal(false);
   editingId = signal<string | null>(null);
@@ -125,7 +124,7 @@ export class ViewWidget implements OnInit {
     v.citation.forEach(c => { ddata.citations.push(c); });
     if (v.alias) {
       ddata.alias = v.alias;
-    }
+    } 
 
     if (v.variantCoordinates && 'hgvs' in v.variantCoordinates) {
       console.log("HGVS",v);
@@ -160,6 +159,10 @@ export class ViewWidget implements OnInit {
     }   
     return ddata;
   });
+
+  goToAnnotations() {
+        this.router.navigate(['/annots']); 
+  }
 
   
 }

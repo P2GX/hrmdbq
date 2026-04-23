@@ -1,91 +1,87 @@
 <div class="curation-container">
-  <h1>Visualization</h1>
-
-   
-@if (display(); as d) {
-   <h1>{{d.symbol}}: {{ d.category }}</h1>
-   <h3>{{d.label}}</h3>
-   @if (d.alias) {
-    <h3>{{d.alias}}</h3>
-   }
-    <ul>
-      <li><a href="{{d.hgncUrl}}">{{d.hgnc}}</a></li>
-      <li>{{d.transcript}}</li>
-    </ul>
-   <ul>
-      <li>Variant id {{d.id}}</li>
-      <li>{{d.transcript}}</li>
-      
-    </ul>
-    <div class="variant-card">
-
-      <ul>
-  @for (attr of d.attributes | keyvalue; track attr.key) {
-    <li>
-      <strong>{{ attr.key }}:</strong> {{ attr.value }} (Variant: {{ d.id }})
-    </li>
-  }
-  <h2>pathomechanisms</h2>
-  @for (p of d.pathomechanisms; track p) {
-    <li>
-      <strong>{{ p }}</strong> 
-    </li>
-  }
-</ul>
- 
-<div class="citation-container">
-  @for (entry of d.citations; track entry.citation.pmid) {
-    <mat-card class="mb-3">
-      <mat-card-content>
-        <div class="citation-header">
-          <strong>{{ entry.citation.authorList }}</strong> ({{ entry.citation.year }})
-          <a [href]="'https://pubmed.ncbi.nlm.nih.gov/' + entry.citation.pmid" target="_blank">
-            PMID: {{ entry.citation.pmid }}
-          </a>
-        </div>
-
-        <div class="evidence-grid">
-          <div class="evidence-item">
-            <span class="label">Cosegregation:</span>
-            <span [class]="'level-' + entry.cosegregationEvidence">
-               {{ entry.cosegregationEvidence }}
-            </span>
-          </div>
-          <div class="evidence-item">
-            <span class="label">Phenotypic:</span>
-            <span [class]="'level-' + entry.phenotypicEvidence">
-               {{ entry.phenotypicEvidence }}
-            </span>
-          </div>
-          <div class="evidence-item">
-            <span class="label">Experimental:</span>
-            <span [class]="'level-' + entry.experimentalEvidence">
-               {{ entry.experimentalEvidence }}
-            </span>
-          </div>
-        </div>
-
-        @if (entry.note) {
-          <div class="curation-note">
-            <mat-icon>sticky_note_2</mat-icon>
-            <small>{{ entry.note }}</small>
-          </div>
+  @if (display(); as d) {
+    <header class="header-section">
+      <h1 class="variant-title">
+        {{d.symbol}} <span class="category-tag">{{ d.category }}</span>
+      </h1>
+      <div class="variant-label">
+        {{ d.label }}
+        @if (d.alias) {
+          <span class="variant-alias"> ({{ d.alias }})</span>
         }
-      </mat-card-content>
+      </div>
+      <ul class="minimal-list">
+        @for (attr of d.attributes | keyvalue; track attr.key) {
+          <li>
+            <span class="attr-key">{{ attr.key }}:</span>
+            <span>{{ attr.value }}</span>
+          </li>
+        }
+      </ul>
 
-    </mat-card>
+      <div style="display: flex; gap: 6px;">
+        @for (p of d.pathomechanisms; track p) {
+          <span class="patho-pill">{{ p }}</span>
+        }
+      </div>
+
+      <div class="meta-row">
+        <span><strong>HGNC:</strong> <a [href]="d.hgncUrl" class="meta-link" target="_blank">{{d.hgnc}}</a></span>
+        <span><strong>Transcript:</strong> {{d.transcript}}</span>
+        <span><strong>ID:</strong> {{d.id}}</span>
+      </div>
+    </header>
+
+    <div class="citation-container">
+      <h2>Literature Evidence</h2>
+      @for (entry of d.citations; track entry.citation.pmid) {
+        <mat-card>
+          <mat-card-content>
+            <div class="citation-header">
+              <div>
+                <span style="font-weight: 600; color: #111827;">{{ entry.citation.authorList }}</span>
+                <span style="color: #6b7280; margin-left: 8px;">{{ entry.citation.journal }} · {{ entry.citation.year }}</span>
+              </div>
+              <a class="pmid-link" [href]="'https://pubmed.ncbi.nlm.nih.gov/' + entry.citation.pmid" target="_blank">
+                PMID {{ entry.citation.pmid }}
+              </a>
+            </div>
+
+            <div class="evidence-bar">
+              <div class="evidence-item">
+                <span class="level-label">Cosegregation</span>
+                <span [class]="'level-' + entry.cosegregationEvidence">{{ entry.cosegregationEvidence }}</span>
+              </div>
+              <div class="evidence-item">
+                <span class="level-label">Phenotypic</span>
+                <span [class]="'level-' + entry.phenotypicEvidence">{{ entry.phenotypicEvidence }}</span>
+              </div>
+              <div class="evidence-item">
+                <span class="level-label">Experimental</span>
+                <span [class]="'level-' + entry.experimentalEvidence">{{ entry.experimentalEvidence }}</span>
+              </div>
+            </div>
+
+            @if (entry.note) {
+              <div class="curation-note">
+                <p style="margin: 0;">{{ entry.note }}</p>
+              </div>
+            }
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+
+  } @else {
+    <div style="text-align: center; padding-top: 100px; color: #9ca3af;">
+      <p>Select a variant to visualize data</p>
+    </div>
   }
 </div>
 
-      <hr />
-
-    
-    </div>
-} @else {
-    <p>No variant loaded</p>
-}
-
-
-
-
+<div style="position: fixed; bottom: 24px; right: 24px; z-index: 1000;">
+  <button mat-fab extended color="primary" (click)="goToAnnotations()">
+    <mat-icon>arrow_back</mat-icon>
+    Back to Annotations
+  </button>
 </div>
