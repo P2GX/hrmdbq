@@ -1,6 +1,6 @@
 [package]
 name = "hrmdbq"
-version = "0.1.36"
+version = "0.1.37"
 description = "Curation of non-coding variant pathomechanism"
 authors = ["Peter Robinson"]
 edition = "2021"

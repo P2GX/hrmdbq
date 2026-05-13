@@ -49,7 +49,8 @@ export class VariantCategorySelectorComponent {
       multiGene: "Multi-Gene",
       tRNA: 'tRNA',
       snRNA: 'snRNA',
-      snoRNA: 'snoRNA'
+      snoRNA: 'snoRNA',
+      ThreePrimeFlanking: '3-prime flanking'
     };
     if (cat) {
       return labels[cat];

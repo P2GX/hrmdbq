@@ -28,7 +28,8 @@ export enum VariantClass {
   SnRNA = 'snRNA',     // Exact match
   SnoRNA = 'snoRNA',   // Exact match
   ICR = 'ICR', 
-  MultiGene = 'multiGene'
+  MultiGene = 'multiGene',
+  ThreePrimeFlanking = 'ThreePrimeFlanking'
 }
 
 

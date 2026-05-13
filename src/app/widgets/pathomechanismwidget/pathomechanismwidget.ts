@@ -162,7 +162,8 @@ export class PathomechanismCurationComponent {
         // Add defaults for others
         'lncRNA':   ['General / Protein-level','RNA Processing & Stability'],
         'tRNA':     ['General / Protein-level','RNA Processing & Stability'],
-        'multiGene': ['General / Protein-level']
+        'multiGene': ['General / Protein-level'],
+        'ThreePrimeFlanking': ['General / Protein-level','RNA Processing & Stability'],
     };
 
 

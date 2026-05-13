@@ -139,7 +139,6 @@ pub struct SelectionResponse {
 
 #[tauri::command]
 async fn select_curation_directory(
-    app: tauri::AppHandle,
     state: tauri::State<'_, AppState>
 ) -> Result<SelectionResponse, String> {
     let mut settings = state

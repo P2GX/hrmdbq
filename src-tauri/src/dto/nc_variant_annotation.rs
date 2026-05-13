@@ -27,6 +27,7 @@ pub enum VariantClass {
     #[serde(rename = "ICR")]            
     ICR,           
     MultiGene,
+    ThreePrimeFlanking,
 }
 
 impl VariantClass {
@@ -43,6 +44,7 @@ impl VariantClass {
             VariantClass::SnoRNA    => 9,
             VariantClass::ICR       => 10,
             VariantClass::MultiGene => 11,
+            VariantClass::ThreePrimeFlanking => 12,
         }
     }
 }
@@ -74,6 +76,7 @@ impl std::fmt::Display for VariantClass {
             Self::SnoRNA => "snoRNA",
             Self::ICR => "ICR",
             Self::MultiGene => "Multi-Gene",
+            Self::ThreePrimeFlanking => "3' flanking region"
         };
         write!(f, "{}", label)
     }
@@ -125,7 +128,6 @@ pub enum Pathomechanism {
     IRESdisruption,     // Internal Ribosome Entry Site
     RBPbindingSiteDisruption,
     Polyadenlyation, // polyA site disruption
-    
     Unknown,
 }
 
