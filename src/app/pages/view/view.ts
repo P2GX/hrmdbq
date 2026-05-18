@@ -71,6 +71,7 @@ function defaultVariantDisplay(): VariantDisplay {
 export class ViewWidget implements OnInit {
 
 
+
   private curationService = inject(CurationService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -82,6 +83,16 @@ export class ViewWidget implements OnInit {
   readonly activeGene = computed(() => 
       this.curationService.currentCuration()?.geneData
   );
+
+  readonly hasClinVar = computed(() => {
+    const vr = this.variant();
+    return !!vr?.variationId;
+  });
+
+  readonly variationId = computed(() => {
+    const vr = this.variant();
+    return vr?.variationId || 'na';
+  });
 
    ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -196,7 +207,17 @@ export class ViewWidget implements OnInit {
     });
     const baseUrl = 'https://genome.ucsc.edu/cgi-bin/hgTracks';
     const ucscUrl = `${baseUrl}?${params.toString()}`;
-     openUrl(ucscUrl)
+    openUrl(ucscUrl)
+  }
+
+  openClinvar() {
+    if (!this.hasClinVar()) {
+      this.notificationService.showError("Cannot retrieve ClinVar id");
+      return;
+    }
+    const varId = this.variationId();
+    const clinVarUrl = `https://www.ncbi.nlm.nih.gov/clinvar/variation/${varId}/`;
+    openUrl(clinVarUrl);
   }
 
   

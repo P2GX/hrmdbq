@@ -35,6 +35,15 @@
           <mat-icon>travel_explore</mat-icon>
         UCSC
       </button>
+      @if (this.hasClinVar()) {
+        <button mat-fab extended class="clinvar-btn" (click)="openClinvar()">
+            <mat-icon>travel_explore</mat-icon>
+          ClinVar
+        </button>
+      } @else {
+        <p>No ClinVar entry available</p>
+      }
+      
     </header>
 
     <div class="citation-container">
