@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, signal, computed, inject, output, OnInit } from '@angular/core';
+import { Component, signal, computed, inject, output, OnInit, input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
@@ -31,14 +31,13 @@ export interface GeneStepResult {
 ]
 })
 export class GeneCurationWidget implements OnInit {
-  // Data Signals
   geneSymbol = signal('');
   hgncId = signal('');
   maneTranscriptId = signal('');
   
-  // State Signals
   isSearching = signal(false);
-  isConfirmed = signal(false); // Controls the toggle
+  isConfirmed = signal(false); 
+  editMode = input<boolean>(false);
 
   stepComplete = output<GeneStepResult>();
 
@@ -47,7 +46,7 @@ export class GeneCurationWidget implements OnInit {
       private router = inject(Router);
 
   
-ngOnInit() {
+  ngOnInit() {
    const activeCuration = this.curationService.currentCuration();
     if (activeCuration) {
       const initialGene: GeneStepResult = {
@@ -65,6 +64,7 @@ ngOnInit() {
   }
 
   onReset() {
+    console.log("gene symbol reset")
     this.isConfirmed.set(false);
     this.geneSymbol.set('');
     this.hgncId.set('');

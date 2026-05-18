@@ -66,12 +66,6 @@ export class CurationWidget implements OnInit {
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.isEditMode.set(true);
-      this.editingId.set(id);
-      this.loadExistingCuration(id);
-      return;
-    } 
     const variantToEdit = this.curationService.editingVariant();
     if (variantToEdit) {
       this.isEditMode.set(true);
@@ -117,6 +111,7 @@ export class CurationWidget implements OnInit {
   }
 
   private loadExistingCuration(id: string): void{
+    console.log("loadExistingCuration ????")
     this.notificationService.showError(`IMPLEMENT ME- handle existing ${id}`)
   }
 
@@ -213,6 +208,7 @@ onAddCitation() {
   }
 
   resetToStep(step: number) {
+    console.log("Reset to step", step)
     if (step <= 5) this.citations.set([]);
     if (step <= 4) this.pathomechanisms.set([]);
     if (step <= 3) this.variantClass.set(null);

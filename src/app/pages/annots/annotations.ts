@@ -154,7 +154,7 @@ export class AnnotationTable implements OnInit {
   editVariant(row: NcVariantAssessment) {
     this.editingVariant.set(row);
     this.curationService.setEditingVariant(row);
-    this.router.navigate(["curate"]);
+    this.router.navigate(["curate", row.id]);
   } 
 
   viewVariant(row: NcVariantAssessment) {

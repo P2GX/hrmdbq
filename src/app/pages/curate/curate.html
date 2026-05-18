@@ -3,6 +3,7 @@
 
     <div class="step-wrapper" [class.active]="currentStep() === 1">
         <app-gene-curation-widget 
+            [editMode]="isEditMode()"
             (stepComplete)="onGeneStepComplete($event)"
             (reset)="resetToStep(1)">
         </app-gene-curation-widget>

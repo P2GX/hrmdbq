@@ -27,6 +27,7 @@ pub enum VariantClass {
     #[serde(rename = "ICR")]            
     ICR,           
     MultiGene,
+    #[serde(rename = "ThreePrimeFlanking")]
     ThreePrimeFlanking,
 }
 
