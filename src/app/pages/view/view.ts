@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CitationEntry, CurationEvent, HgvsVariant, IntergenicHgvsVariant, NcVariantAssessment, StructuralVariant, VariantKind } from '../../service/models';
 import { NotificationService } from '../../service/notification.service';
-import { ConfigService } from '../../service/configService';
+import { openUrl } from '@tauri-apps/plugin-opener';
 import { CurationService } from '../../service/curation_service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatIconModule } from "@angular/material/icon";
@@ -70,12 +70,18 @@ function defaultVariantDisplay(): VariantDisplay {
 })
 export class ViewWidget implements OnInit {
 
+
   private curationService = inject(CurationService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   isEditMode = signal(false);
   editingId = signal<string | null>(null);
   errorMessage = signal<string | null>(null);
+  variant = signal<NcVariantAssessment | null>(null);
+  notificationService = inject(NotificationService);
+  readonly activeGene = computed(() => 
+      this.curationService.currentCuration()?.geneData
+  );
 
    ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -87,14 +93,10 @@ export class ViewWidget implements OnInit {
     
   }
 
-  variant = signal<NcVariantAssessment | null>(null);
-  readonly activeGene = computed(() => 
-      this.curationService.currentCuration()?.geneData
-  );
+  
   activeGeneData = computed(() => {
       const gene = this.activeGene();
       if (! gene) return undefined;
-      console.log("active gene", gene);
       const gdata = {
         symbol: gene.symbol,
         hgnc: gene.hgncId,
@@ -163,6 +165,41 @@ export class ViewWidget implements OnInit {
   goToAnnotations() {
         this.router.navigate(['/annots']); 
   }
+
+
+  openUcsc() {
+    const vt = this.variant();
+    if (! vt) {
+      this.notificationService.showError("Could not retrieve variant");
+      return;
+    }
+    const variantCoordinates = vt.variantCoordinates;
+    if ("structural" in variantCoordinates) {
+      this.notificationService.showWarning("Cannot visualized structural variants currently");
+      return;
+    }
+    const coords = "intergenic" in variantCoordinates 
+       ? variantCoordinates.intergenic 
+       : variantCoordinates.hgvs;
+    const { chr: contig, position: pos, altAllele: alt, refAllele: ref } = coords;
+    const db = "hg38";
+    const windowPadding: number = 20;
+    const start = Math.max(1, pos - windowPadding);
+    const varSize = ref.length - 1;
+    const endPos = pos + varSize;
+    const end = varSize + pos + windowPadding;
+    const positionRange = `${contig}:${start}-${end}`;
+    const params = new URLSearchParams({
+      db: db,                  // e.g., "hg38"
+      position: positionRange, // e.g., "chr1:1234540-1234590"
+      highlight: `${db}.${contig}:${pos}-${endPos}`
+    });
+    const baseUrl = 'https://genome.ucsc.edu/cgi-bin/hgTracks';
+    const ucscUrl = `${baseUrl}?${params.toString()}`;
+     openUrl(ucscUrl)
+  }
+
+  
 
   
 }

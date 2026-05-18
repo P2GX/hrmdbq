@@ -152,3 +152,16 @@
   color: #6b7280;      /* Muted gray to distinguish from primary label */
   font-style: italic;  /* Italicizing aliases is a standard clinical convention */
 }
+
+.ucsc-btn {
+  background-color: #e8f5e9 !important; 
+  color: #1b5e20 !important; 
+  padding-left: 24px !important;
+  padding-right: 24px !important;
+  margin-top: 10px;
+}
+
+/* Ensures the icon inherits the matching dark green color */
+.ucsc-btn mat-icon {
+  color: #1b5e20 !important;
+}
