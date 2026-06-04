@@ -69,8 +69,6 @@ type VariantMode = 'HGVS' | 'SV' | 'IG';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AddVariantComponent {
-
-  
   // the following has symbol, transcript id, and HGNC id
   selected_gene = input.required<GeneStepResult>();
   initialNcVariantBundle = input<NcVariantBundle|null>(null);
@@ -257,6 +255,7 @@ export class AddVariantComponent {
       // we strip whitespace from HGVS variants because it is common for publications to add space e.c., c.123 A > T
       this.variant_string = this.variant_string.replace(/\s+/g, '');
     }
+    console.log("onVariantInput",this.variant_string);
     if (!this.variant_string) {
       this.errorMessage = 'Empty variant not allowed';
     } else if (this.variant_string.startsWith('c.') || this.variant_string.startsWith('n.')){
@@ -345,6 +344,7 @@ export class AddVariantComponent {
      if (!this.variant_string || !this.selected_gene()) {
       return this.fail('Please enter a valid variant and select a gene.');
     }
+    console.log("validateHgvsDto ", this.variant_string);
     this.errorMessage = null;
     this.configService.validateHgvsVariant(this.selected_gene().symbol, this.selected_gene().hgncId, this.selected_gene().maneId, this.variant_string)
       .then((hgvs) => {
@@ -434,6 +434,7 @@ export class AddVariantComponent {
 
   // Replace your button's (click) with this:
   handleConfirmWithWarning() {
+    console.log("handleConfirmWithWarning")
     // If the string is validated and we are moving to the next step
     if (this.variantValidated) {
       if (!this.clinvarId) {

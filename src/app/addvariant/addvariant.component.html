@@ -18,9 +18,13 @@
             <mat-form-field appearance="outline" class="w-full" subscriptSizing="dynamic">
               <mat-label>{{ currentMode === 'HGVS' ? 'HGVS Expression' : 'Intergenic' }}</mat-label>
               <input matInput 
-                     [(ngModel)]="variant_string" 
-                     (input)="variant_string = variant_string.replace(' ', '')"
-                     placeholder="Enter variant..." />
+                [(ngModel)]="variant_string" 
+                (input)="variant_string = variant_string.replace(' ', '')"
+                autofocus
+                autocapitalize="none"
+                spellcheck="false"
+                autocomplete="off"
+                placeholder="Enter variant..." />
             </mat-form-field>
           } @else {
             <div class="flex gap-2">
