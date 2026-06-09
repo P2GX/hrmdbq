@@ -560,8 +560,8 @@
 
 
 <h1 id="human-regulatory-mutation-database-curation-tool-hrmdbq">Human Regulatory Mutation Database Curation Tool (HRMDBQ)</h1>
-<p><strong>HRMDBQ</strong> is a high-performance Tauri/Angular desktop application specifically designed to streamline the annotation of non-coding Mendelian regulatory variants.</p>
-<p>Predicting the consequences of mutations and distinguishing deleterious from neutral mutations in coding sequences are relatively straightforward thanks to the genetic code. The goal of the HRMD project is to comprehensively curate the medical literature for Mendelian disease-causing non-coding variants as a foundation for analysis and classification tools.</p>
+<p><strong>HRMDBQ</strong> is an Tauri/Angular desktop application specifically designed to streamline the annotation of non-coding Mendelian regulatory variants.</p>
+<p>Predicting the consequences of mutations and distinguishing deleterious from neutral mutations in coding sequences are relatively straightforward thanks to the genetic code. The goal of the HRMD project is to comprehensively curate the medical literature for Mendelian disease-causing <strong>non-coding variants</strong> as a foundation for analysis and classification tools.</p>
 <hr />
 <h1 id="installation">Installation</h1>
 <p>HRMDBQ is available as prepackaged installers for macOS, Windows, and Linux. </p>
@@ -572,32 +572,18 @@
 <div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">macOS</label><label for="__tabbed_1_2">Windows</label><label for="__tabbed_1_3">Linux</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<h3 id="installing-on-macos">Installing on macOS</h3>
+<h2 id="installing-on-macos">Installing on macOS</h2>
+<blockquote>
 <p><strong>File to download:</strong> <code>hrmdbq_&lt;version&gt;_aarch64.dmg</code><br />
-<em>(Apple Silicon: M1/M2/M3/M4 Macs)</em></p>
-<div class="admonition warning">
-<p class="admonition-title">Unsigned Application</p>
-<p>Because this application is open-source and distributed for free, it is not signed or notarized by Apple. macOS will warn you the first time you try to open it.</p>
-</div>
-<ol>
-<li><strong>Download:</strong> Get the <code>.dmg</code> file from the <a href="https://github.com/p2gx/hrmdbq/releases">Releases</a> page.</li>
-<li><strong>Install:</strong> Open the DMG and drag the app into your <strong>Applications</strong> folder.</li>
-<li><strong>First Run:</strong> When you try to open it, macOS may show an error:  <blockquote>
-<p><em>"App can't be opened because it is from an unidentified developer"</em> &gt; or<br />
-<em>"hrmdbq is damaged and can’t be opened. You should move it to the Trash"</em></p>
+This is the macOS installer for Apple Silicon (M1/M2/M3/M4 Macs)</p>
 </blockquote>
-</li>
+<ol>
+<li>Download the <code>.dmg</code> file from the <a href="https://github.com/p2gx/phenoboard/releases">Releases</a> page</li>
+<li>Open the DMG and drag the app into your Applications folder</li>
+<li>When you try to open it, macOS will show the message:<br />
+<em>"'hrmdbq' is an app downloaded from the Internet. Are you sure you want to open it?"</em></li>
 </ol>
-<h4 id="how-to-bypass-security-warnings">How to Bypass Security Warnings</h4>
-<p>Do <strong>not</strong> move the app to the trash. Choose one of the following methods:</p>
-<p><strong>Method 1: Terminal (Recommended)</strong>
-Open your Terminal (search for "Terminal" in Spotlight), paste the following command, and press ++enter++:
-<div class="highlight"><pre><span></span><code>xattr<span class="w"> </span>-cr<span class="w"> </span>/Applications/hrmdbq.app
-</code></pre></div></p>
-<p><strong>Method 2: System Settings</strong>
-1. Open <strong>System Settings</strong>.
-2. Navigate to <strong>Privacy &amp; Security</strong>.
-3. Scroll down and click <strong>"Open Anyway"</strong>.</p>
+<p>If you confirm, the app will be installed into your <code>Applications</code> folder and started. From now one you can open hrmdbq like any other application (e.g., using the Spotlight searchbar).</p>
 </div>
 <div class="tabbed-block">
 <h3 id="installing-on-windows">Installing on Windows</h3>
