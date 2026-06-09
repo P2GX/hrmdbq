@@ -70,8 +70,6 @@ function defaultVariantDisplay(): VariantDisplay {
 })
 export class ViewWidget implements OnInit {
 
-
-
   private curationService = inject(CurationService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);

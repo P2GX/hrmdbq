@@ -3,6 +3,7 @@ import { CurationEvent, CurationStats, GeneCuration, HgvsVariant, HrmdbqSettings
 import { invoke } from '@tauri-apps/api/core';
 import { Citation, VariantDto } from './models';
 import { listen } from '@tauri-apps/api/event';
+import { GeneCurationStats } from './variant_models';
 
 
 @Injectable({
@@ -94,8 +95,8 @@ createCurationEvent(orcid: string): CurationEvent {
      return invoke<void>('serialize_gene_curation', {curation: curation});
   }
 
-  async fetchVariantStats(): Promise<CurationStats> {
-    return await invoke<CurationStats>('generate_curation_stats');
+  async fetchVariantStats(): Promise<GeneCurationStats[]> {
+    return await invoke<GeneCurationStats[]>('generate_curation_stats');
   }
 
 

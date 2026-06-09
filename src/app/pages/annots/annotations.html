@@ -23,7 +23,7 @@
       </div>
     
       <div class="resource-chips" style="margin-top: 15px;">
-        @for (res of curationService.currentCuration()?.webResources; track res.url) {
+        @for (res of resources(); track res.url) {
           <a [href]="res.url" target="_blank" class="resource-link">
             <mat-icon>open_in_new</mat-icon>
            {{ res.name }}

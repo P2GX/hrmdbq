@@ -8,7 +8,7 @@ use ga4ghphetools::dto::{
 use serde::{Deserialize, Serialize};
 
 
-#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
+#[derive(Clone, Debug, Deserialize, Hash, Serialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub enum VariantClass {
     Promoter,
@@ -315,8 +315,8 @@ impl Ord for NcVariantAssessment {
 }
 
 impl NcVariantAssessment {
-    pub fn category(&self) -> String {
-        self.variant_category.clone().into()
+    pub fn category(&self) -> VariantClass {
+        self.variant_category.clone()
     }
 }
 

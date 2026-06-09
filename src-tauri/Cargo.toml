@@ -1,15 +1,13 @@
 [package]
 name = "hrmdbq"
-version = "0.1.46"
+version = "0.1.47"
 description = "Curation of non-coding variant pathomechanism"
 authors = ["Peter Robinson"]
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [lib]
-# The `_lib` suffix may seem redundant but it is necessary
-# to make the lib name unique and wouldn't conflict with the bin name.
+# The `_lib` suffix is necessary to make the lib name unique and not conflict with the bin name.
 # This seems to be only an issue on Windows, see https://github.com/rust-lang/cargo/issues/8519
 name = "hrmdbq_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
@@ -19,7 +17,7 @@ tauri-build = { version = "2", features = [] }
 
 [dependencies]
 anyhow = "1.0.102"
-chrono = "0.4.44"
+chrono = "0.4.45"
 dirs = "6.0"
 ga4ghphetools = { git = 'https://github.com/P2GX/ga4ghphetools.git', tag = '0.6.8' }
 once_cell = "1.21.4"
@@ -38,5 +36,4 @@ rfd = "0.16.0"
 
 
 [dev-dependencies]
-# flate2 = "1.0.30"
 rstest = "0.26.1"

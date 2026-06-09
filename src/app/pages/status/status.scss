@@ -1,40 +1,213 @@
+/* Container & Widget Structure */
 .widget-card {
-  padding: 1rem;
-  border: 1px solid #e0e0e0;
+  padding: 1.5rem;
+  background: var(--bg-card, #ffffff);
   border-radius: 8px;
-  background: white;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
 
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-  }
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
 
-  .controls {
-    margin: 1rem 0;
-    display: flex;
-    justify-content: center;
-  }
+.header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #0f172a;
+}
 
-  .stats-list {
-    margin-top: 1rem;
-    max-height: 300px;
-    overflow-y: auto;
-  }
+.summary-badge {
+  margin: 1rem 0;
+  padding: 0.5rem 0.85rem;
+  background-color: #f0fdf4; /* Soft green background for tracking */
+  border: 1px solid #bbf7d0;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  color: #166534;
+  display: inline-block;
+}
 
-  .stats-row {
-    display: flex;
-    padding: 0.5rem 0;
-    border-bottom: 1px solid #f0f0f0;
+.controls {
+  margin-bottom: 1.25rem;
+}
 
-    .spacer { flex: 1; border-bottom: 1px dotted #ccc; margin: 0 10px; height: 12px; }
-  }
+/* * High-Density Matrix Table Framework 
+ * Optimized for horizontal scrolling across wide genomics datasets
+ */
+.matrix-table-container {
+  max-width: 100%;
+  max-height: 500px; /* Adjust based on your Tauri layout height */
+  overflow: auto;    /* Crucial for desktop dual-axis scrolling */
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+}
 
-  .empty-state {
-    text-align: center;
-    padding: 2rem;
-    color: #666;
-    mat-icon { font-size: 48px; width: 48px; height: 48px; }
-  }
+.matrix-table {
+  width: 100%;
+  border-collapse: separate; /* Required for sticky borders to overlay correctly */
+  border-spacing: 0;
+  font-size: 0.8125rem;      /* Condensed font size for multi-column layout */
+  line-height: 1.25rem;
+}
+
+/* --- Header Row Rules --- */
+.matrix-table th {
+  position: sticky;
+  top: 0;
+  background-color: #f8fafc;
+  color: #475569;
+  font-weight: 600;
+  padding: 0.65rem 0.75rem;
+  border-bottom: 2px solid #cbd5e1;
+  border-right: 1px solid #e2e8f0;
+  white-space: nowrap;
+  z-index: 2;
+}
+
+/* --- Body Data Rules --- */
+.matrix-table td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid #f1f5f9;
+  border-right: 1px solid #f8fafc;
+  color: #334155;
+  white-space: nowrap;
+}
+
+.matrix-table tbody tr:hover td {
+  background-color: #f8fafc !important; /* Highlight full row on hover */
+}
+
+/* --- Sticky Gene Column (Left Side Anchor) --- */
+.matrix-table .sticky-col {
+  position: sticky;
+  left: 0;
+  background-color: #ffffff;
+  border-right: 2px solid #cbd5e1 !important; 
+  box-shadow: 2px 0 5px -2px rgba(0,0,0,0.05);
+  z-index: 3;
+}
+
+/* Intersecting Header Block (Top-Left Cell needs highest stack priority) */
+.matrix-table th.sticky-col {
+  z-index: 4;
+  background-color: #f1f5f9;
+}
+
+/* --- Sticky Totals Column (Right Side Anchor) --- */
+.total-header, .total-cell {
+  position: sticky;
+  right: 0;
+  background-color: #f8fafc;
+  border-left: 2px solid #cbd5e1 !important;
+  z-index: 3;
+}
+
+.matrix-table th.total-header {
+  z-index: 4;
+  background-color: #f1f5f9;
+}
+
+/* --- Data Specific Polish --- */
+.gene-symbol {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.class-header {
+  font-size: 0.75rem;
+  letter-spacing: 0.025em;
+  text-transform: capitalize;
+}
+
+.count-cell {
+  font-variant-numeric: tabular-nums; /* Keeps grid numerical structures aligned perfectly */
+  font-weight: 500;
+  min-width: 80px;
+}
+
+.total-cell {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  color: #1e40af; /* Bold indigo accents for totals */
+}
+
+/* Dim down the noise: variants with 0 counts pull back visually */
+.zero-count {
+  color: #cbd5e1 !important;
+  font-weight: 300 !important;
+}
+
+/* --- State Blocks --- */
+.loading-state, .empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  color: #64748b;
+  text-align: center;
+}
+
+.empty-state mat-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  color: #cbd5e1;
+  margin-bottom: 0.75rem;
+}
+
+/* Global Helpers */
+.text-center { text-align: center; }
+.text-right  { text-align: right; }
+.text-muted  { color: #94a3b8; }
+
+.summary-row-container {
+  display: flex;
+  align-items: center;
+  gap: 5px; 
+  margin: 1rem 0;
+}
+
+.summary-badge {
+  margin: 0; 
+  padding: 0.5rem 0.85rem;
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  color: #166534;
+  
+  /* Lock the box sizing behavior so both elements resolve heights identically */
+  box-sizing: border-box; 
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Custom override to scale up the material button size matching the badge */
+.tall-jump-btn {
+  /* Match the standard line height and padding layout profile of the badge */
+  height: 36px !important; 
+  line-height: 34px !important; /* Account for the 1px top/bottom border wrapper */
+  font-size: 0.875rem !important;
+  border-radius: 6px !important; /* Uniform corner matching */
+  padding: 0 1rem !important;
+  
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+
+.tall-jump-btn mat-icon {
+  margin-right: 4px;
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
 }

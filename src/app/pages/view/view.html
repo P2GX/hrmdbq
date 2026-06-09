@@ -29,6 +29,9 @@
         <span><strong>HGNC:</strong> <a [href]="d.hgncUrl" class="meta-link" target="_blank">{{d.hgnc}}</a></span>
         <span><strong>Transcript:</strong> {{d.transcript}}</span>
         <span><strong>ID:</strong> {{d.id}}</span>
+         @if (this.hasClinVar()) {
+           <span><strong>ClinVar:</strong> {{variationId()}}</span>
+         }
       </div>
 
       <button mat-fab extended class="ucsc-btn" (click)="openUcsc()">

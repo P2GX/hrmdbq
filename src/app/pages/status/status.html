@@ -3,36 +3,74 @@
     <h2>Variant Statistics</h2>
     <button mat-flat-button color="primary" (click)="fetchData()" [disabled]="isLoading()">
       <mat-icon>refresh</mat-icon>
-      {{ stats() ? 'Update Data' : 'Get Stats' }}
+      {{ statsList().length > 0 ? 'Update Data' : 'Get Stats' }}
     </button>
   </div>
 
- 
-  
   <mat-divider></mat-divider>
 
-  @if (stats()) {
-     <div class="summary-badge">
-    <strong>Total Variants Tracked:</strong> {{ stats()?.total }}
-  </div>
-    <div class="controls">
-      <mat-button-toggle-group [value]="viewMode()" (change)="viewMode.set($event.value)">
-        <mat-button-toggle value="gene">By Gene</mat-button-toggle>
-        <mat-button-toggle value="category">By Category</mat-button-toggle>
-      </mat-button-toggle-group>
+  @if (statsList().length > 0) {
+    <div class="summary-row-container">
+      <div class="summary-badge">
+        <strong>Total Variants Tracked:</strong> {{ totalTrackedVars() }}
+      </div>
+      
+      <button mat-stroked-button color="accent" class="tall-jump-btn" (click)="scrollToTotals(tableContainer)">
+        <mat-icon>arrow_downward</mat-icon>
+        Show Totals
+      </button>
     </div>
 
-    <div class="stats-list">
-      @for (item of displayData(); track item.label) {
-        <div class="stats-row">
-          <span class="label">{{ item.label }}</span>
-          <span class="spacer"></span>
-          <span class="count"><b>{{ item.count }}</b></span>
-        </div>
+   <div #tableContainer class="matrix-table-container">
+  <table class="matrix-table">
+    <thead>
+      <tr>
+        <th class="sticky-col">Gene Symbol</th>
+        @for (col of columns; track col) {
+          <th class="text-center class-header">{{ col }}</th>
+        }
+        <th class="text-right total-header">Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (row of matrixRows(); track row.geneSymbol) {
+        <tr>
+          <td class="gene-symbol sticky-col">{{ row.geneSymbol }}</td>
+          
+          @for (col of columns; track col) {
+            @let count = row.variantCategoryCounts[col] || 0;
+            <td class="text-center count-cell" [class.zero-count]="count === 0">
+              {{ count }}
+            </td>
+          }
+          
+          <td class="text-right total-cell">{{ row.total }}</td>
+        </tr>
       } @empty {
-        <p>No data found.</p>
+        <tr>
+          <td [attr.colspan]="columns.length + 2" class="text-center text-muted">
+            No curation datasets loaded.
+          </td>
+        </tr>
       }
-    </div>
+    </tbody>
+    <tfoot>
+      <tr class="total-summary-row">
+        <td class="gene-symbol sticky-col">Total</td>
+        
+        @for (col of columns; track col) {
+          @let colTotal = columnTotals()[col] || 0;
+          <td class="text-center count-cell" [class.zero-count]="colTotal === 0">
+            {{ colTotal }}
+          </td>
+        }
+        
+        <td class="text-right total-cell">{{ totalTrackedVars() }}</td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+
   } @else if (isLoading()) {
     <div class="loading-state">
       <p>Loading genomic data...</p>

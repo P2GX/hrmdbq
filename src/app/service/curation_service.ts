@@ -42,7 +42,7 @@ export class CurationService {
     return path ? path.split(/[/\\]/).pop() : '';
     });
 
-  // 3. Computed signals (Optional, e.g., for a counter)
+  
   readonly count = computed(() => this.variants().length);
 
   constructor() {}
@@ -149,7 +149,6 @@ export class CurationService {
         webResources: [...(current.webResources || []), newResource]
       };
     });
-    const cc = this.currentCuration();
     this._hasUnsavedChanges.set(true);
   }
 

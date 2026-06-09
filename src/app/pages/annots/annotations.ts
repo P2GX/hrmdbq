@@ -3,7 +3,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { CommonModule } from '@angular/common';
 import { CurationService } from '../../service/curation_service'; 
-import { NcVariant, NcVariantAssessment, EvidenceSource } from '../../service/models';
+import { NcVariant, NcVariantAssessment, EvidenceSource, WebResource, createWebResource } from '../../service/models';
 import { MatIconModule } from "@angular/material/icon";
 import { ConfigService } from '../../service/configService';
 import { NotificationService } from '../../service/notification.service';
@@ -62,6 +62,17 @@ export class AnnotationTable implements OnInit {
     readonly variantCount = computed(() => {
       return this.curationService.variants().length
     });
+
+    /* Web resources that will be shown. By default, we always show a link to the ClinVar page for the gene */
+  resources = computed<WebResource[]>(() => {
+    const symbol = this.activeGeneSymbol();
+    if (!symbol) return [];
+    const rawResources = this.curationService.currentCuration()?.webResources ?? [];
+    const filteredResources = rawResources.filter(r => r.name !== "ClinVar");
+    const url = `https://www.ncbi.nlm.nih.gov/clinvar/?gene=${symbol}&term=%22${symbol}%22%5BGENE%5D`;
+    const clinvarResource = createWebResource("ClinVar", url);
+    return [...filteredResources, clinvarResource];
+  });
 
  
 

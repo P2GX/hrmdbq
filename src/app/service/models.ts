@@ -395,6 +395,12 @@ export interface WebResource {
   name: string;
   url: string;
 }
+export function createWebResource(name: string, url: string): WebResource {
+  return {
+    name,
+    url,
+  };
+}
 
 /**
  * Individual evidence or curator notes
@@ -426,11 +432,7 @@ export interface GeneCurationFile {
 
 
 export interface CurationStats {
-  // Maps Gene Symbol (e.g., "BRCA1") to its occurrence count
   geneSymbolCounts: Record<string, number>;
-  
-  // Maps Variant Category (e.g., "Splicing") to its occurrence count
-  variantCategoryCounts: Record<string, number>;
-  // Number of variants
+  variantCategoryCounts: Record<VariantClass, number>;
   total: number;
 }

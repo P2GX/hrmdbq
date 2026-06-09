@@ -1,6 +1,6 @@
 use std::{collections::HashMap, fs};
 
-use crate::dto::{curation_stats::CurationStats, nc_variant_annotation::{GeneCuration, GeneCurationFile}};
+use crate::dto::{curation_stats::{CurationStats, GeneCurationStats}, nc_variant_annotation::{GeneCuration, GeneCurationFile, VariantClass}};
 
 
 
@@ -16,7 +16,7 @@ fn get_curation(gcf: &GeneCurationFile) -> Result<GeneCuration, String> {
 
 pub fn get_stats(curation_files: &Vec<GeneCurationFile>) -> Result<CurationStats, String> {
     let mut gene_symbol_counts: HashMap<String, usize> = HashMap::new();
-    let mut variant_category_counts: HashMap<String, usize> = HashMap::new();
+    let mut variant_category_counts: HashMap<VariantClass, usize> = HashMap::new();
     for curation_file in curation_files {
         let gc = get_curation(&curation_file)?;
         let symbol = gc.get_symbol();
@@ -34,4 +34,25 @@ pub fn get_stats(curation_files: &Vec<GeneCurationFile>) -> Result<CurationStats
         return Err(format!("Inequal counts for genes {} and categories {}.", n1, n2));
     }
     Ok(CurationStats { gene_symbol_counts, variant_category_counts, total: n1 })
+}
+
+pub fn get_gene_to_category_counts(curation_files: &Vec<GeneCurationFile>) -> Result<Vec<GeneCurationStats>, String> {
+    let mut curation_list: Vec<GeneCurationStats> = Vec::new();
+    for curation_file in curation_files {
+        let gc = get_curation(&curation_file)?;
+        let symbol = gc.get_symbol();
+        let mut variant_category_counts: HashMap<VariantClass, usize> = HashMap::new();
+        for annot in &gc.annotations {
+            let category = annot.category();
+            *variant_category_counts.entry(category).or_insert(0) += 1;
+        }
+        let curation = GeneCurationStats{ 
+            gene_symbol: symbol.to_string(), 
+            variant_category_counts, 
+            total: gc.n_curations()
+        };
+        curation_list.push(curation);
+    }
+
+    Ok(curation_list)
 }
