@@ -7,7 +7,7 @@ use ga4ghphetools::dto::{
 
 
 use crate::{
-    dto::{citation::Citation, curation_stats::{CurationStats, GeneCurationStats}, nc_variant_annotation::{GeneCuration, GeneCurationFile, NcVariantAssessment}},
+    dto::{citation::Citation, curation_stats::{GeneCurationStats}, nc_variant_annotation::{GeneCuration, GeneCurationFile, NcVariantAssessment}},
     util::{gene_curation::get_path, hgnc_rest::HgncBundle, settings::HrmdbqSettings},
 };
 
