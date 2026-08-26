@@ -84,6 +84,7 @@ export const PATHOMECHANISMS =
    'mrnaStability',           // Changes in RNA half-life
    'secondaryStructure',      // Folding changes (rRNA/snRNA/tRNA)
    'impairedRnaProcessing',
+   'TssMutation',
   // Translational Control (5' UTR)
   'uORFCreation',
    'uORFDisruption',
