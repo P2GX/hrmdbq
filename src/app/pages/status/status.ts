@@ -13,7 +13,7 @@ import { GeneCurationStats } from '../../service/variant_models';
 
 
 @Component({
-  selector: 'app-about',
+  selector: 'app-status',
   imports: [MatDividerModule, 
     CommonModule, 
     MatIconModule, 

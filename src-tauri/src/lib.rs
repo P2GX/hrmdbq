@@ -221,7 +221,6 @@ async fn set_biocuration_orcid(
 async fn retrieve_pmid_citation(
     pmid: &str
 ) -> Result<Citation, String> {
-    println!("retrieve_pmid_citation pmid={}", pmid);
     util::pubmed_retriever::retrieve_citation(pmid).await
 }
 
@@ -235,6 +234,7 @@ fn serialize_gene_curation(
     curation: GeneCuration
 ) -> Result<(), String> {
     let gene_symbol = curation.get_symbol().to_string();
+    eprintln!("SERIALIZE GENE CURATION symbol={}" ,gene_symbol);
     let guard = state.gene_list
         .lock()
         .map_err(|_| "Failed to lock mutex".to_string())?;
@@ -242,6 +242,7 @@ fn serialize_gene_curation(
         Some(pb) => pb,
         None => { return Err(format!("Could not retrieve path for {}", gene_symbol)); },
     };
+    eprintln!("SERIALIZED GENE CURATION");
     crate::util::gene_curation::save_gene_curation(&path_buf, &curation)?;
     Ok(())
 }
@@ -256,8 +257,7 @@ fn save_new_curation(
     let file_name = format!("{}.json", symbol);
     let mut path_buf = PathBuf::from(directory);
     path_buf.push(file_name);
-
-    // 1. Save the file to disk
+    eprint!("save_new_curation: {:?}", curation);
     crate::util::gene_curation::save_gene_curation(&path_buf, &curation)?;
 
     // 2. Update the internal state so `serialize_gene_curation` 
@@ -291,8 +291,6 @@ async fn get_gene_curation_list(
         let path = entry.path();
         if path.is_file() && path.extension().and_then(|s| s.to_str()) == Some("json") {
             if let Ok(content) = std::fs::read_to_string(&path) {
-                // Using the full GeneCuration struct for now, 
-                // but consider a 'Light' version if performance dips
                 if let Ok(curation) = serde_json::from_str::<GeneCuration>(&content) {
                     gene_list.push(GeneCurationFile {
                         gene_symbol: curation.gene_data.symbol,
@@ -316,7 +314,7 @@ fn create_gene_curation(
     symbol: String,
     hgnc: HgncBundle
 ) -> Result<GeneCuration, String> {
-    let guard = state.gene_list
+    let mut guard = state.gene_list
         .lock()
         .map_err(|_| "Failed to lock mutex".to_string())?;
      let settings = state.settings
@@ -330,8 +328,13 @@ fn create_gene_curation(
     if already_exists {
         return Err(format!("Curation file for {} exists already!", symbol));
     }
-    let gene_curation =  GeneCuration::from_hgnc_bundle(symbol, hgnc);
+    let gene_curation =  GeneCuration::from_hgnc_bundle(symbol.clone(), hgnc);
     crate::util::gene_curation::save_gene_curation(&file_path, &gene_curation)?;
+    guard.push(GeneCurationFile { gene_symbol: symbol.clone(), file: file_path.clone() });
+    let mut current_lock = state.current_gene_curation
+        .lock()
+        .map_err(|_| "Failed to lock current curation".to_string())?;
+    *current_lock = Some(gene_curation.clone());
     Ok(gene_curation)
 }
 

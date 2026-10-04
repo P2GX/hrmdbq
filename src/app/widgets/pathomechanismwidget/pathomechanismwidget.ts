@@ -146,7 +146,7 @@ export class PathomechanismCurationComponent {
         {
             label: 'RNA Processing & Stability',
             icon: 'Inventory_2',
-            options: ['spliceDefect', 'mrnaStability', 'secondaryStructure', 'impairedRnaProcessing', 'TssMutation','microRNAbindingSiteDisruption', 'microRNAbindingSiteCreation', 'iREdisruption', 'rBPbindingSiteDisruption']
+            options: ['spliceDefect', 'mrnaStability', 'secondaryStructure', 'impairedRnaProcessing', 'tssMutation','microRNAbindingSiteDisruption', 'microRNAbindingSiteCreation', 'iREdisruption', 'rBPbindingSiteDisruption']
         }
     ];
 

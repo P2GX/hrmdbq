@@ -46,7 +46,7 @@ pub fn save_gene_curation(
     gc.annotations.sort();
     let json_contents = serde_json::to_string_pretty(&gc)
         .map_err(|e| format!("Failed to serialize GeneCuration: {}", e))?;
-    
+    eprint!("JSON CONTENTS: {}", json_contents);
     fs::write(path, json_contents)
         .map_err(|e| format!("Failed to write file to {:?}: {}", path, e))?;
 

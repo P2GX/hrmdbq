@@ -46,7 +46,6 @@ pub async fn retrieve_citation(input: &str) -> Result<Citation, String> {
             return Err(format!("Could not extract numerical PMID from {}", input));
         }
     };
-    println!("retrieve_citation numerical pmid={}", num_pmid);
     fetch_citation(&num_pmid).await
 }
 
@@ -78,7 +77,7 @@ async fn fetch_citation(numerical_pmid: &str) -> Result<Citation, String> {
     );
 
     let response = reqwest::get(&url).await.map_err(|e| e.to_string())?;
-    println!("{:?}", response);
+
     let json: PubmedResponse = response.json().await.map_err(|e| e.to_string())?;
     let article_record = match json.result.records.get(numerical_pmid) {
         Some(record) => record,
@@ -165,8 +164,7 @@ mod tests {
         let pmid = "13168976";
         let result = retrieve_citation(pmid).await;
         assert!(result.is_ok());
-        let citation = result.unwrap();
-        println!("{:?}", citation);
+        let citation = result.unwrap(); 
         assert!(citation.year == 1953);
         assert!(citation.journal.contains("symposia"));
         assert!(citation.author_list.contains("WATSON"));

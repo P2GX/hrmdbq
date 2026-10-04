@@ -117,10 +117,11 @@ export class CurationService {
   }
 
   async saveActiveCurationToDisk() {
-    const curation = this._currentCuration();
+    const curation: GeneCuration | null = this._currentCuration();
     const directory = this._curationDirectory();
     if (!curation) return;
     const exists = this._curationFileList().some(f => f.geneSymbol === curation.geneData.symbol);
+    console.log(`saveActiveCurationToDisk, exists=${exists} curation=${curation}`);
     try {
       if (exists) {
         await invoke('serialize_gene_curation', { curation });
@@ -136,6 +137,7 @@ export class CurationService {
       this._hasUnsavedChanges.set(false);
       this.notificationService.showSuccess("Saved successfully.");
     } catch (err) {
+      console.error("TAURI SAVE ERROR:", err);
       this.notificationService.showError(`Save failed: ${err}`);
     }
   }
@@ -222,8 +224,9 @@ export class CurationService {
   upsertVariant(assess: NcVariantAssessment): void {
     this._currentCuration.update(state => {
       if (!state) return null;
-      const index = state.annotations.findIndex(ann => ann.id === assess.id);
-      let newAnnotations = [...state.annotations];
+      const existingAnnotations = state.annotations ?? [];
+      const index = existingAnnotations.findIndex(ann => ann.id === assess.id);
+      let newAnnotations = [...existingAnnotations];
       if (index !== -1) {
         newAnnotations[index] = assess;
       } else {

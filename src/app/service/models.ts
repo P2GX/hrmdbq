@@ -66,40 +66,37 @@ export interface EvidenceRecord {
 
 
 
-export const PATHOMECHANISMS = 
-  // General/Functional
-  ['lossOfFunction',
-   'gainOfFunction',
-   'dominantNegative',
-  // Transcriptional Control (Promoters/Enhancers/ICR)
-   'reducedTranscription',
-   'increasedTranscription',
-   'reducedExpression',
-   'increasedExpression',
-   'enhancerHijacking',
-    'insulatorLoss', 
-    'tfbsDisruption',
-  // RNA Processing & Stability (Introns/3' UTR)
-   'spliceDefect',
-   'mrnaStability',           // Changes in RNA half-life
-   'secondaryStructure',      // Folding changes (rRNA/snRNA/tRNA)
-   'impairedRnaProcessing',
-  // Translational Control (5' UTR)
-  'uORFCreation',
-   'uORFDisruption',
-   'kozakCreation',
+export const PATHOMECHANISMS = [
+  'lossOfFunction',
+  'gainOfFunction',
+  'dominantNegative',
+  'reducedExpression',
+  'increasedExpression',
+  'reducedTranscription',
+  'increasedTranscription',
+  'tfbsDisruption',
+  'enhancerHijacking',
+  'insulatorLoss',
+  'spliceDefect',
+  'mrnaStability',
+  'secondaryStructure',
+  'impairedRnaProcessing',
+  'tssMutation',
+  'uORFCreation', 
+  'uORFDisruption',
+  'kozakCreation',
   'kozakDisruption',
   'novelUpstreamStart',
   'reducedTranslation',
   'increasedTranslation',
-  'polyadenlyation',
-  // Regulatory Site Interaction (UTRs)
-   'microRNAbindingSiteDisruption',
+  'microRNAbindingSiteDisruption',
   'microRNAbindingSiteCreation',
-  'iREdisruption',            // Iron Responsive Element
-   'iRESdisruption', // internal ribosome entry site 
-   'rBPbindingSiteDisruption', // RNA-Binding Protein sites (generic)
-   'unknown'];
+  'iREdisruption',
+  'iRESdisruption',
+  'rBPbindingSiteDisruption',
+  'polyadenlyation',
+  'unknown'
+] as const;
 
 export type Pathomechanism = (typeof PATHOMECHANISMS)[number];
 
@@ -123,7 +120,7 @@ export const PATHOMECHANISM_LABELS: Record<Pathomechanism, string> = {
     mrnaStability: "mRNA stability alteration",
     secondaryStructure: "Secondary structure alteration",
     impairedRnaProcessing: "Impaired ncRNA processing",
-    TssMutation: "TSS Mutation",
+    tssMutation: "TSS Mutation",
     
     // Translational Control (5' UTR)
     uORFCreation: "uORF creation",
@@ -409,7 +406,7 @@ export interface GeneNote {
   id: string;
   title: string;
   content: string;
-  dateModified: string; // Matches camelCase rename
+  dateModified: string;
 }
 
 /**
@@ -420,6 +417,7 @@ export interface GeneCuration {
   webResources: WebResource[];
   notes: GeneNote[];
   annotations: NcVariantAssessment[];
+  genomeAssembly: string;
 }
 
 /**

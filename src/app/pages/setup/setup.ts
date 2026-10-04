@@ -21,7 +21,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { getVersion, getName } from '@tauri-apps/api/app';
 
 @Component({
-  selector: 'app-about',
+  selector: 'app-setup',
   imports: [
     CommonModule,
     MatButtonModule,

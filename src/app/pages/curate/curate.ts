@@ -25,7 +25,7 @@ export interface AddVariantDialogData {
 
 
 @Component({
-  selector: 'app-about',
+  selector: 'app-curate',
   imports: [
     CommonModule,
     FormsModule,
@@ -138,7 +138,7 @@ export class CurationWidget implements OnInit {
   }
 
   onPathomechanismStepComplete(pathomechanisms: Pathomechanism[]): void {
-    this.pathomechanisms.update((lst) => [...lst, ...pathomechanisms]);
+    this.pathomechanisms.set(pathomechanisms);
     this.updateStep(5);
   }
 
@@ -224,8 +224,8 @@ onAddCitation() {
   }
 
   async onFinalSave() {
-    const cat = this.variantClass();
-    if (! cat) {
+    const varCateg = this.variantClass();
+    if (! varCateg) {
       this.notificationService.showError("Cannot save without variant category");
       return;
     }
@@ -263,7 +263,7 @@ onAddCitation() {
     const ncAssess: NcVariantAssessment = {
       id: assessId,
       variantCoordinates: variantBundle.ncvariant,
-      variantCategory: cat,
+      variantCategory: varCateg,
       pathomechanisms: pathomechanism,
       citation: citations,
       biocuration: [curation],
@@ -282,8 +282,10 @@ onAddCitation() {
     }
     this.curationService.setEditingVariant(null);
     try {
-        await this.curationService.upsertVariant(ncAssess);
+        this.curationService.upsertVariant(ncAssess);
+        await this.curationService.saveActiveCurationToDisk();
         this.notificationService.showSuccess("Variant assessment saved.");
+        console.log("variant assessment saved: ", ncAssess);
         this.router.navigate(["/annots"]);
     } catch (err) {
         this.notificationService.showError(`Save failed: ${err}`);

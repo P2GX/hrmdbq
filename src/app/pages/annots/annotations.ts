@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { CommonModule } from '@angular/common';
@@ -20,7 +20,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 
 
 @Component({
-  selector: 'app-about',
+  selector: 'app-annotations',
   imports: [
     CommonModule,
     FormsModule,
@@ -43,21 +43,19 @@ export class AnnotationTable implements OnInit {
     private notificationService = inject(NotificationService);
     private dialog = inject(MatDialog);
     private router = inject(Router);
-    // for adding a new resource
-    resName = signal('');
-    resUrl = signal('');
+ 
 
     displayedColumns: string[] = ['label', 'category', 'alias', 'actions'];
     editingVariant = signal<NcVariantAssessment | null>(null);
 
-   
+    readonly dataSource = new MatTableDataSource<NcVariantAssessment>([]);
 
     readonly activeGeneSymbol = computed(() => 
       this.curationService.currentCuration()?.geneData.symbol ?? 'No Gene Selected'
     );
-    readonly dataSource = computed(() => 
-      new MatTableDataSource<NcVariantAssessment>(this.curationService.variants())
-    );
+    readonly isFileLoaded = computed(() => {
+      return this.curationService.isGeneLoaded() && !!this.curationService.currentCuration();
+    });
 
     readonly variantCount = computed(() => {
       return this.curationService.variants().length
@@ -75,14 +73,17 @@ export class AnnotationTable implements OnInit {
   });
 
  
-
   constructor() {
-    if (!this.curationService.isGeneLoaded()) {
-      this.notificationService.showError("No active curation found. Return to setup to initialize gene.");
-    }
+    effect(() => {
+      this.dataSource.data = this.curationService.variants();
+    });
   }
+
   ngOnInit(): void {
     this.curationService.setEditingVariant(null);
+    if (!this.isFileLoaded()) {
+      this.notificationService.showError("No active curation found. Return to setup to initialize gene.");
+    }
   }
   
 
@@ -109,6 +110,7 @@ export class AnnotationTable implements OnInit {
    
   exportData(): void {
     const curation = this.curationService.currentCuration();
+    console.log("Export data, current curation=", curation);
     if (! curation) {
       this.notificationService.showError("Could not save curation because GeneCuration object was null");
       return;
@@ -158,7 +160,7 @@ export class AnnotationTable implements OnInit {
      this.router.navigate(["/curate"]);
   }
 
-  gotToSetup() {
+  goToSetup() {
     this.router.navigate(["/setup"]);
   }
 

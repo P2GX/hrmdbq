@@ -77,7 +77,7 @@
   <div class="table-wrapper mat-elevation-z2">
     
     @if (curationService.variants().length > 0) {
-      <table mat-table [dataSource]="dataSource()">
+      <table mat-table [dataSource]="dataSource">
 
         <ng-container matColumnDef="label">
           <th mat-header-cell *matHeaderCellDef> Variant Label </th>
@@ -133,7 +133,7 @@
       <mat-icon color="warn">warning</mat-icon>
       <h2>No Active Curation Workspace</h2>
       <p>Please select a gene from the <strong>Setup</strong> page to begin curating.</p>
-      <button mat-flat-button color="primary" (click)="gotToSetup()">
+      <button mat-flat-button color="primary" (click)="goToSetup()">
         Go to Setup
       </button>
     </div>

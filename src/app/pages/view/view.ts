@@ -57,7 +57,7 @@ function defaultVariantDisplay(): VariantDisplay {
 
 
 @Component({
-  selector: 'app-about',
+  selector: 'app-view',
   imports: [
     CommonModule,
     FormsModule,

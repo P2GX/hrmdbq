@@ -102,6 +102,7 @@ pub enum Pathomechanism {
     // Transcriptional / Architecture
     ReducedTranscription,
     IncreasedTranscription,
+    #[serde(rename = "tfbsDisruption")]
     TfbsDisruption,
     EnhancerHijacking,
     InsulatorLoss,
@@ -111,10 +112,13 @@ pub enum Pathomechanism {
     MrnaStability,
     SecondaryStructure,
     ImpairedRnaProcessing,
+    #[serde(rename = "tssMutation")]
     TssMutation,
     
     // Translational Control (5' UTR)
+    #[serde(rename = "uORFCreation")]
     UORFCreation,
+    #[serde(rename = "uORFDisruption")]
     UORFDisruption,
     KozakCreation,
     KozakDisruption,
