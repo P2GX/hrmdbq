@@ -1,5 +1,6 @@
 .sidenav-container {
-  height: 100%;
+  height: 100vh;
+  background-color: #f4f8fb; 
   position: relative;
   overflow: hidden;
 }
@@ -11,36 +12,44 @@ body {
 }
 
 .sidenav {
-  background-color: var(--md-sys-color-primary);
   overflow-x: hidden;
   overflow-y: hidden;
   width: 16rem;
-  transition: width 0.2s ease !important;
+  background-color: #ffffff; /* Crisp white sidebar */
+  border-right: 1px solid #e1ecf4; /* Subtle ice-blue border */
+  color: #2c3e50;
+  transition: width 0.25s ease-in-out;
 }
 
 .sidenav-header {
   padding: 1rem;
-  background: var(--md-sys-color-primary);
-  color: var(--md-sys-color-on-primary); /* Reusing white from style.css */
+  background: #ffffff;
+  color: #2c3e50;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  box-shadow: 0 2px 4px var(--shadow-header); /* Reusing shadow from style.css */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
   overflow: hidden;
+  border-bottom: 1px solid #eef3f7;
+}
+
+.sidenav.collapsed {
+  width: 72px; /* Standard collapsed width for Material */
 }
 
 .logo-title {
     display: flex;
     align-items: center;
-    padding: 1rem;
+    padding: 0 0.5rem;
     overflow: hidden; /* Prevents text from leaking out during animation */
     white-space: nowrap; 
     gap: 12px;
 
     .logo-icon {
-        width: 40px;  /* Standard sidebar icon size */
-        height: 40px;
-        flex-shrink: 0; /* Prevents the icon from squishing */
+      margin: 0;
+        width: 36px;  
+        height: 36px;
+        flex-shrink: 0; 
     }
 
     .logo-text {
@@ -48,7 +57,7 @@ body {
         font-size: 1.2rem;
         font-weight: 700;
         letter-spacing: 1px;
-        color: var(--text-primary);
+        color: #1e293b;
         transition: opacity 0.3s ease;
     }
 }
@@ -59,38 +68,77 @@ body {
   font-size: 1.3rem;
 }
 
+/* ==================================================== */
+/* Navigation Links & States                            */
+/* ==================================================== */
+
 .nav-item {
-  margin: 4px 8px;
+  margin: 6px 10px;
   border-radius: 8px;
-  transition: all 0.2s ease;
-  color: var(--md-sys-color-on-primary);
-  white-space: nowrap; /* Prevents wrapping during collapse */
+  color: #475569 !important; /* Visible clean slate-blue for unselected links */
+  white-space: nowrap; 
   overflow: hidden;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .nav-item:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-  transform: translateX(0.2em);
+  background-color: #f0f7ff; /* Soft cheerful light blue hover */
+  color: #0284c7 !important;
+}
+
+.nav-item:hover mat-icon {
+  color: #0284c7 !important;
 }
 
 .nav-item mat-icon {
-  color: var(--md-sys-color-primary-container);
+  color: #64748b !important; /* Visible icon color for unselected links */
   margin-right: 12px;
   font-size: 20px;
   align-content: center;
 }
 
 .nav-item span[matListItemTitle] {
-  color: var(--md-sys-color-on-primary);
-  font-weight: 200;
+  color: #334155 !important; /* Clearly visible text for unselected links */
+  font-weight: 400;
 }
 
-.nav-item.active-link {
-  background: linear-gradient(90deg, var(--md-sys-color-primary-hover) 0%, var(--md-sys-color-primary) 69%);
-  border-radius: 2em;
-  transform: translateX(0.2em);
-  color: var(--md-sys-color-on-primary); /* Reusing white */
-  transition: all 0.6s ease;
+/* Stronger Active State */
+.active-link {
+  background-color: #bae6fd !important; /* Stronger vibrant light-blue highlight */
+  color: #0369a1 !important;            /* Deep prominent blue */
+  font-weight: 600 !important;
+}
+
+.active-link span[matListItemTitle] {
+  color: #0369a1 !important;
+  font-weight: 600 !important;
+}
+
+.active-link mat-icon {
+  color: #0369a1 !important;            /* Deep prominent icon color */
+}
+
+/* Dividers */
+mat-divider {
+  border-top-color: #e2e8f0 !important;
+  margin: 8px 16px;
+}
+
+/* Main Content Area */
+.main-content {
+  background-color: #f8fafc; /* Crisp clean canvas */
+  color: #1e293b;
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  flex: 1;
+  background-color: #f8fafc;
+  container-type: inline-size;
+  overflow-x: hidden;
+  height: 100%;
+  padding-top: 0;
 }
 
 .mdc-list {
@@ -135,13 +183,8 @@ a.nav-item {
 
 /* ==================================================== */
 
-.main-content {
-  display: flex;
-  flex-direction: column;
-}
-
 .menu-button {
-  color: var(--md-sys-color-on-primary);
+  color: #0284c7;
 }
 
 ::ng-deep.mat-drawer-inner-container {
@@ -149,42 +192,28 @@ a.nav-item {
   max-width: 100%;
 }
 
-.content {
-  flex: 1;
-  background-color: var(--md-sys-color-background);
-  container-type: inline-size;
-  overflow-x: hidden;
-  height: 100%;
-  /* Padding removed to allow content to naturally hit the top of the viewport */
-  padding-top: 0;
-}
-
 .content-analysis {
   padding: 12px !important;
   overflow-x: auto !important;
   overflow-y: auto !important;
-  background-color: red !important; /* Note: Left this hardcoded as it looks like a debug value */
+  background-color: red !important; /* Left as requested/debug */
   height: 100vh;
-}
-
-* {
-  transition: all 0.2s ease-in-out;
 }
 
 ::ng-deep h1 {
   margin: 1rem;
   font-size: 2.0rem;
   font-weight: 400;
-  color: var(--md-sys-color-primary);
+  color: #0284c7;
 }
 
 ::ng-deep .page-header {
   display: flex;
   flex-direction: column;
   padding: 0 5vw 0rem 5vw;
-  box-shadow: 0 2px 4px var(--shadow-header);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
   margin-bottom: 1rem;
-  background-color: var(--md-sys-color-on-primary);
+  background-color: #ffffff;
 }
 
 ::ng-deep h1.page-title {
@@ -193,21 +222,15 @@ a.nav-item {
 
 .mat-divider {
   margin: 1rem 0.5rem;
-  color: var(--md-sys-color-primary);
-  font-size: var(--font-standard)
+  color: #cbd5e1;
 }
 
 ::ng-deep.mat-mdc-button .mat-mdc-button-persistent-ripple::before {
-  color: var(--md-sys-color-on-primary);
-}
-
-::ng-deep.mat-snack-bar-container.mat-snack-bar-container-animations-enabled {
-  background-color: var(--md-sys-color-on-primary) !important;
-  opacity: 0.95 !important;
+  color: #ffffff;
 }
 
 ::ng-deep.mat-snack-bar-container-animations-enabled {
-  background-color: var(--md-sys-color-on-primary) !important;
+  background-color: #ffffff !important;
   opacity: 0.95 !important;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 0.13rem 0.3rem;
 }

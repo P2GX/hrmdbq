@@ -94,12 +94,12 @@ fn validate_hgvs_variant(
     transcript: &str,
     allele: &str,
 ) -> Result<HgvsVariant, String> {
-    ga4ghphetools::variant::validate_hgvs_variant(symbol, hgnc, transcript, allele)
+    ga4ghphetools::validate_hgvs_variant(symbol, hgnc, transcript, allele)
 }
 
 #[tauri::command]
 fn validate_structural_variant(variant_dto: VariantDto) -> Result<StructuralVariant, String> {
-    ga4ghphetools::variant::validate_structural_variant(variant_dto)
+    ga4ghphetools::validate_structural_variant(variant_dto)
 }
 
 #[tauri::command]
@@ -109,7 +109,7 @@ fn validate_intergenic_variant(
     allele: String,
 ) -> Result<IntergenicHgvsVariant, String> {
     let vsto = VariantDto::hgvs_g(&allele, &hgnc, &symbol);
-    ga4ghphetools::variant::validate_intergenic_variant(vsto)
+    ga4ghphetools::validate_intergenic_variant(vsto)
 }
 
 #[tauri::command]
